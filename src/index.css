@@ -1,0 +1,460 @@
+@import 'tailwindcss';
+@import 'reactflow/dist/style.css';
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+/* React Flow necesita altura real en toda la cadena; flex-1 + min-h-0 evita colapso a 0px */
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100dvh;
+  max-width: none;
+  text-align: initial;
+  border: none;
+}
+
+/* Listas en documentación: viñetas con tarjeta; numeración clásica en <ol> */
+.doc-list-ul > li.doc-li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.625rem;
+  border-radius: 0.875rem;
+  border: 1px solid rgb(30 41 59 / 0.55);
+  background: rgb(15 23 42 / 0.35);
+  padding: 0.65rem 0.85rem;
+  box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.03);
+}
+
+.doc-list-ul > li.doc-li:last-child {
+  margin-bottom: 0;
+}
+
+.doc-list-ol > li.doc-li {
+  display: list-item;
+  list-style: decimal;
+  margin-left: 0.35rem;
+  padding-left: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.doc-list-ol > li.doc-li .doc-li-chev {
+  display: none;
+}
+
+.doc-list-ol > li.doc-li .doc-li-body {
+  display: block;
+  min-width: 0;
+}
+
+/* Portal principal: animaciones y efectos */
+@keyframes portal-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes portal-orb-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(12px, -8px) scale(1.04);
+  }
+}
+
+.portal-fade-in {
+  animation: portal-fade-in 0.55s ease-out both;
+}
+
+.portal-card-hover {
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.portal-card-hover:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px -12px rgb(0 0 0 / 0.45);
+}
+
+.portal-orb {
+  animation: portal-orb-float 14s ease-in-out infinite;
+}
+
+.portal-orb-violet {
+  background: rgb(139 92 246 / 0.12);
+}
+
+.portal-orb-sky {
+  background: rgb(56 189 248 / 0.1);
+  animation-delay: -4s;
+}
+
+.portal-orb-emerald {
+  background: rgb(52 211 153 / 0.08);
+  animation-delay: -8s;
+}
+
+/* Paso a paso — tema hielo / nieve */
+@keyframes frost-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(6deg);
+  }
+}
+
+@keyframes frost-step-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--frost-slide, 24px)) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes frost-reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes frost-ice-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 16px rgb(34 211 238 / 0.35);
+  }
+  50% {
+    box-shadow: 0 0 28px rgb(34 211 238 / 0.55);
+  }
+}
+
+@keyframes frost-snow-drift {
+  0% {
+    background-position: 0 0, 40px 60px;
+  }
+  100% {
+    background-position: 120px 240px, 160px 300px;
+  }
+}
+
+.frost-float {
+  display: inline-block;
+  animation: frost-float 2.8s ease-in-out infinite;
+}
+
+.frost-step-enter {
+  animation: frost-step-in 0.45s ease-out both;
+}
+
+.frost-step-from-right {
+  --frost-slide: 24px;
+}
+
+.frost-step-from-left {
+  --frost-slide: -24px;
+}
+
+.frost-reveal {
+  animation: frost-reveal-in 0.35s ease-out both;
+}
+
+.frost-ice-glow {
+  animation: frost-ice-pulse 2.5s ease-in-out infinite;
+}
+
+.frost-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.frost-snow {
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgb(255 255 255 / 0.35), transparent),
+    radial-gradient(2px 2px at 80px 120px, rgb(200 230 255 / 0.25), transparent);
+  background-size: 120px 240px;
+  animation: frost-snow-drift 20s linear infinite;
+}
+
+@keyframes frost-particle-fly {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--px), var(--py)) scale(0.2);
+  }
+}
+
+@keyframes frost-mascot-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes frost-mascot-jump {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-10px) scale(1.08);
+  }
+}
+
+@keyframes frost-mascot-wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-8deg);
+  }
+  75% {
+    transform: rotate(8deg);
+  }
+}
+
+@keyframes frost-mascot-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-4px);
+  }
+  40%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes frost-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}
+
+@keyframes frost-stage-pulse-ring {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(34 211 238 / 0.25);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgb(34 211 238 / 0.08);
+  }
+}
+
+@keyframes frost-bubble-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes frost-shimmer-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes frost-heat-pulse {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes frost-ambience-drift {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(15deg);
+  }
+}
+
+@keyframes frost-sparkle-spin {
+  0%,
+  100% {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: rotate(180deg) scale(1.2);
+  }
+}
+
+@keyframes frost-stamp-in {
+  0% {
+    transform: scale(1.4);
+    opacity: 0.5;
+  }
+  60% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes frost-doc-stamp-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes frost-choice-pop {
+  0% {
+    transform: scale(0.9);
+  }
+  60% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+.frost-particle-dot,
+.frost-particle-icon {
+  animation: frost-particle-fly 0.85s ease-out forwards;
+}
+
+.frost-mascot-bounce {
+  display: inline-block;
+  animation: frost-mascot-bounce 2s ease-in-out infinite;
+}
+
+.frost-mascot-jump {
+  display: inline-block;
+  animation: frost-mascot-jump 0.6s ease-out;
+}
+
+.frost-mascot-wiggle {
+  display: inline-block;
+  animation: frost-mascot-wiggle 0.5s ease-in-out;
+}
+
+.frost-mascot-shake {
+  display: inline-block;
+  animation: frost-mascot-shake 0.4s ease-in-out;
+}
+
+.frost-shake {
+  animation: frost-shake 0.45s ease-in-out;
+}
+
+.frost-stage-pulse {
+  animation: frost-stage-pulse-ring 2s ease-in-out infinite;
+}
+
+.frost-bubble {
+  animation: frost-bubble-float 2.2s ease-in-out infinite;
+}
+
+.frost-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgb(255 255 255 / 0.12) 50%, transparent 60%);
+  animation: frost-shimmer-sweep 1.2s ease-in-out infinite;
+}
+
+.frost-heat-wave {
+  background: radial-gradient(circle at 50% 80%, rgb(251 113 133 / 0.35), transparent 70%);
+  animation: frost-heat-pulse 1s ease-in-out infinite;
+}
+
+.frost-ambience-flake {
+  animation: frost-ambience-drift 4s ease-in-out infinite;
+}
+
+.frost-sparkle {
+  animation: frost-sparkle-spin 3s linear infinite;
+}
+
+.frost-stamp {
+  animation: frost-stamp-in 0.5s ease-out;
+}
+
+.frost-doc-stamp {
+  animation: frost-doc-stamp-pop 0.35s ease-out;
+}
+
+.frost-choice-win,
+.frost-choice-lose {
+  animation: frost-choice-pop 0.4s ease-out;
+}
+
+.frost-draggable:active {
+  transform: scale(1.08) rotate(-3deg);
+}
+
+.frost-truck {
+  filter: drop-shadow(0 4px 8px rgb(0 0 0 / 0.4));
+}
+
+.frost-confetti-field {
+  background-image:
+    radial-gradient(circle, rgb(52 211 153 / 0.4) 2px, transparent 2px),
+    radial-gradient(circle, rgb(34 211 238 / 0.35) 2px, transparent 2px);
+  background-size: 32px 32px, 48px 48px;
+  animation: frost-snow-drift 8s linear infinite;
+}
+
+.frost-nav-btn:not(:disabled):hover {
+  transform: translateY(-1px);
+}

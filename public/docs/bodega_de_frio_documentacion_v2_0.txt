@@ -1,0 +1,604 @@
+BODEGA DE FRÍO
+Documentación Técnica  ·  V2.0
+Sistema de Operación Multi-Rol · Multi-Cuenta · Multi-Bodega
+Stack Tecnológico
+Next.js  ·  React  ·  TypeScript  ·  Firebase  ·  Cloudinary  ·  n8n
+Mayo 2026
+github.com/eldani13/frio  ·  frio-phi.vercel.app
+Tabla de Contenidos
+TOC \h \o "1-3"Tabla de Contenidos PAGEREF _Toc229553461 \h 2
+1. Visión General y Contexto PAGEREF _Toc229553462 \h 4
+Principios de Diseño PAGEREF _Toc229553463 \h 4
+2. Qué Cambia de V1.0 a V2.0 PAGEREF _Toc229553464 \h 4
+3. Stack Tecnológico PAGEREF _Toc229553465 \h 5
+Frontend PAGEREF _Toc229553466 \h 5
+Backend / Servicios Cloud PAGEREF _Toc229553467 \h 5
+4. Arquitectura del Sistema PAGEREF _Toc229553468 \h 5
+Estructura de Archivos PAGEREF _Toc229553469 \h 5
+Flujo de Datos PAGEREF _Toc229553470 \h 6
+5. Roles y Permisos PAGEREF _Toc229553471 \h 6
+6. Flujo de Trabajo Completo V2.0 PAGEREF _Toc229553472 \h 6
+6.1 Configuración Inicial del Sistema PAGEREF _Toc229553473 \h 6
+6.2 Autenticación y Bootstrap PAGEREF _Toc229553474 \h 7
+6.3 Gestión de Proveedores PAGEREF _Toc229553475 \h 7
+6.4 Ingreso de Mercancía PAGEREF _Toc229553476 \h 8
+6.5 Cola Operativa y Órdenes de Trabajo PAGEREF _Toc229553477 \h 8
+6.6 Procesamiento (Primario y Secundario) PAGEREF _Toc229553478 \h 8
+6.7 Salidas y Ventas PAGEREF _Toc229553479 \h 9
+6.8 Transporte y Evidencia PAGEREF _Toc229553480 \h 9
+6.9 Alertas Operativas PAGEREF _Toc229553481 \h 9
+6.10 Reportería y Estadísticas PAGEREF _Toc229553482 \h 10
+6.11 Configuración Operativa PAGEREF _Toc229553483 \h 10
+7. Modelo de Datos (Firestore) PAGEREF _Toc229553484 \h 11
+Colecciones Principales PAGEREF _Toc229553485 \h 11
+Estructura del Estado Principal (state/main) PAGEREF _Toc229553486 \h 11
+8. API Routes Internas PAGEREF _Toc229553487 \h 11
+POST /api/pedido-proveedor PAGEREF _Toc229553488 \h 11
+POST /api/evidencia-transporte PAGEREF _Toc229553489 \h 12
+9. Integración con Servicios Externos PAGEREF _Toc229553490 \h 12
+9.1 Fridem (Bodega Externa) PAGEREF _Toc229553491 \h 12
+9.2 n8n (Automatización de Pedidos) PAGEREF _Toc229553492 \h 12
+9.3 Cloudinary (Evidencia Fotográfica) PAGEREF _Toc229553493 \h 12
+10. Variables de Entorno PAGEREF _Toc229553494 \h 13
+Firebase Principal PAGEREF _Toc229553495 \h 13
+Fridem (Bodega Externa) PAGEREF _Toc229553496 \h 13
+Cloudinary PAGEREF _Toc229553497 \h 13
+n8n / Integración Proveedores PAGEREF _Toc229553498 \h 13
+11. Mejoras Propuestas para V2.0 PAGEREF _Toc229553499 \h 14
+11.1 Seguridad y Autenticación PAGEREF _Toc229553500 \h 14
+11.2 Operación PAGEREF _Toc229553501 \h 14
+11.3 IoT y Temperatura PAGEREF _Toc229553502 \h 14
+11.4 Datos y Reportería PAGEREF _Toc229553503 \h 14
+11.5 Integraciones PAGEREF _Toc229553504 \h 14
+11.6 Técnico / Mantenibilidad PAGEREF _Toc229553505 \h 14
+12. Guía de Instalación y Despliegue PAGEREF _Toc229553506 \h 15
+Prerrequisitos PAGEREF _Toc229553507 \h 15
+Instalación Local PAGEREF _Toc229553508 \h 15
+Scripts Disponibles PAGEREF _Toc229553509 \h 15
+Despliegue en Producción (Vercel) PAGEREF _Toc229553510 \h 15
+13. Troubleshooting PAGEREF _Toc229553511 \h 16
+Console Ninja: failed to connect to host PAGEREF _Toc229553512 \h 16
+Next.js detecta root incorrecto PAGEREF _Toc229553513 \h 16
+Bodega Externa Fridem Vacía PAGEREF _Toc229553514 \h 16
+Error Cloudinary: Invalid Signature PAGEREF _Toc229553515 \h 16
+Estado de Bodega Desincronizado PAGEREF _Toc229553516 \h 16
+14. Glosario de Términos PAGEREF _Toc229553517 \h 17
+Términos de Dominio PAGEREF _Toc229553518 \h 17
+Términos Técnicos PAGEREF _Toc229553519 \h 17
+1. Visión General y Contexto
+Bodega de Frío es un sistema web de operación diseñado para gestionar de forma integral el ciclo de vida de mercancía en una bodega fría (frigorífica). La aplicación cubre desde la recepción de insumos hasta el despacho final con evidencia fotográfica, pasando por procesamiento, trazabilidad por slot y reportería avanzada.
+Principios de Diseño
+Multi-rol: Cada usuario tiene un rol específico que define qué ve y qué puede hacer.
+Multi-cuenta: Un mismo sistema puede servir a múltiples cuentas operativas independientes.
+Multi-bodega: Soporta bodegas internas propias y bodegas externas (como Fridem) con integración en tiempo real.
+Trazabilidad completa: Cada caja/lote tiene historial desde su ingreso hasta su despacho o procesamiento.
+Tiempo real: Estado operativo sincronizado en Firestore, visible simultáneamente por todos los usuarios activos.
+2. Qué Cambia de V1.0 a V2.0
+Característica
+V1.0
+V2.0
+Dashboard
+12 posiciones fijas
+Dashboard dinámico multi-rol con cola operativa
+Procesamiento
+Lógica básica de transformación.
+Balance de Masa Absoluto (Coproducto, Subproducto, Merma, Remanente).
+Ingreso
+Registro manual contra OC.
+Conciliación Ciega y validación de temperatura con sensores.
+Mapa de Bodega
+Visualización de slots y ocupación.
+Locking en tiempo real (evita duplicidad) y lógica FEFO automática.
+Transporte
+Registro de viaje TV-#### básico.
+Salida Cruzada (Validación de peso) y evidencias GPS/Firma obligatorias.
+3. Stack Tecnológico
+Frontend
+Tecnología
+Versión
+Uso
+Next.js (App Router)
+16.1.6
+Framework principal SSR/CSR
+React
+19.2.3
+UI components y estado
+TypeScript
+Latest
+Tipado estático
+Tailwind CSS
+4
+Estilos utilitarios
+Recharts
+Latest
+Gráficas de reportes
+html2canvas + jsPDF
+Latest
+Exportación de reportes a PDF
+xlsx
+Latest
+Importación de catálogo
+Backend
+Tecnología
+Uso
+NestJS (Node.js)
+Estructura modular para separar Ingresos, Mapa, Procesamiento y Despacho.
+TypeScript
+Tipado estricto para que los pesos y fechas siempre tengan el formato correcto.
+Firebase Admin SDK
+Permite a NestJS leer/escribir en Firestore con privilegios de administrador (Server-side).
+Zod / Class-Validator
+NestJS recibe el token del Front, lo valida y extrae el accountID y el rol.
+Swagger (OpenAPI)
+Genera automáticamente una página para probar los endpoints (ej. /ingreso, /procesar).
+Axios / HttpModule
+Conexión con los webhooks de n8n para disparar alertas y pedidos.
+Base de datos
+Tecnología
+Uso
+Cloud Firestore
+Almacena el estado actual de los slots, cajas, lotes y viajes en tiempo real.
+Firestore Security Rules
+Configuración para que solo el UID del servidor NestJS pueda escribir.
+Firebase Storage
+Respaldo de firmas digitales y documentos adjuntos de la recepción.
+Firebase Cloud Messaging
+Envío de alertas push a los operarios cuando el sensor de temperatura falla.
+Cloudinary (API)
+Almacenamiento y optimización de las evidencias fotográficas del transporte.
+4. Arquitectura del Sistema
+frio-frontend/
+├── app/                        # Next.js App Router [cite: 39]
+│   ├── (auth)/                 # Rutas de login y recuperación
+│   ├── (dashboard)/            # Vistas principales por rol [cite: 48]
+│   │   ├── ingreso/            # Módulo de Ingreso de mercancía [cite: 350]
+│   │   ├── mapa/               # Mapa interactivo de slots [cite: 363]
+│   │   ├── procesamiento/      # Módulo de transformación [cite: 364]
+│   │   └── transporte/         # Flujo para conductores y viajes [cite: 382]
+│   ├── components/             # UI Components (SlotCard, Modal, etc.) [cite: 286]
+│   ├── context/                # AuthContext (Sesión y Cuenta) [cite: 323]
+│   ├── hooks/                  # useWarehouse (Suscripción real-time) [cite: 49]
+│   └── services/               # Clientes API (Llamadas a NestJS)
+├── public/                     # Assets estáticos
+├── styles/                     # Tailwind CSS 4 [cite: 318]
+└── lib/                        # Utils y validaciones de esquema (Zod)
+frio-backend/
+├── src/
+│   ├── main.ts                 # Punto de entrada y Swagger [cite: 470]
+│   ├── app.module.ts           # Módulo raíz
+│   ├── common/                 # Elementos transversales
+│   │   ├── decorators/         # @Roles, @CurrentUser
+│   │   ├── guards/             # AuthGuard (Valida Firebase Token) [cite: 232]
+│   │   ├── interceptors/       # StripInterceptor (Limpia undefined)
+│   │   └── pipes/              # Validación de datos
+│   ├── firebase/               # Configuración Firebase Admin SDK [cite: 52]
+│   │   ├── firebase.module.ts
+│   │   └── firebase.service.ts # Métodos saveWarehouseState, etc. [cite: 53]
+│   └── modules/                # Módulos de dominio modularizados [cite: 39]
+│       ├── ingreso/            # Lógica de recepción y OC [cite: 350]
+│       ├── inventario/         # Gestión de slots y Locking
+Firestore (NoSQL Structure) /
+├── tenants/                    # Configuración por cuenta [cite: 402]
+│   └── {codeCuenta}/           # Namespace de la organización
+│       ├── config              # Reglas, capacidad y bodegas [cite: 332]
+│       ├── catalogo/           # Productos primarios y secundarios [cite: 335]
+│       └── providers/          # Lista de proveedores [cite: 336]
+├── warehouses/                 # Datos operativos vivos [cite: 402]
+│   └── {warehouseId}/
+│       ├── state/
+│       │   └── main            # Slots, boxes y alertas en vivo [cite: 403, 404]
+│       └── history/            # Historial de movimientos y mermas [cite: 53]
+├── usuarios/                   # Perfiles operativos y roles [cite: 402]
+└── systemCounters/             # Contadores globales (ej. Viajes TV-####) [cite: 402]
+Flujo de Datos
+LECTURA (Tiempo Real)
+Usuario ← Next.js SDK ← Firestore / Realtime DB
+ESCRITURA (Validación Atómica)
+Usuario → Next.js Dashboard → NestJS Backend
+↘
+1. Función Strip (Limpieza)
+2. Balance de Masa (Pesos)
+3. Locking (Bloqueo de Slots)
+4. Auth & Roles
+↓
+Firestore (Admin SDK)
+INTEGRACIONES (Salidas)
+NestJS Server ↘
+Cloudinary (Fotos)
+n8n Webhook (Alertas)
+WhatsApp/Email (SLA)
+5. Roles y Permisos
+Rol
+Acceso Principal
+Acciones Permitidas
+administrador
+Todo el sistema
+CRUD completo, configuración, reportes
+custodio
+Ingresos, salidas, cartonaje
+Recepción de mercancía, creación de órdenes, cartonaje
+operario
+Cola de trabajo
+Ejecutar órdenes de movimiento entre zonas
+procesador
+Procesamiento
+Avanzar estados, registrar secundario y merma
+jefe
+Dashboard operativo, órdenes
+Crear órdenes, ver estado general, gestionar alertas
+cliente
+Vista de sus órdenes
+Consultar estado de sus órdenes de compra/venta
+configurador
+Configuración del sistema
+Bodegas, cuentas, usuarios, solicitudes de integración
+operadorCuentas
+Cuenta operativa
+Solicitar procesamiento, gestionar su cuenta
+transporte
+Viajes
+Registrar entregas, evidencia fotográfica, cierre de viaje
+6. Flujo de Trabajo Completo V2.0
+6.1 Configuración Inicial del Sistema
+Responsable: Configurador / Administrador
+Antes de cualquier operación, el sistema debe estar configurado con:
+Configuración de bodegas: Se definen las bodegas del sistema (nombre, tipo: interna/externa, capacidad de slots).
+Configuración de cuentas: Se crean las cuentas operativas (codeCuenta) que agrupan clientes y bodegas.
+Alta de usuarios: Se crean los usuarios con sus roles en Firebase Auth y se registra su perfil en Firestore.
+Catálogo de productos: Se importa o crea manualmente el catálogo de productos.
+Proveedores y compradores: Se registran con sus datos de contacto.
+Flota de camiones y plantas: Se registran los vehículos disponibles y las plantas de destino.
+Asignación de bodegas a cuentas: El configurador vincula bodegas a cada codeCuenta.
+💡 Mejora Propuesta V2.0: Implementar un wizard de onboarding guiado para configuración inicial, que valide cada paso antes de habilitar la operación.
+6.2 Autenticación y Bootstrap
+Responsable: Todos los usuarios
+Abrir app
+↓
+¿Sesión activa?
+├── NO → Pantalla de login (Firebase Auth) → Ingresar credenciales
+│         → ¿Válidas? → NO → Error / reintento
+│                    → SÍ → Cargar perfil
+└── SÍ → Cargar perfil
+↓
+Leer rol, nombre, cuenta, permisos desde Firestore
+↓
+¿Bodega interna? → SÍ → Suscribir estado principal (Firestore)
+→ NO → Consultar inventario Fridem (Realtime DB)
+↓
+Renderizar Dashboard según rol
+💡 Mejora Propuesta V2.0: Agregar autenticación por Google/SSO para organizaciones empresariales. Implementar tokens de sesión con refresh automático y expiración configurable.
+6.3 Gestión de Proveedores
+Responsable: Administrador / Configurador / Jefe
+Los campos de una Orden de Compra incluyen: Proveedor, líneas de producto (SKU, cantidad, unidad, precio), fecha de entrega estimada, bodega destino y estado.
+Estados de la Orden de Compra:
+Pendiente → En tránsito → Recibida → Cerrada
+💡 Mejora Propuesta V2.0: Implementar módulo de cotización comparativa entre múltiples proveedores con historial de precios.
+6.4 Ingreso de Mercancía
+Responsable: Custodio
+Llegada de mercancía a bodega
+Validación contra Orden de Compra (o ingreso manual libre)
+Asignación de slot en bodega (zona de ingresos)
+Registro de trazabilidad: producto, cliente, kg, fecha, temperatura objetivo
+Creación de orden de trabajo: a_bodega / a_salida / revisar
+Cierre de recepción (OrdenCompraService.cerrarRecepcion)
+💡 Mejora Propuesta V2.0: Integrar lectura de códigos de barras o QR para registro rápido de cajas, y alertas automáticas cuando la temperatura de ingreso está fuera de rango.
+6.5 Cola Operativa y Órdenes de Trabajo
+Responsable: Operario (ejecuta), Jefe / Custodio (crean órdenes)
+Estados de slots:
+Estado
+Descripción
+libre
+Sin mercancía
+ocupado
+Con caja almacenada
+reservado
+Asignado a orden de salida
+en_proceso
+Mercancía en procesamiento
+💡 Mejora Propuesta V2.0: Implementar mapa visual interactivo de la bodega (plano de slots) donde el operario pueda hacer clic directamente sobre el slot destino para confirmar el movimiento.
+6.6 Procesamiento (Primario y Secundario)
+Responsable: OperadorCuentas (solicita), Procesador / Operario (ejecuta)
+OperadorCuentas genera solicitud de procesamiento
+Estado: Pendiente → En curso → Terminado
+Al INICIAR: Se descuenta producto primario de slots de bodega
+Al TERMINAR: Registrar resultado secundario, calcular merma (primario - secundario)
+Si hay sobrante: Crear orden de devolución al primario
+Actualizar estado de solicitud a 'Terminado'
+💡 Mejora Propuesta V2.0: Agregar control de temperatura por lote durante el procesamiento, con registro automático de lecturas desde sensores IoT. Incluir certificados de calidad exportables por lote procesado.
+6.7 Salidas y Ventas
+Responsable: Jefe / Custodio / OperadorCuentas
+Estados de Orden de Venta:
+Borrador → Confirmada → En preparación → En transporte → Cerrado(ok) / Cerrado(no ok)
+Generación de Orden de Venta (OV) con líneas: producto, cantidad, comprador, destino
+Custodio cartoniza / ingresa mercancía contra OV
+Sistema valida disponibilidad en slots
+Si hay stock: Crear viaje de transporte (TV-####)
+Asignar camión y conductor
+6.8 Transporte y Evidencia
+Responsable: Transporte
+Conductor recibe detalles del viaje (líneas, destinos, cantidades)
+Por cada línea de entrega: registrar cantidad entregada, incidencia si aplica
+Subir evidencia: foto del producto entregado, firma digital del receptor (Cloudinary)
+Cierre de viaje: Cerrado(ok) o Cerrado(no ok) con notificación a jefe
+Se actualiza estado final de OV asociada
+💡 Mejora Propuesta V2.0: Integrar geolocalización en tiempo real del camión durante el viaje. Agregar firma electrónica legalmente válida (DocuSign o similar).
+6.9 Alertas Operativas
+Tipo
+Disparador
+Acción Requerida
+Temperatura
+Lectura fuera de rango
+Ajuste + registro de motivo
+Demora
+Orden sin ejecutar por tiempo > umbral
+Reasignación o escalación
+Orden reportada
+Usuario reporta problema con una orden
+Revisión y resolución
+💡 Mejora Propuesta V2.0: Integrar alertas automáticas mediante sensores de temperatura IoT conectados a Firebase Realtime Database, con notificaciones push (PWA / FCM).
+6.10 Reportería y Estadísticas
+Módulo
+Datos Incluidos
+Proveedores
+OC por proveedor, kg recibidos, estado por período
+Compradores
+OV por comprador, kg despachados, historial de viajes
+Transporte
+Viajes completados, incidencias, evidencias
+Bodega interna
+Inventario vivo por slot, merma acumulada, rotación
+Bodega externa
+Inventario Fridem en solo lectura
+Capacidades de exportación: PDF (html2canvas + jsPDF) y Excel (xlsx).
+💡 Mejora Propuesta V2.0: Agregar dashboards con KPIs en tiempo real (ocupación de bodega %, merma % por período, on-time delivery %), y programación de reportes automáticos por email.
+6.11 Configuración Operativa
+Responsable: Configurador
+Ruta
+Módulo
+/asignarbodegas
+Vincular bodegas a cuentas (codeCuenta)
+/catalogos
+CRUD catálogo de productos + importación masiva xlsx
+/proveedores
+CRUD proveedores + modal de órdenes
+/compradores
+CRUD compradores
+/camiones
+CRUD flota de vehículos
+/plantas
+CRUD plantas de destino
+7. Modelo de Datos (Firestore)
+Colecciones Principales
+warehouses/
+{warehouseId}/
+state/
+main         → Estado operativo vivo (slots, cajas, órdenes, alertas)
+history      → Histórico + merma acumulada
+clientes/
+{clientId}/
+productos/
+providers/
+compradores/
+ordenesCompra/
+ordenesVenta/
+solicitudesProcesamiento/
+usuarios/            → Catálogo de usuarios operativos
+systemCounters/
+viajesTransporte   → Contador global TV-####
+Estructura del Estado Principal (state/main)
+{
+slots: Record<string, SlotState>,        // Mapa de bodega
+inboundBoxes: BoxRecord[],               // Zona de ingreso
+outboundBoxes: BoxRecord[],              // Zona de salida
+dispatchedBoxes: BoxRecord[],            // Despachado
+orders: WorkOrder[],                     // Órdenes de trabajo activas
+alerts: Alert[],                         // Alertas activas
+tasks: Task[],                           // Tareas de cola operativa
+updatedAt: Timestamp
+}
+💡 Mejora Propuesta V2.0: Separar el historial en subcolecciones paginadas por mes para evitar documentos con payload excesivo. Implementar reglas de seguridad Firestore granulares por rol y por codeCuenta.
+8. API Routes Internas
+POST /api/pedido-proveedor
+Proxy que recibe un pedido consolidado desde el frontend y lo reenvía al webhook n8n del proveedor.
+Payload esperado:
+{
+"proveedorId": "string",
+"lineas": [
+{ "productoId": "string", "cantidad": 0, "unidad": "string" }
+],
+"bodegaDestino": "string",
+"fechaEntregaEstimada": "ISO8601"
+}
+POST /api/evidencia-transporte
+Recibe un archivo (FormData) y lo sube a Cloudinary, devolviendo la URL segura.
+Recibe FormData con campo file
+Si hay CLOUDINARY_URL configurada: firma la subida (signed upload)
+Si no: usa preset sin firma (CLOUDINARY_UNSIGNED_UPLOAD_PRESET)
+Devuelve URL segura para guardar en Firestore
+💡 Mejora Propuesta V2.0: Agregar validación de tipo MIME y tamaño máximo de archivo. Implementar compresión de imagen antes de subir para reducir costos de almacenamiento.
+9. Integración con Servicios Externos
+9.1 Fridem (Bodega Externa)
+Bodega externa cuyo inventario se consume en modo solo lectura mediante una instancia de Firebase diferente (proyecto separado).
+lib/fridemClient.ts — ensureFridemAuth(): inicializa la app Firebase secundaria
+lib/fridemInventory.ts — fetchFridemSlots(), fetchFridemInventoryRows()
+9.2 n8n (Automatización de Pedidos)
+Plataforma open-source de automatización de flujos de trabajo que recibe el webhook de pedidos y orquesta la notificación al proveedor.
+PEDIDO_PROVEEDOR_WEBHOOK_URL — URL del workflow n8n
+PEDIDO_PROVEEDOR_DOCUMENT_ID — ID del documento de configuración en Firestore
+9.3 Cloudinary (Evidencia Fotográfica)
+Almacena las fotografías y firmas de entrega de los viajes de transporte.
+Usar CLOUDINARY_URL completa (Opción A) para evitar errores de firma
+Definir CLOUDINARY_EVIDENCIA_FOLDER para organizar archivos por bodega o cuenta
+10. Variables de Entorno
+Crear .env.local en la raíz del proyecto:
+Firebase Principal
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_WAREHOUSE_ID=default
+Fridem (Bodega Externa)
+NEXT_PUBLIC_FRIDEM_API_KEY=
+NEXT_PUBLIC_FRIDEM_AUTH_DOMAIN=
+NEXT_PUBLIC_FRIDEM_PROJECT_ID=
+NEXT_PUBLIC_FRIDEM_DATABASE_URL=
+Cloudinary
+# Opción A (recomendada):
+CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+# Opcionales:
+CLOUDINARY_UNSIGNED_UPLOAD_PRESET=
+CLOUDINARY_EVIDENCIA_FOLDER=evidencia-transporte
+n8n / Integración Proveedores
+PEDIDO_PROVEEDOR_DOCUMENT_ID=
+PEDIDO_PROVEEDOR_WEBHOOK_URL=
+11. Mejoras Propuestas para V2.0
+11.1 Seguridad y Autenticación
+Reglas Firestore granulares por rol y codeCuenta
+Sesiones con refresh token automático y expiración configurable
+Auditoría de acciones críticas (quién, qué, cuándo) en colección auditLog
+Soporte SSO / Google Workspace para organizaciones
+11.2 Operación
+Mapa visual interactivo de slots en bodega (arrastrar/soltar)
+Lectura de códigos de barras / QR para ingreso y despacho rápido
+Notificaciones push en tiempo real (Firebase Cloud Messaging)
+Geolocalización de camiones durante viajes activos
+11.3 IoT y Temperatura
+Integración con sensores de temperatura vía MQTT → Firebase Realtime DB
+Alertas automáticas por temperatura fuera de rango con historial de lecturas por slot
+Dashboard de temperatura en tiempo real por zona de bodega
+11.4 Datos y Reportería
+KPIs en tiempo real: % ocupación de bodega, % merma, on-time delivery, rotación
+Reportes programados por email (diario/semanal/mensual)
+Subcolecciones de historial paginadas por mes
+Exportación de certificados de calidad por lote procesado
+11.5 Integraciones
+Módulo de cotización comparativa entre proveedores con historial de precios
+Integración con ERP existente del cliente vía API REST
+Firma electrónica legalmente válida para documentos de entrega
+Notificaciones automáticas al comprador cuando su pedido es despachado
+11.6 Técnico / Mantenibilidad
+Refactorizar BodegaDashboard.tsx extrayendo hooks por dominio
+Cobertura de tests unitarios con Vitest para servicios críticos
+CI/CD con validación de tipos TypeScript y linting en cada PR
+Documentación de API con OpenAPI/Swagger para las rutas internas
+12. Guía de Instalación y Despliegue
+Prerrequisitos
+Node.js 18+
+npm 9+
+Proyecto Firebase configurado (Auth, Firestore, Realtime DB, Storage)
+Cuenta Cloudinary
+Instancia n8n (opcional, para integración de pedidos)
+Instalación Local
+# 1. Clonar el repositorio
+git clone https://github.com/eldani13/frio.git
+cd frio
+# 2. Instalar dependencias
+npm install
+# 3. Configurar variables de entorno
+cp .env.example .env.local
+# Editar .env.local con tus credenciales
+# 4. Iniciar en desarrollo
+npm run dev
+# 5. Abrir en el navegador → http://localhost:3000
+Scripts Disponibles
+Comando
+Descripción
+npm run dev
+Servidor de desarrollo con hot reload
+npm run build
+Build de producción
+npm run start
+Servidor de producción
+npm run lint
+Análisis estático de código
+node scripts/unify-fonts.mjs
+Normalizar clases de fuente en componentes
+Despliegue en Producción (Vercel)
+Conectar repositorio en Vercel
+Configurar todas las variables de entorno en Vercel Dashboard
+Deploy automático en cada push a main
+URL producción: https://frio-phi.vercel.app
+13. Troubleshooting
+Console Ninja: failed to connect to host
+No es un error de la aplicación. Es generado por la extensión de debugging Console Ninja.
+Solución: Deshabilitar la extensión Console Ninja o ignorar el mensaje en consola.
+Next.js detecta root incorrecto
+Síntoma: Next.js toma como raíz una carpeta padre porque detecta otro package-lock.json en un nivel superior.
+// next.config.ts
+const nextConfig = {
+turbopack: {
+root: __dirname  // apunta explícitamente al root del proyecto
+}
+};
+Bodega Externa Fridem Vacía
+Verificar variables NEXT_PUBLIC_FRIDEM_* correctamente configuradas
+NEXT_PUBLIC_FRIDEM_DATABASE_URL apunta a la instancia correcta de Realtime DB
+Reglas de lectura de la base Fridem permiten el acceso desde el app ID configurado
+Error Cloudinary: Invalid Signature
+Causa: Mezcla de credenciales de diferentes entornos de Cloudinary.
+Solución: Usar una sola variable CLOUDINARY_URL completa y eliminar las variables individuales para evitar conflictos.
+Estado de Bodega Desincronizado
+Causa: Colisión de escrituras concurrentes en Firestore sin control de concurrencia.
+Solución inmediata: Verificar que todos los guardados usen merge: true (implementado en saveWarehouseState).
+Solución V2.0: Implementar transacciones Firestore para operaciones críticas como movimiento de slots.
+14. Glosario de Términos
+Términos de Dominio
+Término
+Definición
+Bodega fría
+Instalación de almacenamiento a temperatura controlada para conservar alimentos perecederos u otros bienes sensibles.
+Slot
+Posición física específica dentro de la bodega donde se almacena una caja o pallet.
+Custodio
+Persona responsable de la recepción y despacho físico de mercancía en bodega.
+Cartonaje
+Proceso de empacar, etiquetar y preparar cajas para despacho contra una orden de venta.
+Merma
+Pérdida de peso o cantidad de un producto durante almacenamiento o procesamiento. Se registra en kg.
+Procesamiento primario
+Primera transformación de la mercancía: corte, porcionado, limpieza, clasificación, etc.
+Procesamiento secundario
+Resultado del procesamiento primario: producto ya transformado listo para despacho.
+OC (Orden de Compra)
+Documento que autoriza la compra de productos a un proveedor.
+OV (Orden de Venta)
+Documento que registra el compromiso de entrega de mercancía a un comprador.
+TV (Viaje de Transporte)
+Identificador único de viaje en formato TV-####. Agrupa las entregas de un mismo despacho.
+Trazabilidad
+Capacidad de seguir el recorrido completo de un lote desde su ingreso hasta su destino final.
+Términos Técnicos
+Término
+Definición
+Multi-tenant
+Arquitectura donde un mismo sistema sirve a múltiples clientes de forma aislada.
+codeCuenta
+Código único que identifica una cuenta operativa. Actúa como namespace dentro del sistema.
+Bootstrap
+Proceso de inicialización de la app: sesión, perfil, suscripción a bodega y montaje de UI.
+Webhook
+Mecanismo donde un sistema notifica a otro mediante una petición HTTP en tiempo real.
+Firestore
+Base de datos NoSQL en la nube de Firebase con sincronización en tiempo real.
+Merge (Firestore)
+Operación que actualiza solo los campos especificados sin sobreescribir el resto.
+RBAC
+Control de acceso basado en roles que determina qué recursos puede ver y usar cada usuario.
+IoT
+Red de dispositivos físicos conectados a internet que transmiten datos automáticamente.
+FCM
+Firebase Cloud Messaging — servicio para enviar notificaciones push a dispositivos.
+PWA
+Progressive Web App — aplicación web instalable con capacidades offline y notificaciones push.
+SSR
+Server-Side Rendering — el servidor genera el HTML antes de enviarlo al navegador.
+CDN
+Content Delivery Network — red global de servidores para servir archivos con baja latencia.
+KPI
+Key Performance Indicator — métricas cuantificables que miden el desempeño de un proceso.
+MQTT
+Protocolo de mensajería ligero para IoT con modelo publicador/suscriptor.
+Documentación V2.0  ·  Bodega de Frío  ·  Mayo 2026
+github.com/eldani13/frio  ·  frio-phi.vercel.app
