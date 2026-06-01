@@ -60,6 +60,14 @@ export function DatabaseErDiagramPanel() {
 
   const tableCount = domainFilter === 'all' ? ENTITIES.length : new Set(filteredRelations.flatMap((r) => [r.from, r.to])).size
 
+  const exportFileName = useMemo(() => {
+    const slug =
+      domainFilter === 'all'
+        ? 'er-completo'
+        : `er-${domainFilter}`.replace(/[^a-z0-9-]/gi, '-')
+    return `diagrama-${slug}`
+  }, [domainFilter])
+
   return (
     <div className="flex min-h-[32rem] flex-col rounded-2xl border border-slate-700/55 bg-slate-900/40">
       <div className="flex flex-wrap items-center gap-2 border-b border-slate-700/50 px-4 py-3">
@@ -102,6 +110,8 @@ export function DatabaseErDiagramPanel() {
           <MermaidDiagram
             chart={chart}
             zoomable
+            exportable
+            exportFileName={exportFileName}
             className="w-full"
             title={domainFilter === 'all' ? 'Modelo completo (todas las tablas)' : `Dominio: ${ER_DOMAIN_OPTIONS.find((o) => o.id === domainFilter)?.label}`}
           />

@@ -2,9 +2,11 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import {
   HiMagnifyingGlassMinus,
   HiMagnifyingGlassPlus,
+  HiOutlineArrowDownTray,
   HiOutlineArrowsPointingOut,
 } from 'react-icons/hi2'
 import mermaid from 'mermaid'
+import { exportPngHd, exportSvgFile } from './exportDiagramImage.js'
 
 let mermaidReady = false
 
@@ -55,7 +57,18 @@ function prepareSvgForZoom(svg) {
   svg.style.pointerEvents = 'none'
 }
 
-function ZoomToolbar({ scale, onZoomIn, onZoomOut, onFit, onFullscreen, isFullscreen }) {
+function ZoomToolbar({
+  scale,
+  onZoomIn,
+  onZoomOut,
+  onFit,
+  onFullscreen,
+  isFullscreen,
+  exportable,
+  onExportPng,
+  onExportSvg,
+  exporting,
+}) {
   const pct = Math.round(scale * 100)
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -93,17 +106,49 @@ function ZoomToolbar({ scale, onZoomIn, onZoomOut, onFit, onFullscreen, isFullsc
         <HiOutlineArrowsPointingOut className="h-3.5 w-3.5" aria-hidden />
         {isFullscreen ? 'Salir' : 'Pantalla completa'}
       </button>
+      {exportable ? (
+        <div className="flex items-center gap-1 rounded-lg border border-slate-600/50 bg-slate-800/80 p-0.5">
+          <button
+            type="button"
+            onClick={onExportPng}
+            disabled={exporting}
+            className="inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-[11px] font-medium text-slate-300 transition-colors hover:bg-slate-700 hover:text-emerald-200 disabled:cursor-wait disabled:opacity-60"
+            title="PNG en alta resolución (3×)"
+          >
+            <HiOutlineArrowDownTray className="h-3.5 w-3.5" aria-hidden />
+            {exporting ? 'Exportando…' : 'PNG HD'}
+          </button>
+          <button
+            type="button"
+            onClick={onExportSvg}
+            disabled={exporting}
+            className="rounded-md px-2 py-1.5 text-[11px] font-medium text-slate-400 transition-colors hover:bg-slate-700 hover:text-slate-200 disabled:cursor-wait disabled:opacity-60"
+            title="SVG vectorial sin pérdida"
+          >
+            SVG
+          </button>
+        </div>
+      ) : null}
     </div>
   )
 }
 
-export function MermaidDiagram({ chart, title, className = '', zoomable = false }) {
+export function MermaidDiagram({
+  chart,
+  title,
+  className = '',
+  zoomable = false,
+  exportable = false,
+  exportFileName = 'diagrama',
+}) {
   const containerRef = useRef(null)
   const viewportRef = useRef(null)
   const renderSeqRef = useRef(0)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [ready, setReady] = useState(false)
+  const [exporting, setExporting] = useState(false)
+  const [exportError, setExportError] = useState(null)
   const [scale, setScale] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -194,6 +239,37 @@ export function MermaidDiagram({ chart, title, className = '', zoomable = false 
   const zoomIn = () => setScale((s) => clamp(s + ZOOM_STEP, MIN_SCALE, MAX_SCALE))
   const zoomOut = () => setScale((s) => clamp(s - ZOOM_STEP, MIN_SCALE, MAX_SCALE))
 
+  const getExportSvg = () => {
+    const svg = containerRef.current?.querySelector('svg')
+    if (!svg || !ready) return null
+    return svg
+  }
+
+  const handleExportPng = async () => {
+    const svg = getExportSvg()
+    if (!svg) return
+    setExportError(null)
+    setExporting(true)
+    try {
+      await exportPngHd(svg, exportFileName)
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : 'Error al exportar PNG')
+    } finally {
+      setExporting(false)
+    }
+  }
+
+  const handleExportSvg = () => {
+    const svg = getExportSvg()
+    if (!svg) return
+    setExportError(null)
+    try {
+      exportSvgFile(svg, exportFileName)
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : 'Error al exportar SVG')
+    }
+  }
+
   const handleWheel = (e) => {
     if (!zoomable) return
     e.preventDefault()
@@ -253,9 +329,14 @@ export function MermaidDiagram({ chart, title, className = '', zoomable = false 
             onFit={fitToView}
             onFullscreen={() => setIsFullscreen((v) => !v)}
             isFullscreen={isFullscreen}
+            exportable={exportable}
+            onExportPng={handleExportPng}
+            onExportSvg={handleExportSvg}
+            exporting={exporting}
           />
           <p className="text-[11px] text-slate-500">
             Rueda del ratón para zoom · arrastra para mover · doble clic para ajustar
+            {exportable ? ' · PNG HD a 3× resolución nativa del diagrama' : ''}
           </p>
           {isFullscreen ? (
             <button
@@ -302,6 +383,7 @@ export function MermaidDiagram({ chart, title, className = '', zoomable = false 
       )}
 
       {error ? <p className="mt-2 text-xs text-amber-300/90">{error}</p> : null}
+      {exportError ? <p className="mt-2 text-xs text-amber-300/90">{exportError}</p> : null}
     </figure>
   )
 }
