@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://flujos-nine.vercel.app/sitemap.xml
+
+# Índice para agentes de IA (también en /llms.txt tras el build)
+# https://flujos-nine.vercel.app/llms.txt

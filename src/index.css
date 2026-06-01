@@ -458,3 +458,103 @@ body {
 .frost-nav-btn:not(:disabled):hover {
   transform: translateY(-1px);
 }
+
+/* HTML legible generado en build (crawlers / lectores sin JS) */
+.static-readable {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  color: #e2e8f0;
+  background: #020617;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+}
+
+.static-readable--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.static-readable__brand {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #67e8f9;
+}
+
+.static-readable__title {
+  margin: 0.35rem 0 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.static-readable__note {
+  margin: 0.75rem 0 0;
+  font-size: 0.8125rem;
+  color: #94a3b8;
+}
+
+.readable-prose h1 {
+  font-size: 1.35rem;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.readable-prose h2 {
+  font-size: 1.15rem;
+  margin: 1.1rem 0 0.45rem;
+  color: #f1f5f9;
+}
+
+.readable-prose h3 {
+  font-size: 1rem;
+  margin: 0.9rem 0 0.35rem;
+  color: #e2e8f0;
+}
+
+.readable-prose p {
+  margin: 0.5rem 0;
+  color: #cbd5e1;
+}
+
+.readable-prose ul {
+  margin: 0.5rem 0 0.75rem 1.1rem;
+  padding: 0;
+}
+
+.readable-prose li {
+  margin: 0.25rem 0;
+}
+
+.readable-prose code {
+  font-size: 0.875em;
+  background: #1e293b;
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+}
+
+.readable-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  font-size: 0.875rem;
+}
+
+.readable-prose th,
+.readable-prose td {
+  border: 1px solid #334155;
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+}
+
+.readable-prose th {
+  background: #0f172a;
+}

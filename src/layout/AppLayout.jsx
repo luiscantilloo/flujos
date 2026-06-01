@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { Link, Outlet, useLocation, useParams } from 'react-router-dom'
 import { getBackNavigation, getRouteMeta } from '../router/routeMeta.js'
+import { DocumentHead } from '../seo/DocumentHead.jsx'
 import { PortalFallback } from './PortalFallback.jsx'
 
 export function AppLayout() {
@@ -20,6 +21,7 @@ export function AppLayout() {
 
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-slate-950 text-slate-100">
+      <DocumentHead />
       <header className="shrink-0 border-b border-slate-800/80 bg-slate-900/60 px-4 py-3 backdrop-blur-md">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
