@@ -15,10 +15,19 @@ export const documentationItems = [
     id: 'bodega-frio-documentacion-v20',
     title: 'Bodega de frío — Documentación técnica (V2.0)',
     summary:
-      'Stack, arquitectura, cambios V1→V2, flujos operativos, Supabase, API internas, integraciones, variables de entorno, despliegue y troubleshooting.',
+      'Empresa vs tenant, arquitectura lectura/escritura, modelo dual 3NF+jsonb, stack frio vs Dev Hub, flujos V2, Supabase, API, despliegue.',
     filePath: '/docs/bodega_de_frio_documentacion_v2_0.md',
     format: 'markdown',
     sourceNote: 'Generado desde BodegaDeFrio_DocumentacionV2.docx.',
+  },
+  {
+    id: 'guia-explicacion-er',
+    title: 'Guía para explicar las tablas (paso a paso, lenguaje fácil)',
+    summary:
+      'Cuento del 0 al 31: analogías, guiones simples y detalle técnico opcional para explicar el ER sin jerga.',
+    filePath: '/docs/guia_explicacion_tablas_er.md',
+    format: 'markdown',
+    sourceNote: 'Generado desde src/data/erExplanationDocument.js',
   },
   {
     id: 'guia-documentacion-general',

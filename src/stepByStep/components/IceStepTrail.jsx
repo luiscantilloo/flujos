@@ -18,7 +18,7 @@ export function IceStepTrail({ steps, currentIndex, onJump }) {
   }, [currentIndex])
 
   return (
-    <div className="shrink-0 overflow-x-auto border-b border-cyan-900/40 bg-slate-950/80 px-2 py-3 backdrop-blur-sm">
+    <div className="app-scroll-x shrink-0 border-b border-cyan-900/40 bg-slate-950/80 px-2 py-3 backdrop-blur-sm">
       <div className="flex min-w-max items-center gap-1 px-2">
         {steps.map((step, i) => {
           const done = i < currentIndex

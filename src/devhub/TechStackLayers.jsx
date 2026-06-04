@@ -5,7 +5,7 @@ import {
   HiOutlineServerStack,
 } from 'react-icons/hi2'
 import { TbBrandNextjs, TbBrandReact, TbBrandTailwind } from 'react-icons/tb'
-import { SiNestjs, SiPostgresql, SiSupabase, SiTypescript } from 'react-icons/si'
+import { SiAxios, SiNestjs, SiPostgresql, SiSupabase, SiSwagger, SiTypescript, SiZod } from 'react-icons/si'
 
 const LAYER_STYLE = {
   frontend: {
@@ -31,7 +31,7 @@ const LAYER_STYLE = {
   },
 }
 
-/** Stack agrupado por capa para la página /recursos */
+/** Stack del producto WMS (frio-frontend / frio-backend). El Dev Hub (flujo) usa Vite + React. */
 export const TECH_STACK_LAYERS = [
   {
     id: 'frontend',
@@ -66,6 +66,20 @@ export const TECH_STACK_LAYERS = [
         icon: TbBrandTailwind,
         color: 'text-cyan-300',
       },
+      {
+        name: 'Supabase JS',
+        version: '2',
+        role: 'Cliente browser: Auth, lectura y Realtime (RLS por tenant)',
+        icon: SiSupabase,
+        color: 'text-emerald-400',
+      },
+      {
+        name: 'Route Handlers',
+        version: '16',
+        role: 'app/api/: pedido proveedor (n8n), evidencia (Cloudinary)',
+        icon: TbBrandNextjs,
+        color: 'text-slate-100',
+      },
     ],
   },
   {
@@ -76,23 +90,44 @@ export const TECH_STACK_LAYERS = [
       {
         name: 'NestJS',
         version: '10+',
-        role: 'API REST, módulos de dominio, Swagger',
+        role: 'API REST: ingreso, inventario, ventas, procesamiento, configuración',
         icon: SiNestjs,
         color: 'text-rose-400',
       },
       {
         name: 'TypeScript',
         version: '5+',
-        role: 'DTOs, pipes, guards y servicios',
+        role: 'DTOs, pipes, guards, interceptors (Strip) y servicios',
         icon: SiTypescript,
         color: 'text-blue-400',
       },
       {
-        name: 'Next.js API Routes',
-        version: '16',
-        role: 'Pedido proveedor, evidencia Cloudinary (secretos)',
-        icon: TbBrandNextjs,
-        color: 'text-slate-100',
+        name: 'Supabase Admin SDK',
+        version: '2',
+        role: 'Escrituras server-side, saveWarehouseState, locking',
+        icon: SiSupabase,
+        color: 'text-emerald-400',
+      },
+      {
+        name: 'Class-Validator · Zod',
+        version: '—',
+        role: 'Validación de token, tenant, rol y payloads',
+        icon: SiZod,
+        color: 'text-amber-300',
+      },
+      {
+        name: 'Swagger',
+        version: 'OpenAPI',
+        role: 'Contrato y prueba de endpoints (/ingreso, /procesar)',
+        icon: SiSwagger,
+        color: 'text-green-400',
+      },
+      {
+        name: 'Axios',
+        version: 'HttpModule',
+        role: 'Webhooks n8n: pedidos y alertas',
+        icon: SiAxios,
+        color: 'text-violet-300',
       },
     ],
   },
@@ -111,7 +146,7 @@ export const TECH_STACK_LAYERS = [
       {
         name: 'PostgreSQL',
         version: '15+',
-        role: 'Tablas normalizadas, RLS por code_cuenta',
+        role: 'Tablas 3NF; RLS por codigo_cuenta (tenant); empresa → cuenta',
         icon: SiPostgresql,
         color: 'text-sky-300',
       },
@@ -171,7 +206,9 @@ export function TechStackLayers() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Stack tecnológico</h3>
-          <p className="mt-1 text-xs text-slate-500">Frontend · Backend · Base de datos</p>
+          <p className="mt-1 text-xs text-slate-500">
+            Producto WMS · alineado con doc V2.0 §3 y flujo lectura/escritura §4
+          </p>
         </div>
         <CopyButton text={fullCopy} label="Copiar stack completo" />
       </div>

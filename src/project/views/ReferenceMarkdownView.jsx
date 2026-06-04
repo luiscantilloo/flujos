@@ -41,7 +41,7 @@ export function ReferenceMarkdownView({ project, topic, onBackToProjects }) {
     <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-slate-950">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_-15%,rgba(16,185,129,0.1),transparent)]" />
 
-      <div className="relative flex min-h-0 flex-1 flex-col overflow-auto">
+      <div className="relative flex min-h-0 flex-1 flex-col app-scroll-page">
         <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-8 sm:py-10">
           <button
             type="button"

@@ -86,7 +86,12 @@ export function getRouteSeo(pathname, params = {}) {
     }
   }
 
-  if (pathname === paths.stackArchitecture) {
+  if (pathname === paths.projectStructure) {
+    const phase = getPortalPhaseMeta('project-structure')
+    return { ...meta, title: phase.title, description: phase.subtitle, canonicalPath: paths.projectStructure }
+  }
+
+  if (pathname === paths.stackArchitecture || pathname === '/arquitectura-stack') {
     const phase = getPortalPhaseMeta('stack-architecture')
     return { ...meta, title: phase.title, description: phase.subtitle, canonicalPath: paths.stackArchitecture }
   }

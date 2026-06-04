@@ -12,7 +12,7 @@ export function FlowNavigation({
     >
       {topLevelFlowKeys.length > 1 ? (
         <div
-          className="flex max-h-[44vh] min-w-0 flex-1 flex-wrap gap-1 overflow-y-auto overflow-x-hidden sm:max-h-none sm:overflow-x-auto"
+          className="app-scroll-panel flex max-h-[44vh] min-w-0 flex-1 flex-wrap gap-1 sm:max-h-none sm:flex-nowrap sm:overflow-y-hidden sm:overflow-x-auto"
           role="tablist"
           aria-label="Elegir flujo"
         >

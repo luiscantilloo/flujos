@@ -31,7 +31,11 @@ export function getRouteMeta(pathname, params = {}) {
     return getPortalPhaseMeta('dev-resources')
   }
 
-  if (pathname === paths.stackArchitecture) {
+  if (pathname === paths.projectStructure) {
+    return getPortalPhaseMeta('project-structure')
+  }
+
+  if (pathname === paths.stackArchitecture || pathname === '/arquitectura-stack') {
     return getPortalPhaseMeta('stack-architecture')
   }
 
@@ -99,7 +103,7 @@ export function getBackNavigation(pathname, params = {}) {
     return { show: true, label: 'Menú principal', to: paths.home }
   }
 
-  if (pathname === paths.stackArchitecture) {
+  if (pathname === paths.projectStructure || pathname === paths.stackArchitecture || pathname === '/arquitectura-stack') {
     return { show: true, label: 'Menú principal', to: paths.home }
   }
 

@@ -8,7 +8,6 @@ const SCRIPTS = [
   { cmd: 'npm run dev', desc: 'Servidor de desarrollo local' },
   { cmd: 'npm run build', desc: 'Build de producción' },
   { cmd: 'npm run lint', desc: 'ESLint en todo el proyecto' },
-  { cmd: 'npm run test', desc: 'Suite de tests unitarios' },
   { cmd: 'npm run docs:all', desc: 'Regenera MD de Bodega v1.0 y V2.0 desde .txt' },
 ]
 
@@ -16,7 +15,7 @@ const INSTALL_STEPS = [
   'Clonar el repositorio',
   'npm install',
   'Copiar .env.local con variables de Supabase y Cloudinary',
-  'npm run dev → http://localhost:3000',
+  'npm run dev → http://localhost:5173 (Dev Hub Vite)',
 ]
 
 const QUICK_LINKS = [
@@ -55,7 +54,7 @@ export function DevResourcesPortal({ onBackToMain, onOpenDocSection }) {
     <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-slate-950">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_45%_at_50%_-15%,rgba(56,189,248,0.14),transparent),radial-gradient(ellipse_50%_40%_at_100%_80%,rgba(139,92,246,0.1),transparent)]" />
 
-      <div className="relative flex min-h-0 flex-1 flex-col overflow-auto">
+      <div className="relative flex min-h-0 flex-1 flex-col app-scroll-page">
         <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-8 sm:py-10">
           <Link
             to={paths.home}
@@ -69,9 +68,16 @@ export function DevResourcesPortal({ onBackToMain, onOpenDocSection }) {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-300/90">Herramientas</p>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">Stack y scripts</h2>
             <p className="mt-3 text-pretty text-base leading-relaxed text-slate-400">
-              Stack por capas (frontend, backend y BD), comandos npm e instalación local.
+              Stack del <strong className="font-medium text-slate-300">producto WMS</strong> (Next + Nest +
+              Supabase). Este repositorio <strong className="font-medium text-slate-300">flujo</strong> es el Dev
+              Hub (Vite + React) para documentación y diagramas.
             </p>
           </div>
+
+          <p className="mt-6 rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-100/90">
+            Comandos npm de abajo aplican al <strong>Dev Hub</strong> (<code className="font-mono text-amber-200">npm run dev</code>{' '}
+            → Vite, puerto por defecto 5173). La app operativa vive en los repos frio.
+          </p>
 
           <TechStackLayers />
 

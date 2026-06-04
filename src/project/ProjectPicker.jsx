@@ -8,7 +8,7 @@ export function ProjectPicker({ topic, onSelectProject, onBack }) {
   const projects = getEnabledHubProjects()
 
   return (
-    <div className="relative flex min-h-0 flex-1 flex-col overflow-auto bg-slate-950">
+    <div className="relative flex min-h-0 flex-1 flex-col app-scroll-page bg-slate-950">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_45%_at_30%_-10%,rgba(139,92,246,0.14),transparent)]" />
 
       <div className="relative mx-auto w-full max-w-3xl px-4 py-8 sm:px-8 sm:py-10">

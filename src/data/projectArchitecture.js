@@ -1,123 +1,15 @@
 import { ENTITIES, SCHEMA_DOMAINS } from './bodegaDatabaseSchema.js'
+import { formatFieldType } from './schemaFieldTypes.js'
+import { getReadingStepForEntity } from './schemaReadingGuide.js'
 
 /**
- * Nodo del árbol de arquitectura (carpetas o tablas).
+ * Nodo del árbol de estructura (carpetas o tablas).
  * @typedef {{ id: string, name: string, hint?: string, children?: ArchNode[] }} ArchNode
  */
 
-/** @type {ArchNode[]} */
-export const FRONTEND_TREE = [
-  {
-    id: 'fe-app',
-    name: 'app/',
-    hint: 'Next.js App Router',
-    children: [
-      {
-        id: 'fe-auth',
-        name: '(auth)/',
-        hint: 'Login, recuperación de contraseña',
-        children: [
-          { id: 'fe-auth-login', name: 'login/', hint: 'Pantalla de acceso (Supabase Auth)' },
-          { id: 'fe-auth-recover', name: 'recuperar/', hint: 'Flujo de reset' },
-        ],
-      },
-      {
-        id: 'fe-dash',
-        name: '(dashboard)/',
-        hint: 'Vistas por rol (RBAC)',
-        children: [
-          { id: 'fe-ingreso', name: 'ingreso/', hint: 'Recepción, OC, SOL' },
-          { id: 'fe-mapa', name: 'mapa/', hint: 'Mapa de slots, locking' },
-          { id: 'fe-proc', name: 'procesamiento/', hint: 'Primario / secundario, merma' },
-          { id: 'fe-trans', name: 'transporte/', hint: 'Viajes TV, evidencias' },
-          { id: 'fe-ventas', name: 'ventas/', hint: 'OV, despacho' },
-          { id: 'fe-config', name: 'configuracion/', hint: 'Tenant, catálogo, proveedores' },
-          { id: 'fe-reportes', name: 'reportes/', hint: 'KPIs y auditoría' },
-        ],
-      },
-      {
-        id: 'fe-api',
-        name: 'api/',
-        hint: 'Route Handlers server-side (secretos)',
-        children: [
-          { id: 'fe-api-pedido', name: 'pedido-proveedor/', hint: 'POST → n8n webhook' },
-          { id: 'fe-api-evidencia', name: 'evidencia-transporte/', hint: 'POST → Cloudinary' },
-        ],
-      },
-      {
-        id: 'fe-components',
-        name: 'components/',
-        hint: 'UI: SlotCard, modales, tablas',
-        children: [
-          { id: 'fe-comp-ui', name: 'ui/', hint: 'Primitivos reutilizables' },
-          { id: 'fe-comp-bodega', name: 'bodega/', hint: 'Dominio WMS' },
-        ],
-      },
-      { id: 'fe-context', name: 'context/', hint: 'AuthContext, cuenta activa, rol' },
-      { id: 'fe-hooks', name: 'hooks/', hint: 'useWarehouse, suscripción Realtime' },
-      { id: 'fe-services', name: 'services/', hint: 'Cliente HTTP hacia NestJS / Supabase' },
-    ],
-  },
-  { id: 'fe-public', name: 'public/', hint: 'Assets estáticos, favicon' },
-  { id: 'fe-styles', name: 'styles/', hint: 'Tailwind CSS 4, tokens' },
-  {
-    id: 'fe-lib',
-    name: 'lib/',
-    hint: 'Utilidades compartidas',
-    children: [
-      { id: 'fe-lib-supabase', name: 'supabase/', hint: 'Cliente browser + tipos generados' },
-      { id: 'fe-lib-fridem', name: 'fridemClient.ts', hint: 'Proyecto Supabase secundario (solo lectura)' },
-      { id: 'fe-lib-zod', name: 'schemas/', hint: 'Validación Zod de formularios' },
-    ],
-  },
-]
+import { BACKEND_TREE, FRONTEND_TREE } from './projectStructureTrees.js'
 
-/** @type {ArchNode[]} */
-export const BACKEND_TREE = [
-  {
-    id: 'be-src',
-    name: 'src/',
-    children: [
-      { id: 'be-main', name: 'main.ts', hint: 'Bootstrap NestJS + Swagger' },
-      { id: 'be-app-module', name: 'app.module.ts', hint: 'Módulo raíz' },
-      {
-        id: 'be-common',
-        name: 'common/',
-        hint: 'Cross-cutting',
-        children: [
-          { id: 'be-decorators', name: 'decorators/', hint: '@Roles(), @CurrentUser()' },
-          { id: 'be-guards', name: 'guards/', hint: 'AuthGuard — JWT Supabase' },
-          { id: 'be-interceptors', name: 'interceptors/', hint: 'StripInterceptor (sin undefined)' },
-          { id: 'be-pipes', name: 'pipes/', hint: 'Validación DTO' },
-        ],
-      },
-      {
-        id: 'be-supabase',
-        name: 'supabase/',
-        hint: 'Service role + PostgREST',
-        children: [
-          { id: 'be-supabase-mod', name: 'supabase.module.ts' },
-          { id: 'be-supabase-svc', name: 'supabase.service.ts', hint: 'saveWarehouseState, transacciones' },
-        ],
-      },
-      {
-        id: 'be-modules',
-        name: 'modules/',
-        hint: 'Dominio modularizado',
-        children: [
-          { id: 'be-mod-ingreso', name: 'ingreso/', hint: 'OC, SOL, recepción' },
-          { id: 'be-mod-inv', name: 'inventario/', hint: 'Slots, locking, movimientos' },
-          { id: 'be-mod-ventas', name: 'ventas/', hint: 'OV, líneas, FEFO' },
-          { id: 'be-mod-trans', name: 'transporte/', hint: 'Viajes TV, evidencias' },
-          { id: 'be-mod-proc', name: 'procesamiento/', hint: 'Solicitudes, merma' },
-          { id: 'be-mod-config', name: 'configuracion/', hint: 'Tenants, catálogo' },
-          { id: 'be-mod-auth', name: 'auth/', hint: 'Perfiles y permisos' },
-        ],
-      },
-    ],
-  },
-  { id: 'be-test', name: 'test/', hint: 'E2E y unitarios NestJS' },
-]
+export { FRONTEND_TREE, BACKEND_TREE }
 
 /** @param {{ getTree?: () => ArchNode[], view?: string }} section */
 export function isTreeSection(section) {
@@ -129,7 +21,8 @@ export function getSectionTree(section) {
   return isTreeSection(section) ? section.getTree() : []
 }
 
-export const ARCHITECTURE_SECTIONS = [
+/** Carpetas de código — repos frio-frontend y frio-backend (doc V2.0 §4). */
+export const PROJECT_STRUCTURE_SECTIONS = [
   {
     id: 'frontend',
     label: 'Frontend',
@@ -144,13 +37,21 @@ export const ARCHITECTURE_SECTIONS = [
     accent: 'violet',
     getTree: () => BACKEND_TREE,
   },
-  {
-    id: 'database',
-    label: 'Base de datos',
-    rootLabel: 'supabase · PostgreSQL',
-    accent: 'emerald',
-    view: 'tables',
-  },
+]
+
+/** Modelo de datos Supabase — tablas 3NF, ER, warehouse_state (doc V2.0 §7). */
+export const DATABASE_ARCHITECTURE_SECTION = {
+  id: 'database',
+  label: 'Base de datos',
+  rootLabel: 'supabase · PostgreSQL',
+  accent: 'emerald',
+  view: 'tables',
+}
+
+/** @deprecated Usar PROJECT_STRUCTURE_SECTIONS o DATABASE_ARCHITECTURE_SECTION. */
+export const ARCHITECTURE_SECTIONS = [
+  ...PROJECT_STRUCTURE_SECTIONS,
+  DATABASE_ARCHITECTURE_SECTION,
 ]
 
 /** Tablas extra fuera del modelo ENTITIES principal */
@@ -160,7 +61,7 @@ const EXTRA_DATABASE_TABLES = [
     schema: 'auth',
     table: 'users',
     name: 'Usuarios Auth',
-    domain: 'tenant',
+    domain: 'rbac',
     physical: 'auth.users',
     desc: 'Gestionado por Supabase Auth; vinculado a public.usuarios',
     fields: [
@@ -170,47 +71,53 @@ const EXTRA_DATABASE_TABLES = [
     ],
     indexes: [],
   },
-  {
-    id: 'warehouse_state',
-    schema: 'public',
-    table: 'warehouse_state',
-    name: 'Estado en vivo (OLTP)',
-    domain: 'warehouse',
-    physical: 'public.warehouse_state',
-    desc: 'Documento jsonb por bodega; Realtime para slots, cajas y alertas',
-    fields: [
-      { name: 'warehouse_id', type: 'text', pk: true, fk: 'bodega.warehouseId' },
-      { name: 'state', type: 'jsonb', desc: 'slots, inboundBoxes, outboundBoxes, orders, alerts' },
-      { name: 'updated_at', type: 'timestamptz' },
-    ],
-    indexes: ['INDEX(warehouse_id)'],
-  },
 ]
 
 /** @typedef {import('./bodegaDatabaseSchema.js').ENTITIES[number] & { schema: string }} DbTableRow */
 
-/** Lista plana de tablas para la vista tipo tabla */
+function attachReadingMeta(row) {
+  const reading = getReadingStepForEntity(row.id)
+  return {
+    ...row,
+    readOrder: reading?.order ?? row.readOrder ?? 999,
+    readingPhase: reading?.phaseLabel ?? null,
+    readingFirst: reading?.readFirst ?? null,
+    readingThen: reading?.thenRead ?? null,
+    readingCreatedBy: reading?.createdBy ?? null,
+    indexes: row.indexes?.length ? row.indexes : reading?.indexes ?? [],
+  }
+}
+
+/** Lista plana de tablas para la vista tipo tabla (orden = guía de lectura 0…N) */
 export function getDatabaseTables() {
   const fromEntities = ENTITIES.map((entity) => {
     const authTable = entity.physical?.startsWith('auth.')
-    return {
-    id: entity.id,
-    schema: authTable ? 'auth' : 'public',
-    table: authTable ? (entity.physical.split('.').pop() ?? entity.table) : entity.table,
-    name: entity.name,
-    domain: entity.domain,
-    domainLabel: SCHEMA_DOMAINS.find((d) => d.id === entity.domain)?.label ?? entity.domain,
-    physical: entity.physical,
-    desc: entity.desc,
-    fields: entity.fields ?? [],
-    indexes: entity.indexes ?? [],
-  }
+    return attachReadingMeta({
+      id: entity.id,
+      schema: authTable ? 'auth' : 'public',
+      table: authTable ? (entity.physical.split('.').pop() ?? entity.table) : entity.table,
+      name: entity.name,
+      domain: entity.domain,
+      domainLabel: SCHEMA_DOMAINS.find((d) => d.id === entity.domain)?.label ?? entity.domain,
+      physical: entity.physical,
+      desc: entity.desc,
+      fields: entity.fields ?? [],
+      indexes: entity.indexes ?? [],
+    })
   })
-  const extras = EXTRA_DATABASE_TABLES.map((t) => ({
-    ...t,
-    domainLabel: SCHEMA_DOMAINS.find((d) => d.id === t.domain)?.label ?? t.domain,
-  }))
-  return [...extras.filter((e) => e.id === 'auth_users'), ...fromEntities, ...extras.filter((e) => e.id !== 'auth_users')]
+  const extras = EXTRA_DATABASE_TABLES.map((t) =>
+    attachReadingMeta({
+      ...t,
+      readOrder: t.id === 'auth_users' ? 1 : t.readOrder,
+      domainLabel: SCHEMA_DOMAINS.find((d) => d.id === t.domain)?.label ?? t.domain,
+    }),
+  )
+  const merged = [
+    ...extras.filter((e) => e.id === 'auth_users'),
+    ...fromEntities,
+    ...extras.filter((e) => e.id !== 'auth_users'),
+  ]
+  return merged.sort((a, b) => a.readOrder - b.readOrder || a.table.localeCompare(b.table))
 }
 
 export function getDatabaseTablesGrouped() {
@@ -241,13 +148,17 @@ export function databaseTableToText(table) {
   const cols = ['| Campo | Tipo | Claves | Notas |', '| --- | --- | --- | --- |']
   for (const f of table.fields) {
     const notes = [f.fk, f.desc].filter(Boolean).join(' · ') || '—'
-    cols.push(`| ${f.name} | ${f.type} | ${fieldKeysLabel(f)} | ${notes} |`)
+    cols.push(`| ${f.name} | ${formatFieldType(f)} | ${fieldKeysLabel(f)} | ${notes} |`)
   }
+  const reading =
+    table.readOrder != null && table.readOrder < 999
+      ? `\nLectura: tabla ${table.readOrder}${table.readingPhase ? ` · ${table.readingPhase}` : ''}${table.readingFirst ? `\n- Antes: ${table.readingFirst}` : ''}${table.readingThen ? `\n- Después: ${table.readingThen}` : ''}`
+      : ''
   const idx =
     table.indexes?.length > 0
       ? `\nÍndices:\n${table.indexes.map((i) => `- ${i}`).join('\n')}`
       : ''
-  return `${header}\n${cols.join('\n')}${idx}`
+  return `${header}\n${cols.join('\n')}${reading}${idx}`
 }
 
 export function databaseSectionToText() {
@@ -322,8 +233,12 @@ export function sectionToText(section) {
   return `${section.rootLabel}\n${nodesToTreeText(tree)}`
 }
 
+export function buildFullProjectStructureText() {
+  return PROJECT_STRUCTURE_SECTIONS.map((s) => sectionToText(s)).join('\n\n')
+}
+
 export function buildFullArchitectureText() {
-  return ARCHITECTURE_SECTIONS.map((s) => sectionToText(s)).join('\n\n')
+  return databaseSectionToText()
 }
 
 export function buildSelectedNodeText(section, nodeId) {

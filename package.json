@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/generate-readable-html.mjs",
+    "build": "node scripts/generate-er-explanation-doc.mjs && vite build && node scripts/generate-readable-html.mjs",
+    "docs:er-guia": "node scripts/generate-er-explanation-doc.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "docs:bodega": "node scripts/build-bodega-doc.mjs",

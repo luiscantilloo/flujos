@@ -216,7 +216,7 @@ function DocReaderExperience({ doc, onBackToIndex, initialHeadingId, onInitialHe
       </header>
 
       <div className="relative z-10 flex min-h-0 flex-1 overflow-hidden">
-        <aside className="hidden w-[min(100%,17.5rem)] shrink-0 overflow-y-auto border-r border-slate-800/80 bg-slate-950/40 px-3 py-6 lg:block">
+        <aside className="app-scroll-panel hidden w-[min(100%,17.5rem)] shrink-0 border-r border-slate-800/80 bg-slate-950/40 px-3 py-6 lg:block">
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">En esta página</p>
           <TocPanel toc={toc} activeId={activeHeadingId} onPick={scrollToId} />
         </aside>
@@ -240,7 +240,7 @@ function DocReaderExperience({ doc, onBackToIndex, initialHeadingId, onInitialHe
                   Cerrar
                 </button>
               </div>
-              <div className="min-h-0 flex-1 overflow-y-auto px-3 py-4">
+              <div className="app-scroll-panel min-h-0 flex-1 px-3 py-4">
                 <TocPanel toc={toc} activeId={activeHeadingId} onPick={scrollToId} onClose={() => setTocOpen(false)} />
               </div>
             </div>
@@ -250,7 +250,7 @@ function DocReaderExperience({ doc, onBackToIndex, initialHeadingId, onInitialHe
         <div
           ref={scrollRef}
           onScroll={updateProgress}
-          className="min-h-0 flex-1 overflow-y-auto scroll-smooth bg-[radial-gradient(ellipse_at_top,_rgba(56,189,248,0.06),_transparent_50%),radial-gradient(ellipse_at_bottom,_rgba(167,139,250,0.07),_transparent_55%)]"
+          className="app-scroll-page min-h-0 flex-1 bg-[radial-gradient(ellipse_at_top,_rgba(56,189,248,0.06),_transparent_50%),radial-gradient(ellipse_at_bottom,_rgba(167,139,250,0.07),_transparent_55%)]"
         >
           <div className="mx-auto max-w-4xl px-4 py-8 sm:px-8 sm:py-12">
             {status === 'loading' ? (
@@ -360,7 +360,7 @@ export function DocumentationPortal({
   }
 
   return (
-    <div className="relative flex min-h-0 flex-1 flex-col overflow-auto bg-slate-950">
+    <div className="relative flex min-h-0 flex-1 flex-col app-scroll-page bg-slate-950">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(124,58,237,0.18),transparent),radial-gradient(ellipse_60%_40%_at_100%_0%,rgba(34,211,238,0.08),transparent)]" />
       <div className="relative mx-auto w-full max-w-3xl px-4 py-10 sm:px-8 sm:py-14">
         <Link

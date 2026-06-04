@@ -161,7 +161,7 @@ export function DocMarkdownView({ markdown }) {
               )
             },
             pre: ({ children, ...props }) => (
-              <pre className={`mb-8 max-w-none overflow-x-auto ${mdBox}`} {...props}>
+              <pre className={`app-scroll-x mb-8 max-w-none ${mdBox}`} {...props}>
                 {children}
               </pre>
             ),

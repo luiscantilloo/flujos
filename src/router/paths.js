@@ -13,10 +13,18 @@ export const paths = {
     return projectId ? `${base}/${encodeURIComponent(projectId)}` : base
   },
   devResources: '/recursos',
-  stackArchitecture: '/arquitectura-stack',
+  projectStructure: '/estructura-proyecto',
+  projectStructureTab: (tab) =>
+    `/estructura-proyecto?tab=${encodeURIComponent(tab)}`,
+  stackArchitecture: '/arquitectura',
+  stackArchitectureEr: '/arquitectura?dbView=er',
+  /** @deprecated Usar projectStructureTab o stackArchitecture */
   stackArchitectureTab: (tab, dbView) => {
-    const base = `/arquitectura-stack?tab=${encodeURIComponent(tab)}`
-    return dbView ? `${base}&dbView=${encodeURIComponent(dbView)}` : base
+    if (tab === 'frontend' || tab === 'backend') {
+      return paths.projectStructureTab(tab)
+    }
+    const base = paths.stackArchitecture
+    return dbView ? `${base}?dbView=${encodeURIComponent(dbView)}` : base
   },
   stepByStep: (projectId) =>
     projectId ? `/paso-a-paso/${encodeURIComponent(projectId)}` : '/paso-a-paso',

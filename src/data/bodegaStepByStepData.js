@@ -1,16 +1,18 @@
 /**
  * Recorrido interactivo «Paso a paso» — Bodega de frío.
- * Cubre el flujo principal (flowsData) y ramas S/N, reintentos y bloqueos.
+ * Roles alineados con wmsRoles.js y modelo ER 3NF.
  */
+
+import { formatRoleLabel } from './wmsRoles.js'
 
 export const BODEGA_STEP_CHAPTERS = [
   { id: 'intro', label: 'Inicio', color: 'from-cyan-400/20 to-sky-500/10' },
-  { id: 'owner', label: 'Dueño (SaaS)', color: 'from-violet-400/20 to-indigo-500/10' },
-  { id: 'tenant', label: 'Inquilino', color: 'from-sky-400/20 to-cyan-500/10' },
-  { id: 'inbound', label: 'Entrada', color: 'from-emerald-400/15 to-teal-500/10' },
+  { id: 'owner', label: 'Configurador (TI)', color: 'from-violet-400/20 to-indigo-500/10' },
+  { id: 'tenant', label: 'Cuenta cliente', color: 'from-sky-400/20 to-cyan-500/10' },
+  { id: 'inbound', label: 'Recepción', color: 'from-emerald-400/15 to-teal-500/10' },
   { id: 'warehouse', label: 'Bodega', color: 'from-blue-400/20 to-indigo-500/10' },
-  { id: 'process', label: 'Proceso', color: 'from-amber-400/15 to-orange-500/10' },
-  { id: 'outbound', label: 'Salida', color: 'from-rose-400/15 to-pink-500/10' },
+  { id: 'process', label: 'Procesamiento', color: 'from-amber-400/15 to-orange-500/10' },
+  { id: 'outbound', label: 'Despacho', color: 'from-rose-400/15 to-pink-500/10' },
   { id: 'finale', label: 'Cierre', color: 'from-emerald-400/25 to-cyan-500/15' },
 ]
 
@@ -36,48 +38,73 @@ export const bodegaStepByStepSteps = [
     id: 'welcome',
     chapter: 'intro',
     title: 'Bienvenido al túnel de frío',
-    hook: '28 paradas. Cero aburrimiento. Todo el WMS en una sola travesía.',
+    hook: 'Recorrido completo: del configurador TI al transportista con evidencias.',
     narrative:
-      'Este recorrido sigue el mismo camino que el diagrama React Flow: desde que el configurador crea la cuenta hasta el cierre del viaje con foto, firma y GPS. Usa las flechas del teclado (← →) o los botones para avanzar. En cada nube de hielo hay algo que tocar, arrastrar o decidir.',
-    roles: ['Todos'],
+      'Mismo camino que el diagrama React Flow y el modelo ER: el equipo TI crea empresa, tenant y bodegas, y asigna al administrador de cuenta; él arma operador, catálogos y equipo de bodega. Luego recepción, mapa y despacho. Usa ← → o los botones.',
+    roles: ['Todos los roles'],
     visual: 'aurora',
     interactive: { type: 'intro' },
   },
   {
     id: 'dual-world',
     chapter: 'intro',
-    title: 'Dos mundos, un mismo producto',
-    hook: 'Morado arriba, operación abajo — el puente es el tenant.',
+    title: 'Plataforma TI, empresa y tenant',
+    hook: 'Empresa ≠ tenant: el tenant es la unidad operativa bajo la empresa.',
     narrative:
-      'DUEÑO configura infraestructura SaaS: cuentas, bodegas, capacidad y roles. INQUILINO opera el día a día: OC, recepción, mapa, alertas, procesamiento y despacho. Sin tenant válido no cruzas el puente.',
-    roles: ['Configurador', 'Admin Tenant', 'Operarios'],
+      'El equipo TI tiene credenciales propias (configurador). Crea la empresa, asigna el administrador de cuenta (pertenece a esa empresa) y luego tenant y bodegas. Al ingresar, cualquier usuario de empresa valida codigoEmpresa + pertenencia + contraseña.',
+    roles: [formatRoleLabel('configurador'), formatRoleLabel('administrador_cuenta')],
     visual: 'cloud',
     flowRefs: ['hdr_dueno', 'hdr_inqu'],
     interactive: {
       type: 'roles',
       cards: [
-        { id: 'dueno', label: 'Dueño', desc: 'Cuentas, bodegas, límites, RBAC', icon: 'building' },
-        { id: 'inquilino', label: 'Inquilino', desc: 'OC → mapa → OV → camión', icon: 'cube' },
+        {
+          id: 'ti',
+          label: 'Configurador (TI)',
+          desc: 'Sesión TI → empresa → admin cuenta → tenant → bodegas',
+          icon: 'building',
+        },
+        {
+          id: 'empresa',
+          label: 'Tenant operativo',
+          desc: 'Operador, catálogos, proveedores y equipo de bodega',
+          icon: 'cube',
+        },
       ],
     },
   },
   {
-    id: 'config-cuenta',
+    id: 'config-empresa',
     chapter: 'owner',
-    title: 'Configurador crea la cuenta',
-    hook: 'Primer ladrillo del SaaS multi-cuenta.',
+    title: 'Configurador crea la empresa',
+    hook: 'Cliente jurídico del SaaS — puede tener varios tenants.',
     narrative:
-      'El configurador da de alta el tenant en Supabase (PostgreSQL): metadatos comerciales, estado activo y vínculo a bodegas. Si el ID es inválido o la cuenta está suspendida, el flujo se detiene en rojo — no hay atajos.',
-    roles: ['Configurador'],
+      'Primero se registra la empresa (codigoEmpresa, razón social, contrato). Es el nivel “holding” o cliente comercial: agrupa tenants pero no opera inventario por sí sola.',
+    roles: [formatRoleLabel('configurador')],
     visual: 'crystal',
-    flowRefs: ['config', 'v_tenant'],
+    flowRefs: ['config'],
+    interactive: {
+      type: 'chain',
+      steps: ['Alta empresa en plataforma', 'Estado activa', 'Lista para dar de alta tenants'],
+    },
+  },
+  {
+    id: 'config-tenant',
+    chapter: 'owner',
+    title: 'Alta del tenant (codeCuenta)',
+    hook: 'Cada tenant pertenece a una empresa.',
+    narrative:
+      'El configurador crea el tenant operativo (codeCuenta) con FK a codigo_empresa. Bodegas y usuarios del tenant usan ese codeCuenta; catálogos y órdenes los crea después el administrador de cuenta. Si el tenant es inválido o suspendido, el flujo se detiene.',
+    roles: [formatRoleLabel('configurador')],
+    visual: 'crystal',
+    flowRefs: ['tenant_alta', 'v_tenant'],
     interactive: {
       type: 'branch',
-      question: '¿La cuenta pasa validación?',
-      yesLabel: 'S — Cuenta activa',
+      question: '¿El tenant pasa validación?',
+      yesLabel: 'S — Tenant activo',
       noLabel: 'N — ID inválido / suspensión',
-      yesOutcome: 'Avanzas a definir bodegas, capacidad y reglas del plano.',
-      noOutcome: 'Bloqueo: err_t. Nadie opera hasta regularizar con soporte.',
+      yesOutcome: 'Avanzas a bodegas, capacidad y reglas del plano (tenant activo).',
+      noOutcome: 'Bloqueo err_t: tenant inválido o suspendido.',
       yesNext: 'estructura',
       noNext: 'blocked-hint',
     },
@@ -89,7 +116,7 @@ export const bodegaStepByStepSteps = [
     hook: 'El mapa físico debe caber en el plano digital.',
     narrative:
       'Se crean bodegas internas (y luego integraciones externas tipo Fridem). Cada una tiene slots, umbrales de temperatura y límites de kg. Si la capacidad física declarada supera el límite del plano, el sistema pide ajustar antes de seguir.',
-    roles: ['Configurador', 'Admin bodega'],
+    roles: [formatRoleLabel('configurador'), formatRoleLabel('administrador_bodega')],
     visual: 'ice',
     flowRefs: ['estructura', 'v_cap'],
     funFact: 'En V2 el dashboard dejó de ser 12 posiciones fijas: ahora es dinámico por rol.',
@@ -98,27 +125,84 @@ export const bodegaStepByStepSteps = [
       question: '¿Capacidad física < límite del plano?',
       yesLabel: 'S — Cabe en el plano',
       noLabel: 'N — Espacio insuficiente',
-      yesOutcome: 'Siguiente: crear perfiles Admin, Jefe, Custodio, Operario, Procesador…',
+      yesOutcome: 'Siguiente: TI crea y asigna al administrador de cuenta (responsable del cliente).',
       noOutcome: 'err_c: debes redimensionar slots o subir el límite contratado.',
     },
   },
   {
-    id: 'rbac',
+    id: 'ti-admin',
     chapter: 'owner',
-    title: 'Roles y permisos (RBAC)',
+    title: 'TI asigna administrador de cuenta',
+    hook: 'Responsable del cliente — no crea la empresa ni las bodegas después.',
+    narrative:
+      'Tras crear la empresa, TI da de alta al administrador_cuenta con codigo_empresa y credenciales Auth. Ese admin ingresará con login V2 (empresa + usuario + contraseña). Luego TI completa tenant y bodegas antes de entregar operación.',
+    roles: [formatRoleLabel('configurador')],
+    visual: 'crystal',
+    flowRefs: ['ti_admin', 'sub_doc_auth'],
+    interactive: {
+      type: 'chain',
+      steps: [
+        'Alta en Auth + rol administrador_cuenta',
+        'codigo_cuenta = codeCuenta del tenant',
+        'Entrega de credenciales al cliente',
+      ],
+    },
+  },
+  {
+    id: 'rbac',
+    chapter: 'tenant',
+    title: 'Admin arma equipo y permisos',
     hook: 'Cada rol ve solo su cola — ni más ni menos.',
     narrative:
-      'Jefe prioriza órdenes de trabajo y alertas. Custodio concentra ingresos y recepción contra OC/OV. Operario ejecuta traslados. Procesador ve sobre todo solicitudes de transformación. Sin permiso explícito: denegar acción.',
-    roles: ['Configurador', 'Todos los operativos'],
+      'El administrador de cuenta crea operador de cuenta, proveedores, compradores y asignacion_bodega (jefe, custodio, operario, procesador, transportista). Sin permiso en una acción: acceso denegado.',
+    roles: [formatRoleLabel('administrador_cuenta'), 'Equipo de bodega'],
     visual: 'snow',
-    flowRefs: ['perfiles', 'v_perm'],
+    flowRefs: ['v_perm', 'adm_cuenta'],
     interactive: {
       type: 'branch',
       question: '¿El usuario tiene permiso para esta acción?',
       yesLabel: 'S — Atribución OK',
       noLabel: 'N — Sin permisos',
-      yesOutcome: 'Cruzas el header-bridge hacia INQUILINO — operación diaria.',
-      noOutcome: 'err_p: pantalla de acceso denegado; revisar matriz RBAC.',
+      yesOutcome: 'Tenant listo: SOL, OC, recepción y operación diaria.',
+      noOutcome: 'err_p: acceso denegado; revisar asignacion_bodega y matriz RBAC.',
+    },
+  },
+  {
+    id: 'admin-cuenta',
+    chapter: 'tenant',
+    title: 'Administrador de cuenta',
+    hook: 'El configurador deja el tenant listo; el admin opera dentro de él.',
+    narrative:
+      'Tras el bridge INQUILINO, el administrador_cuenta (del tenant activo) da de alta operador_cuenta, catálogos y asignacion_bodega. Todo queda scoped al codeCuenta del tenant — la empresa solo agrupa tenants.',
+    roles: [formatRoleLabel('administrador_cuenta')],
+    visual: 'cloud',
+    flowRefs: ['adm_cuenta', 'catalogo'],
+    interactive: {
+      type: 'chain',
+      steps: [
+        'Operador de cuenta',
+        'Catálogos comerciales',
+        'asignacion_bodega por bodega',
+      ],
+    },
+  },
+  {
+    id: 'solicitud-compra',
+    chapter: 'tenant',
+    title: 'Solicitud de compra (SOL)',
+    hook: 'Aprobación antes de la OC formal.',
+    narrative:
+      'El operador_cuenta crea la SOL (Borrador → Enviada). Si el administrador la aprueba, se genera orden_compra con id_orden_compra vinculado. Si rechazan, no hay recepción.',
+    roles: [formatRoleLabel('operador_cuenta'), formatRoleLabel('administrador_cuenta')],
+    visual: 'ice',
+    flowRefs: ['sol', 'oc'],
+    interactive: {
+      type: 'branch',
+      question: '¿SOL aprobada?',
+      yesLabel: 'S — Genera OC',
+      noLabel: 'N — Rechazada',
+      yesOutcome: 'OC en estado Iniciado → recepción en bodega.',
+      noOutcome: 'Sin OC: el flujo de ingreso no arranca.',
     },
   },
   {
@@ -128,9 +212,9 @@ export const bodegaStepByStepSteps = [
     hook: 'Limpia nulls antes de tocar inventario real.',
     narrative:
       'La función Strip elimina undefined/null en payloads hacia Supabase (PostgreSQL). Luego la cuenta genera OC (orden de compra) o SOL (solicitud previa). Estados: Iniciado → En recepción → Cerrado. Prefijo OC-####.',
-    roles: ['Admin Tenant', 'Operador Tenant'],
+    roles: [formatRoleLabel('administrador_cuenta'), formatRoleLabel('operador_cuenta')],
     visual: 'cloud',
-    flowRefs: ['strip', 'oc'],
+    flowRefs: ['strip', 'sol', 'oc'],
     interactive: {
       type: 'chain',
       steps: ['Strip sanitiza JSON', 'OC o SOL con líneas en kg', 'Proveedor recibe pedido'],
@@ -143,7 +227,7 @@ export const bodegaStepByStepSteps = [
     hook: 'Un proveedor bloqueado frena toda la cadena.',
     narrative:
       'Antes de agendar el camión se valida que el proveedor esté activo en catálogo. Integraciones externas (bodegas Fridem, etc.) tienen su propio sub-flujo de solicitud de asignación.',
-    roles: ['Admin Tenant', 'Transporte proveedor'],
+    roles: [formatRoleLabel('operador_cuenta'), formatRoleLabel('transportista')],
     visual: 'ice',
     flowRefs: ['v_prov', 'prov'],
     interactive: {
@@ -162,7 +246,7 @@ export const bodegaStepByStepSteps = [
     hook: 'El camión va cargado de expectativas y kg.',
     narrative:
       'Registro del viaje de entrada, ETA y vínculo a la OC. El custodio prepara la recepción: conciliación ciega en V2 (conteo sin ver cantidades esperadas) para evitar sesgo.',
-    roles: ['Transporte', 'Custodio'],
+    roles: [formatRoleLabel('transportista'), formatRoleLabel('custodio')],
     visual: 'snow',
     flowRefs: ['trans1', 'recp'],
     interactive: {
@@ -177,7 +261,7 @@ export const bodegaStepByStepSteps = [
     hook: '¿Coincide lo que pesaste con lo que pediste?',
     narrative:
       'Input manual de kg por línea. Si no coincide: registrar diferencia o nota de ajuste y volver a validar (línea discontinua en el diagrama). Si coincide: pasar a verificación documental.',
-    roles: ['Custodio', 'Jefe'],
+    roles: [formatRoleLabel('custodio'), formatRoleLabel('jefe_bodega')],
     visual: 'crystal',
     flowRefs: ['ciego', 'val_ciego', 'inc_recp'],
     interactive: {
@@ -196,7 +280,7 @@ export const bodegaStepByStepSteps = [
     hook: 'Sin guías válidas no hay mercancía en sistema.',
     narrative:
       'Guías, certificados sanitarios y referencias de lote. Papelería incompleta = bloqueo err_doc. Solo con documentos OK se evalúa temperatura de ingreso.',
-    roles: ['Custodio'],
+    roles: [formatRoleLabel('custodio')],
     visual: 'cloud',
     flowRefs: ['v_doc', 'v_doc_ok', 'err_doc'],
     interactive: {
@@ -215,7 +299,7 @@ export const bodegaStepByStepSteps = [
     hook: 'Sensores + override del jefe con firma.',
     narrative:
       'Si la temperatura está fuera de rango, el jefe puede autorizar con motivo y firma digital. Sin justificación válida: RECHAZO TOTAL + log de incidente. Si está OK: inspección física.',
-    roles: ['Custodio', 'Jefe de bodega'],
+    roles: [formatRoleLabel('custodio'), formatRoleLabel('jefe_bodega')],
     visual: 'ice',
     flowRefs: ['v_temp1', 'override', 'motivo', 'rechazo'],
     interactive: { type: 'temp', min: -30, max: 8, threshold: 4, unit: '°C' },
@@ -227,7 +311,7 @@ export const bodegaStepByStepSteps = [
     hook: 'Daño visible → cuarentena, no al mapa.',
     narrative:
       'Estado físico de cajas y empaque. Si falla: cuarentena (inc_cal) y vuelta a inspección tras resolver. Si OK: las cajas pasan a inboundBoxes[] — existen en sistema pero aún no ocupan slots.',
-    roles: ['Custodio', 'Operario'],
+    roles: [formatRoleLabel('custodio'), formatRoleLabel('operario')],
     visual: 'snow',
     flowRefs: ['insp', 'v_cal', 'inc_cal', 'ingreso'],
     interactive: {
@@ -246,7 +330,11 @@ export const bodegaStepByStepSteps = [
     hook: 'La mercancía “existe” pero aún no tiene casa.',
     narrative:
       'Cada caja lleva temperatura, peso, cliente comercial y vínculos al catálogo. El jefe o custodio crea órdenes de trabajo tipo a_bodega para moverlas al mapa principal.',
-    roles: ['Custodio', 'Jefe', 'Operario'],
+    roles: [
+      formatRoleLabel('custodio'),
+      formatRoleLabel('jefe_bodega'),
+      formatRoleLabel('operario'),
+    ],
     visual: 'aurora',
     flowRefs: ['ingreso', 'asignar'],
     funFact: 'inboundBoxes y outboundBoxes son arrays en el estado operativo de bodega en Supabase (PostgreSQL).',
@@ -264,7 +352,7 @@ export const bodegaStepByStepSteps = [
     hook: 'Dos operarios no pueden reservar el mismo slot.',
     narrative:
       'Al asignar ubicación se intenta reservar el slot. Si ya está reservado: sugerir adyacente y reintentar (línea punteada). Lock exitoso → ubicación física → liberar lock → estado Ocupado.',
-    roles: ['Operario', 'Jefe'],
+    roles: [formatRoleLabel('operario'), formatRoleLabel('jefe_bodega')],
     visual: 'crystal',
     flowRefs: ['locking', 'lock', 'v_lock', 'almacen', 'unlock'],
     interactive: {
@@ -282,7 +370,11 @@ export const bodegaStepByStepSteps = [
     hook: 'Temperatura fuera de rango despierta al jefe.',
     narrative:
       'Monitor lee sensores por slot. Fuera de rango → alerta crítica. SLA: si no hay intervención en X minutos, escalar a gerencia (alerta roja). Cerrar alerta exige motivo y operario asignado.',
-    roles: ['Jefe', 'Admin', 'Operario'],
+    roles: [
+      formatRoleLabel('jefe_bodega'),
+      formatRoleLabel('administrador_bodega'),
+      formatRoleLabel('operario'),
+    ],
     visual: 'ice',
     flowRefs: ['monitor', 'v_rango', 'alerta', 'sla', 'escalar'],
     interactive: {
@@ -301,7 +393,11 @@ export const bodegaStepByStepSteps = [
     hook: 'Primario → secundario + merma + sobrante.',
     narrative:
       'Solicitud de procesamiento: validar materia prima lista (si no: esperar descongelación en loop). Zona limpia OK → ejecutar. La suma de pesos debe cuadrar; merma injustificada bloquea con auditoría.',
-    roles: ['Procesador', 'Jefe', 'Cuenta'],
+    roles: [
+      formatRoleLabel('procesador'),
+      formatRoleLabel('jefe_bodega'),
+      formatRoleLabel('operador_cuenta'),
+    ],
     visual: 'snow',
     flowRefs: ['sol_proc', 'ejec_proc', 'balance', 'v_merma', 'bloq_p'],
     interactive: {
@@ -321,7 +417,11 @@ export const bodegaStepByStepSteps = [
     hook: 'Primero vence, primero sale.',
     narrative:
       'OV con líneas hacia comprador. Sin stock: notificar faltante. Con stock: FEFO por fecha de vencimiento, picking y reserva de slots. Prefijo VE-####.',
-    roles: ['Admin Tenant', 'Operador Tenant', 'Operario'],
+    roles: [
+      formatRoleLabel('administrador_cuenta'),
+      formatRoleLabel('operador_cuenta'),
+      formatRoleLabel('operario'),
+    ],
     visual: 'cloud',
     flowRefs: ['sol_venta', 'valid_stock', 'fefo', 'picking'],
     interactive: {
@@ -340,7 +440,7 @@ export const bodegaStepByStepSteps = [
     hook: '¿Lo que pesó el camión = lo que salió del picking?',
     narrative:
       'Validación de peso en muelle de salida. Diferencia → bloqueo alerta_s y revisión de zona de picking (reintento). Temp del camión fuera de rango → cambiar vehículo o alerta.',
-    roles: ['Custodio', 'Transporte'],
+    roles: [formatRoleLabel('custodio'), formatRoleLabel('transportista')],
     visual: 'crystal',
     flowRefs: ['salida_cruzada', 'v_temp2', 'bloqueo_d'],
     interactive: {
@@ -359,12 +459,21 @@ export const bodegaStepByStepSteps = [
     hook: 'De outboundBoxes a dispatchedBoxes.',
     narrative:
       'Registro de salida, cartonaje contra OV si aplica, carga al camión. Carga incompleta → err_carga y vuelta a picking. Completa → segundo tramo de transporte hacia el cliente.',
-    roles: ['Custodio', 'Operario', 'Transporte'],
+    roles: [
+      formatRoleLabel('custodio'),
+      formatRoleLabel('operario'),
+      formatRoleLabel('transportista'),
+    ],
     visual: 'ice',
-    flowRefs: ['empaque', 'despacho', 'v_carga', 'trans2'],
+    flowRefs: ['empaque', 'despacho', 'v_carga', 'tv_viaje', 'trans2'],
     interactive: {
       type: 'chain',
-      steps: ['Empaque / registro salida', 'Cargar camión', '¿Carga completa? → En ruta'],
+      steps: [
+        'Empaque / registro salida',
+        'Cargar camión',
+        'contador_documento → TV-####',
+        'Transporte al cliente',
+      ],
     },
   },
   {
@@ -373,10 +482,10 @@ export const bodegaStepByStepSteps = [
     title: 'Entrega al cliente',
     hook: 'TV-#### con trazabilidad hasta el último metro.',
     narrative:
-      'Viaje en viajesTransporte. El rol Transporte registra cantidades, conformidad, incidencias. Sin evidencias no hay cierre: foto + firma + geolocalización obligatorias.',
-    roles: ['Transporte', 'Comprador'],
+      'viaje_transporte vinculado a la OV. El transportista registra cantidades, conformidad e incidencias. Sin evidencias no hay cierre: foto + firma + geolocalización obligatorias.',
+    roles: [formatRoleLabel('transportista'), 'Comprador (externo)'],
     visual: 'snow',
-    flowRefs: ['entrega', 'v_firma', 'err_f'],
+    flowRefs: ['entrega', 'v_firma', 'err_f', 'historial'],
     interactive: {
       type: 'evidence',
       items: [
@@ -392,10 +501,10 @@ export const bodegaStepByStepSteps = [
     title: 'FIN: Cerrado-OK',
     hook: 'Ciclo completo — compra → bodega → venta → evidencia.',
     narrative:
-      'Estado final verde en el diagrama. Historial en Supabase (PostgreSQL) para auditoría, reportes de merma acumulada y KPIs operativos. Has recorrido configuración SaaS, recepción con ramas, mapa con locking, alertas, procesamiento, FEFO, salida cruzada y cierre con evidencias.',
+      'Estado final verde. historial_movimiento y audit_log por tenant. Recorrido: empresa → tenant → SOL/OC → recepción → mapa → procesamiento → OV/FEFO → TV-#### → evidencias.',
     roles: ['Todos'],
     visual: 'aurora',
-    flowRefs: ['fin_ok'],
+    flowRefs: ['historial', 'fin_ok'],
     interactive: { type: 'celebrate' },
   },
 ]

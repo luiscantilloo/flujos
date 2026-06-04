@@ -7,6 +7,116 @@ body {
   margin: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Scroll vertical de página / portal */
+.app-scroll-page {
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Paneles internos (TOC, listas, sidebars) */
+.app-scroll-panel {
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Tablas y diagramas anchos */
+.app-scroll-x {
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+}
+
+.app-scroll-page,
+.app-scroll-panel,
+.app-scroll-x,
+.overflow-x-auto,
+.overflow-y-auto,
+.overflow-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(100 116 139 / 0.9) rgb(15 23 42 / 0.75);
+}
+
+.app-scroll-page::-webkit-scrollbar,
+.app-scroll-panel::-webkit-scrollbar,
+.app-scroll-x::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar,
+.overflow-y-auto::-webkit-scrollbar,
+.overflow-auto::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.app-scroll-page::-webkit-scrollbar-track,
+.app-scroll-panel::-webkit-scrollbar-track,
+.app-scroll-x::-webkit-scrollbar-track,
+.overflow-x-auto::-webkit-scrollbar-track,
+.overflow-y-auto::-webkit-scrollbar-track,
+.overflow-auto::-webkit-scrollbar-track {
+  background: rgb(15 23 42 / 0.55);
+  border-radius: 999px;
+}
+
+.app-scroll-page::-webkit-scrollbar-thumb,
+.app-scroll-panel::-webkit-scrollbar-thumb,
+.app-scroll-x::-webkit-scrollbar-thumb,
+.overflow-x-auto::-webkit-scrollbar-thumb,
+.overflow-y-auto::-webkit-scrollbar-thumb,
+.overflow-auto::-webkit-scrollbar-thumb {
+  background: rgb(71 85 105 / 0.85);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 999px;
+}
+
+.app-scroll-page::-webkit-scrollbar-thumb:hover,
+.app-scroll-panel::-webkit-scrollbar-thumb:hover,
+.app-scroll-x::-webkit-scrollbar-thumb:hover,
+.overflow-x-auto::-webkit-scrollbar-thumb:hover,
+.overflow-y-auto::-webkit-scrollbar-thumb:hover,
+.overflow-auto::-webkit-scrollbar-thumb:hover {
+  background: rgb(148 163 184 / 0.95);
+}
+
+.app-scroll-page::-webkit-scrollbar-corner,
+.app-scroll-panel::-webkit-scrollbar-corner,
+.app-scroll-x::-webkit-scrollbar-corner,
+.overflow-auto::-webkit-scrollbar-corner {
+  background: rgb(15 23 42 / 0.55);
+}
+
+/* Lienzo ER en pantalla completa */
+.er-diagram-grid-bg {
+  background-color: rgb(2 6 23);
+  background-image:
+    linear-gradient(rgb(51 65 85 / 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(51 65 85 / 0.35) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
 /* React Flow necesita altura real en toda la cadena; flex-1 + min-h-0 evita colapso a 0px */
 #root {
   display: flex;

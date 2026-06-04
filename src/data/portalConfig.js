@@ -12,7 +12,7 @@ import { BODEGA_STEP_COUNT } from './bodegaStepByStepData.js'
 
 /** Texto de la leyenda del diagrama (bodega de frío). */
 export const BODEGA_FRIO_LEGEND =
-  'DUEÑO (morado) → INQUILINO (morado puente). Varios nodos con anillo claro abren sub-flujos de documentación (OC, ingreso, mapa/slots, transporte, alertas, etc.) o Tenant/Owner. Amarillo + violeta: cierre con evidencias. Rojo: bloqueos. Verde: FIN. Líneas discontinuas: reintento o ciclo.'
+  'DUEÑO (morado): configurador TI (credenciales) → empresa → admin cuenta → tenant → bodegas. INQUILINO: admin arma operador, catálogos y equipo; luego SOL, OC, mapa, OV, TV. Login V2: empresa + usuario + contraseña. Sub-flujos con anillo. Amarillo/violeta: evidencias. Rojo: bloqueos. Verde: FIN.'
 
 export const PORTAL_BRAND = {
   title: 'Dev Hub',
@@ -77,17 +77,31 @@ export const portalMainSections = [
     action: { type: 'phase', phase: 'step-by-step' },
   },
   {
+    id: 'project-structure',
+    category: 'explore',
+    title: 'Estructura del proyecto',
+    description:
+      'Árbol completo frio-frontend y frio-backend: rutas, módulos, servicios, DTOs — doc V2.0 §4–§8.',
+    icon: 'Folder',
+    accent: 'sky',
+    enabled: true,
+    featured: true,
+    badge: 'Código',
+    keywords: ['estructura', 'carpetas', 'frontend', 'backend', 'next.js', 'nestjs'],
+    action: { type: 'phase', phase: 'project-structure' },
+  },
+  {
     id: 'stack-architecture',
     category: 'explore',
-    title: 'Arquitectura del proyecto',
+    title: 'Arquitectura',
     description:
-      'Carpetas del frontend y backend, y tablas Supabase. Árbol interactivo con copia en un clic.',
+      'Modelo de datos Supabase: tablas 3NF, ER, warehouse_state y RLS (empresa → tenant → bodega).',
     icon: 'Squares2X2',
     accent: 'emerald',
     enabled: true,
     featured: true,
-    badge: 'Interactivo',
-    keywords: ['arquitectura', 'carpetas', 'estructura', 'supabase', 'tablas', 'frontend', 'backend'],
+    badge: 'Datos',
+    keywords: ['arquitectura', 'supabase', 'tablas', 'er', 'postgresql', 'rls'],
     action: { type: 'phase', phase: 'stack-architecture' },
   },
   {
@@ -332,9 +346,13 @@ export function getPortalPhaseMeta(phase, referenceCtx = null) {
     flows: { title: 'Flujos interactivos', subtitle: 'Elige un diagrama para explorar el proceso.' },
     docs: { title: 'Documentación', subtitle: 'Referencias del producto y guía general.' },
     'dev-resources': { title: 'Stack y scripts', subtitle: 'Comandos, tecnologías y enlaces de desarrollo.' },
+    'project-structure': {
+      title: 'Estructura del proyecto',
+      subtitle: 'Carpetas de frio-frontend y frio-backend — explora y copia.',
+    },
     'stack-architecture': {
-      title: 'Arquitectura del proyecto',
-      subtitle: 'Estructura de carpetas y tablas Supabase — explora y copia.',
+      title: 'Arquitectura',
+      subtitle: 'Tablas Supabase, diagrama ER y modelo dual 3NF + jsonb.',
     },
     'step-by-step': {
       title: 'Paso a paso',

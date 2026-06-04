@@ -168,7 +168,7 @@ export function FrostJourney({ projectName, onBackToProjects }) {
       <IceStepTrail steps={bodegaStepByStepSteps} currentIndex={index} onJump={go} />
 
       <div
-        className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-auto bg-gradient-to-b ${VISUAL_BG[step.visual] ?? VISUAL_BG.ice}`}
+        className={`app-scroll-page relative z-10 flex min-h-0 flex-1 flex-col bg-gradient-to-b ${VISUAL_BG[step.visual] ?? VISUAL_BG.ice}`}
       >
         <FrostAmbience onPop={(x, y) => burst(x, y, { count: 6 })} />
 

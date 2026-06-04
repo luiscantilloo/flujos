@@ -102,7 +102,7 @@ export function ChecklistPortal({ project, onBackToMain, onBackToProjects }) {
     <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-slate-950">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_45%_at_80%_-10%,rgba(139,92,246,0.14),transparent),radial-gradient(ellipse_50%_40%_at_0%_100%,rgba(52,211,153,0.08),transparent)]" />
 
-      <div className="relative flex min-h-0 flex-1 flex-col overflow-auto">
+      <div className="relative flex min-h-0 flex-1 flex-col app-scroll-page">
         <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-8 sm:py-10">
           <button
             type="button"

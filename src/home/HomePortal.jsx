@@ -158,7 +158,7 @@ export function MainHub() {
   )
 
   return (
-    <div className="relative flex min-h-0 flex-1 flex-col overflow-auto">
+    <div className="relative flex min-h-0 flex-1 flex-col app-scroll-page">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="portal-orb portal-orb-violet absolute -left-32 top-0 h-96 w-96 rounded-full blur-3xl" />
         <div className="portal-orb portal-orb-sky absolute -right-24 top-32 h-80 w-80 rounded-full blur-3xl" />
@@ -245,7 +245,7 @@ export function MainHub() {
 
 export function FlowsList() {
   return (
-    <div className="relative flex min-h-0 flex-1 flex-col overflow-auto bg-slate-950">
+    <div className="relative flex min-h-0 flex-1 flex-col app-scroll-page bg-slate-950">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_0%,rgba(139,92,246,0.15),transparent)]" />
       <div className="relative mx-auto w-full max-w-3xl px-4 py-8 sm:px-8 sm:py-10">
         <Link

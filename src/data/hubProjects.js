@@ -5,9 +5,10 @@ export const hubProjects = [
   {
     id: 'bodega-frio',
     name: 'Bodega de frío',
-    summary: 'WMS multi-rol y multi-bodega: recepción, mapa de slots, procesamiento, ventas y transporte.',
+    summary:
+      'WMS multi-rol: empresa → tenant → bodega. Producto Next.js + NestJS + Supabase; este Dev Hub documenta flujos y ER.',
     accent: 'sky',
-    tags: ['WMS', 'Next.js 16', 'Supabase'],
+    tags: ['WMS', 'Empresa · Tenant', 'Supabase'],
     enabled: true,
     /** Documento principal para secciones de referencia (v1.0 operacional). */
     documentationDocId: 'bodega-frio-v2',

@@ -25,14 +25,33 @@ const nodes = [
   {
     id: 'config',
     type: 'process',
-    data: { label: 'Configurador crea Cuenta', drillDownTo: 'sub_doc_config_inicial' },
+    data: {
+      label: 'TI (configurador): sesión + crear Empresa',
+      drillDownTo: 'sub_doc_config_inicial',
+    },
+  },
+  {
+    id: 'ti_admin',
+    type: 'process',
+    data: {
+      label: 'TI: crear y asignar administrador de cuenta',
+      drillDownTo: 'sub_doc_config_inicial',
+    },
+  },
+  {
+    id: 'tenant_alta',
+    type: 'process',
+    data: {
+      label: 'Alta tenant (codeCuenta) bajo la empresa',
+      drillDownTo: 'sub_doc_config_inicial',
+    },
   },
   {
     id: 'v_tenant',
     type: 'decision',
-    data: { label: '¿Cuenta Válida?', drillDownTo: 'sub_doc_auth' },
+    data: { label: '¿Tenant válido y activo?', drillDownTo: 'sub_doc_auth' },
   },
-  { id: 'err_t', type: 'error', data: { label: 'Bloqueo: ID Inválido / Suspensión' } },
+  { id: 'err_t', type: 'error', data: { label: 'Bloqueo: tenant inválido o suspendido' } },
   {
     id: 'estructura',
     type: 'process',
@@ -51,22 +70,38 @@ const nodes = [
     id: 'perfiles',
     type: 'process',
     data: {
-      label: 'Crear Roles: Admin, Jefe, Custodio...',
-      drillDownTo: 'sub_tenant_setup',
+      label: 'TI: admin cuenta asignado (login V2 por empresa)',
+      drillDownTo: 'sub_doc_auth',
     },
   },
   {
     id: 'v_perm',
     type: 'decision',
-    data: { label: '¿Permiso Asignado?', drillDownTo: 'sub_tenant_setup' },
+    data: { label: '¿Permiso Asignado?', drillDownTo: 'sub_doc_config_inicial' },
   },
   { id: 'err_p', type: 'error', data: { label: 'Denegar Acción: Sin Atribuciones' } },
   {
     id: 'hdr_inqu',
     type: 'headerBridge',
     data: {
-      label: 'INQUILINO — Operación Diaria',
+      label: 'INQUILINO — Operación diaria (tenant)',
       drillDownTo: 'sub_doc_hilo_negocio',
+    },
+  },
+  {
+    id: 'adm_cuenta',
+    type: 'process',
+    data: {
+      label: 'Administrador de cuenta: operador, catálogos, usuarios',
+      drillDownTo: 'sub_doc_config_inicial',
+    },
+  },
+  {
+    id: 'catalogo',
+    type: 'process',
+    data: {
+      label: 'Catálogo: producto, cliente, proveedor, comprador, camión, planta',
+      drillDownTo: 'sub_doc_config_inicial',
     },
   },
   {
@@ -75,9 +110,17 @@ const nodes = [
     data: { label: 'Función Strip: Limpiar Undefined/Nulls' },
   },
   {
+    id: 'sol',
+    type: 'process',
+    data: {
+      label: 'Solicitud de compra (SOL) — operador cuenta',
+      drillDownTo: 'sub_doc_sol',
+    },
+  },
+  {
     id: 'oc',
     type: 'process',
-    data: { label: 'Orden de Compra / Solicitud', drillDownTo: 'sub_doc_oc' },
+    data: { label: 'Orden de compra (OC) — líneas y kg', drillDownTo: 'sub_doc_oc' },
   },
   { id: 'v_prov', type: 'decision', data: { label: '¿Proveedor Activo?' } },
   { id: 'err_prov', type: 'error', data: { label: 'Alerta: Proveedor Bloqueado' } },
@@ -223,7 +266,11 @@ const nodes = [
     type: 'process',
     data: { label: 'Actualizar Inventario', drillDownTo: 'sub_doc_cola_mapa' },
   },
-  { id: 'sol_venta', type: 'process', data: { label: 'Orden de Venta' } },
+  {
+    id: 'sol_venta',
+    type: 'process',
+    data: { label: 'Orden de venta (OV) + planta destino', drillDownTo: 'sub_doc_ov' },
+  },
   { id: 'valid_stock', type: 'decision', data: { label: '¿Stock Disponible?' } },
   { id: 'notif_f', type: 'process', data: { label: 'Notificar Faltante' } },
   { id: 'fefo', type: 'process', data: { label: 'Lógica FEFO: Vencimiento' } },
@@ -265,14 +312,25 @@ const nodes = [
     data: { label: 'Revisar Zona de Picking', drillDownTo: 'sub_doc_cola_mapa' },
   },
   {
+    id: 'tv_viaje',
+    type: 'process',
+    data: {
+      label: 'Viaje TV-#### (contador_documento)',
+      drillDownTo: 'sub_doc_transporte',
+    },
+  },
+  {
     id: 'trans2',
     type: 'process',
-    data: { label: 'Transporte', drillDownTo: 'sub_doc_transporte' },
+    data: { label: 'Transporte al cliente', drillDownTo: 'sub_doc_transporte' },
   },
   {
     id: 'entrega',
     type: 'process',
-    data: { label: 'Llegada a Cliente', drillDownTo: 'sub_doc_transporte' },
+    data: {
+      label: 'Evidencia entrega (foto, firma, línea OV)',
+      drillDownTo: 'sub_doc_transporte',
+    },
   },
   {
     id: 'v_firma',
@@ -280,12 +338,22 @@ const nodes = [
     data: { label: '¿Firma + Foto + Ubicación?' },
   },
   { id: 'err_f', type: 'error', data: { label: 'Bloqueo: Cierre sin Evidencia' } },
+  {
+    id: 'historial',
+    type: 'process',
+    data: {
+      label: 'Historial movimiento + auditoría',
+      drillDownTo: 'sub_doc_reporteria',
+    },
+  },
   { id: 'fin_ok', type: 'success', data: { label: 'FIN: Cerrado-OK' } },
 ]
 
 const edges = [
   e('ed_h_cfg', 'hdr_dueno', 'config'),
-  e('ed_cfg_vt', 'config', 'v_tenant'),
+  e('ed_cfg_adm', 'config', 'ti_admin'),
+  e('ed_ad_tn', 'ti_admin', 'tenant_alta'),
+  e('ed_tn_vt', 'tenant_alta', 'v_tenant'),
   e('ed_vt_no', 'v_tenant', 'err_t', { sourceHandle: 'no', label: 'N' }),
   e('ed_vt_si', 'v_tenant', 'estructura', { sourceHandle: 'yes', label: 'S' }),
   e('ed_es_vc', 'estructura', 'v_cap'),
@@ -294,8 +362,11 @@ const edges = [
   e('ed_pf_vp', 'perfiles', 'v_perm'),
   e('ed_vp_no', 'v_perm', 'err_p', { sourceHandle: 'no', label: 'N' }),
   e('ed_vp_si', 'v_perm', 'hdr_inqu', { sourceHandle: 'yes', label: 'S' }),
-  e('ed_hi_st', 'hdr_inqu', 'strip'),
-  e('ed_st_oc', 'strip', 'oc'),
+  e('ed_hi_adm', 'hdr_inqu', 'adm_cuenta'),
+  e('ed_ad_cat', 'adm_cuenta', 'catalogo'),
+  e('ed_cat_st', 'catalogo', 'strip'),
+  e('ed_st_sol', 'strip', 'sol'),
+  e('ed_sol_oc', 'sol', 'oc'),
   e('ed_oc_vp', 'oc', 'v_prov'),
   e('ed_vpvn', 'v_prov', 'err_prov', { sourceHandle: 'no', label: 'N' }),
   e('ed_vpvsi', 'v_prov', 'prov', { sourceHandle: 'yes', label: 'S' }),
@@ -369,12 +440,15 @@ const edges = [
   e('ed_em_ds', 'empaque', 'despacho'),
   e('ed_ds_vc', 'despacho', 'v_carga'),
   e('ed_vcn_no', 'v_carga', 'err_carga', { sourceHandle: 'no', label: 'N' }),
-  e('ed_vcn_si', 'v_carga', 'trans2', { sourceHandle: 'yes', label: 'S' }),
+  e('ed_vcn_si', 'v_carga', 'tv_viaje', { sourceHandle: 'yes', label: 'S' }),
   e('ed_ec_pk', 'err_carga', 'picking', { ...L }),
+  e('ed_ds_tv', 'despacho', 'tv_viaje'),
+  e('ed_tv_tr', 'tv_viaje', 'trans2'),
   e('ed_t2_en', 'trans2', 'entrega'),
   e('ed_en_vf', 'entrega', 'v_firma'),
   e('ed_vf_no', 'v_firma', 'err_f', { sourceHandle: 'no', label: 'N' }),
-  e('ed_vf_si', 'v_firma', 'fin_ok', { sourceHandle: 'yes', label: 'S' }),
+  e('ed_vf_si', 'v_firma', 'historial', { sourceHandle: 'yes', label: 'S' }),
+  e('ed_hi_ok', 'historial', 'fin_ok'),
 ]
 
 /** Desglose alineado al Mermaid: tenant → estructura → actores → usuarios → operación Owner (transversal). */
@@ -382,38 +456,69 @@ const subTenantNodes = [
   {
     id: 'st_start',
     type: 'process',
-    data: { label: 'Configurador crea Tenant', drillDownTo: 'sub_doc_config_inicial' },
+    data: {
+      label: '0–1. TI (sesión) + crear empresa',
+      drillDownTo: 'sub_doc_config_inicial',
+    },
   },
   {
-    id: 'st_config_est',
+    id: 'st_ti_admin',
     type: 'process',
     data: {
-      label: 'Configura estructura operativa',
+      label: '2. TI: administrador de cuenta (codigo_empresa)',
+      drillDownTo: 'sub_doc_config_inicial',
+    },
+  },
+  {
+    id: 'st_tenant',
+    type: 'process',
+    data: {
+      label: '3. Alta tenant (codeCuenta)',
       drillDownTo: 'sub_doc_config_inicial',
     },
   },
   {
     id: 'st_crear_bod',
     type: 'process',
-    data: { label: 'Crear bodegas', drillDownTo: 'sub_doc_config_inicial' },
+    data: { label: '4. Crear bodegas del tenant', drillDownTo: 'sub_doc_config_inicial' },
   },
   {
     id: 'st_def_cap',
     type: 'process',
-    data: { label: 'Definir capacidad y reglas', drillDownTo: 'sub_doc_config_inicial' },
+    data: {
+      label: '5. Capacidad y reglas del plano',
+      drillDownTo: 'sub_doc_config_inicial',
+    },
   },
   {
-    id: 'st_crear_act',
+    id: 'st_handoff',
+    type: 'headerBridge',
+    data: { label: 'Entrega al administrador de cuenta' },
+  },
+  {
+    id: 'st_admin_ten',
     type: 'process',
-    data: { label: 'Crear actores de operación' },
+    data: { label: '6. Admin cuenta: operador y usuarios', drillDownTo: 'sub_doc_auth' },
   },
   { id: 'st_admin_bod', type: 'process', data: { label: 'Administrador de bodega' } },
   { id: 'st_jefes_bod', type: 'process', data: { label: 'Jefes de bodega' } },
   { id: 'st_custodios', type: 'process', data: { label: 'Custodios' } },
-  { id: 'st_oper_pro', type: 'process', data: { label: 'Operadores / Procesadores' } },
-  { id: 'st_crear_usr', type: 'process', data: { label: 'Crear usuarios Tenant', drillDownTo: 'sub_doc_auth' } },
-  { id: 'st_admin_ten', type: 'process', data: { label: 'Administrador Tenant' } },
-  { id: 'st_oper_ten', type: 'process', data: { label: 'Operador Tenant' } },
+  { id: 'st_oper_pro', type: 'process', data: { label: 'Operarios / Procesadores / Transportista' } },
+  {
+    id: 'st_oper_ten',
+    type: 'process',
+    data: { label: 'Operador de cuenta (operador_cuenta)' },
+  },
+  {
+    id: 'st_asig_bod',
+    type: 'process',
+    data: { label: 'asignacion_bodega: roles por bodega' },
+  },
+  {
+    id: 'st_sol_t',
+    type: 'process',
+    data: { label: 'Solicitud de compra (SOL)', drillDownTo: 'sub_doc_sol' },
+  },
   {
     id: 'st_oc_t',
     type: 'process',
@@ -440,7 +545,7 @@ const subTenantNodes = [
   {
     id: 'st_transp_in',
     type: 'process',
-    data: { label: 'Transportistas', drillDownTo: 'sub_doc_integraciones' },
+    data: { label: 'Transportista (rol WMS)', drillDownTo: 'sub_doc_transporte' },
   },
   {
     id: 'st_integ_bod',
@@ -544,17 +649,21 @@ const subTenantNodes = [
 ]
 
 const subTenantEdges = [
-  e('st_s_ce', 'st_start', 'st_config_est'),
-  e('st_ce_bod', 'st_config_est', 'st_crear_bod'),
-  e('st_ce_cap', 'st_config_est', 'st_def_cap'),
-  e('st_ce_act', 'st_config_est', 'st_crear_act'),
-  e('st_ca_ab', 'st_crear_act', 'st_admin_bod'),
-  e('st_ca_jb', 'st_crear_act', 'st_jefes_bod'),
-  e('st_ca_cu', 'st_crear_act', 'st_custodios'),
-  e('st_ca_op', 'st_crear_act', 'st_oper_pro'),
-  e('st_ca_usr', 'st_crear_act', 'st_crear_usr'),
-  e('st_usr_ad', 'st_crear_usr', 'st_admin_ten'),
-  e('st_usr_op', 'st_crear_usr', 'st_oper_ten'),
+  e('st_s_ad', 'st_start', 'st_ti_admin'),
+  e('st_ad_tn', 'st_ti_admin', 'st_tenant'),
+  e('st_tn_bod', 'st_tenant', 'st_crear_bod'),
+  e('st_bod_cap', 'st_crear_bod', 'st_def_cap'),
+  e('st_cap_ho', 'st_def_cap', 'st_handoff'),
+  e('st_ho_ad', 'st_handoff', 'st_admin_ten'),
+  e('st_ad_op', 'st_admin_ten', 'st_oper_ten'),
+  e('st_ad_eco', 'st_admin_ten', 'st_config_eco'),
+  e('st_ad_asig', 'st_admin_ten', 'st_asig_bod'),
+  e('st_as_ab', 'st_asig_bod', 'st_admin_bod'),
+  e('st_as_jb', 'st_asig_bod', 'st_jefes_bod'),
+  e('st_as_cu', 'st_asig_bod', 'st_custodios'),
+  e('st_as_op', 'st_asig_bod', 'st_oper_pro'),
+  e('st_op_sol', 'st_oper_ten', 'st_sol_t'),
+  e('st_sol_oc', 'st_sol_t', 'st_oc_t'),
   e('st_at_oc', 'st_admin_ten', 'st_oc_t'),
   e('st_at_eco', 'st_admin_ten', 'st_config_eco'),
   e('st_at_int', 'st_admin_ten', 'st_integ_bod'),
@@ -594,8 +703,8 @@ export const flowDefinitions = {
   ...docSubFlows,
   sub_tenant_setup: {
     id: 'sub_tenant_setup',
-    title: 'Detalle: Tenant, actores y Owner',
-    tabShort: 'Tenant/Owner',
+    title: 'Detalle: TI (empresa → bodegas → admin) → operación',
+    tabShort: 'Empresa/Tenant',
     nodes: subTenantNodes,
     edges: subTenantEdges,
   },

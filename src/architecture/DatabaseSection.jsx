@@ -1,6 +1,7 @@
 import { HiOutlineShare, HiOutlineTableCells } from 'react-icons/hi2'
 import { DatabaseArchitecturePanel } from './DatabaseArchitecturePanel.jsx'
 import { DatabaseErDiagramPanel } from './DatabaseErDiagramPanel.jsx'
+import { DatabaseReadingGuidePanel } from './DatabaseReadingGuidePanel.jsx'
 
 const DB_VIEWS = [
   { id: 'tables', label: 'Tablas', icon: HiOutlineTableCells },
@@ -37,11 +38,14 @@ export function DatabaseSection({ section, selectedTableId, onSelectTable, dbVie
       {dbView === 'er' ? (
         <DatabaseErDiagramPanel />
       ) : (
-        <DatabaseArchitecturePanel
-          section={section}
-          selectedTableId={selectedTableId}
-          onSelectTable={onSelectTable}
-        />
+        <div className="space-y-4">
+          {/* <DatabaseReadingGuidePanel onSelectTable={onSelectTable} /> */}
+          <DatabaseArchitecturePanel
+            section={section}
+            selectedTableId={selectedTableId}
+            onSelectTable={onSelectTable}
+          />
+        </div>
       )}
     </div>
   )

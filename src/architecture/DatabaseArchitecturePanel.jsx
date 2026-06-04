@@ -10,12 +10,14 @@ import {
 import { SCHEMA_DOMAINS } from '../data/bodegaDatabaseSchema.js'
 
 const DOMAIN_ACCENT = {
-  tenant: 'border-violet-500/30 bg-violet-500/10 text-violet-200',
+  rbac: 'border-purple-500/30 bg-purple-500/10 text-purple-200',
+  platform: 'border-violet-500/30 bg-violet-500/10 text-violet-200',
+  rbac: 'border-indigo-500/30 bg-indigo-500/10 text-indigo-200',
   catalog: 'border-sky-500/30 bg-sky-500/10 text-sky-200',
   purchase: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200',
-  sales: 'border-amber-500/30 bg-amber-500/10 text-amber-200',
   warehouse: 'border-cyan-500/30 bg-cyan-500/10 text-cyan-200',
   processing: 'border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-200',
+  sales: 'border-amber-500/30 bg-amber-500/10 text-amber-200',
   system: 'border-slate-500/30 bg-slate-500/10 text-slate-300',
 }
 
@@ -64,15 +66,24 @@ export function DatabaseArchitecturePanel({ selectedTableId, onSelectTable, sect
 
   const filteredTables = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return tables.filter((t) => {
+    const list = tables.filter((t) => {
       if (domainFilter !== 'all' && t.domain !== domainFilter) return false
       if (!q) return true
-      const hay = [t.table, t.name, t.schema, t.physical, t.desc, ...(t.fields?.map((f) => f.name) ?? [])]
+      const hay = [
+        String(t.readOrder ?? ''),
+        t.table,
+        t.name,
+        t.schema,
+        t.physical,
+        t.desc,
+        ...(t.fields?.map((f) => f.name) ?? []),
+      ]
         .filter(Boolean)
         .join(' ')
         .toLowerCase()
       return hay.includes(q)
     })
+    return [...list].sort((a, b) => a.readOrder - b.readOrder)
   }, [tables, query, domainFilter])
 
   const activeTable = useMemo(
@@ -89,7 +100,9 @@ export function DatabaseArchitecturePanel({ selectedTableId, onSelectTable, sect
         <HiOutlineTableCells className="h-5 w-5 shrink-0 text-emerald-400/80" aria-hidden />
         <div className="min-w-0 flex-1">
           <p className="font-mono text-sm font-semibold text-slate-100">{section.rootLabel}</p>
-          <p className="text-xs text-slate-500">{tables.length} tablas · vista relacional</p>
+          <p className="text-xs text-slate-500">
+            {tables.length} tablas · orden de lectura 0→31 (ver guía arriba)
+          </p>
         </div>
         <CopyButton text={copySectionText} label="Copiar todas" />
       </div>
@@ -137,7 +150,7 @@ export function DatabaseArchitecturePanel({ selectedTableId, onSelectTable, sect
       </div>
 
       <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(11rem,16rem)_1fr]">
-        <div className="max-h-80 overflow-auto border-b border-slate-700/50 p-2 lg:max-h-none lg:border-b-0 lg:border-r">
+        <div className="app-scroll-panel max-h-80 border-b border-slate-700/50 p-2 lg:max-h-none lg:border-b-0 lg:border-r">
           <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Tablas</p>
           <ul className="space-y-0.5" role="listbox" aria-label="Lista de tablas">
             {filteredTables.length === 0 ? (
@@ -157,7 +170,12 @@ export function DatabaseArchitecturePanel({ selectedTableId, onSelectTable, sect
                         active ? 'bg-emerald-500/15 ring-1 ring-emerald-400/30' : 'hover:bg-slate-800/60',
                       ].join(' ')}
                     >
-                      <span className="font-mono text-xs text-emerald-200/90">
+                      <span className="flex items-center gap-1.5 font-mono text-xs text-emerald-200/90">
+                        {t.readOrder != null && t.readOrder < 999 ? (
+                          <span className="rounded bg-emerald-500/20 px-1 text-[10px] font-bold text-emerald-300">
+                            {t.readOrder}
+                          </span>
+                        ) : null}
                         {t.schema}.{t.table}
                       </span>
                       <span className="mt-0.5 block truncate text-[11px] text-slate-500">{t.name}</span>
@@ -169,7 +187,7 @@ export function DatabaseArchitecturePanel({ selectedTableId, onSelectTable, sect
           </ul>
         </div>
 
-        <div className="flex min-h-0 flex-col overflow-auto p-4">
+        <div className="app-scroll-panel flex min-h-0 flex-col p-4">
           {activeTable ? (
             <>
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -189,15 +207,30 @@ export function DatabaseArchitecturePanel({ selectedTableId, onSelectTable, sect
                   {activeTable.physical ? (
                     <p className="mt-1 font-mono text-[11px] text-cyan-200/75">{activeTable.physical}</p>
                   ) : null}
+                  {activeTable.readOrder != null && activeTable.readOrder < 999 ? (
+                    <div className="mt-3 rounded-lg border border-emerald-500/25 bg-emerald-950/30 px-3 py-2 text-xs text-emerald-100/90">
+                      <p className="font-semibold">
+                        Tabla {activeTable.readOrder}
+                        {activeTable.readingPhase ? ` · ${activeTable.readingPhase}` : ''}
+                      </p>
+                      {activeTable.readingFirst ? (
+                        <p className="mt-1 text-slate-400">{activeTable.readingFirst}</p>
+                      ) : null}
+                      {activeTable.readingThen ? (
+                        <p className="mt-1 text-emerald-200/70">→ {activeTable.readingThen}</p>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </div>
                 <CopyButton text={copyTableText} label="Copiar tabla" className="shrink-0" />
               </div>
 
-              <div className="mt-4 overflow-x-auto rounded-xl border border-slate-700/55">
+              <div className="app-scroll-x mt-4 rounded-xl border border-slate-700/55">
                 <table className="w-full min-w-[28rem] text-left text-sm">
                   <thead>
                     <tr className="border-b border-slate-700/60 bg-slate-950/60 text-xs uppercase tracking-wide text-slate-500">
                       <th className="px-3 py-2.5 font-medium">Campo</th>
+                      <th className="px-3 py-2.5 font-medium">En código</th>
                       <th className="px-3 py-2.5 font-medium">Tipo</th>
                       <th className="px-3 py-2.5 font-medium">Claves</th>
                       <th className="px-3 py-2.5 font-medium">Notas</th>
@@ -210,6 +243,7 @@ export function DatabaseArchitecturePanel({ selectedTableId, onSelectTable, sect
                         className="border-b border-slate-800/50 transition-colors last:border-0 hover:bg-slate-800/30"
                       >
                         <td className="px-3 py-2 font-mono text-xs text-violet-200">{f.name}</td>
+                        <td className="px-3 py-2 font-mono text-[11px] text-amber-200/80">{f.legacy ?? '—'}</td>
                         <td className="px-3 py-2 text-slate-300">{f.type}</td>
                         <td className="px-3 py-2">
                           <div className="flex flex-wrap gap-1">

@@ -22,6 +22,75 @@ Bodega de Frío es un sistema web de operación diseñado para gestionar de form
 
 Trazabilidad completa: Cada caja/lote tiene historial desde su ingreso hasta su despacho o procesamiento. Tiempo real: Estado operativo sincronizado en PostgreSQL (Supabase), visible simultáneamente por todos los usuarios activos.
 
+### 1.1 Empresa y tenant — no son lo mismo
+
+En V2.0 **todo empieza por el configurador** (equipo TI del proveedor SaaS): personas reales con **credenciales** en Supabase Auth. El modelo de datos y el onboarding **no arrancan en la tabla empresa** — arrancan en el **configurador**, que inicia sesión en el panel de plataforma (sin `codigoEmpresa` de cliente) y desde ahí **crea empresas** y **asigna el administrador de cuenta** de cada una.
+
+| Concepto en negocio | En código / base de datos | Identificador |
+| --- | --- | --- |
+| **Empresa** (cliente jurídico del SaaS) | `empresa` | `codigoEmpresa` / `codigo_empresa` |
+| **Tenant** (unidad operativa bajo la empresa) | `cuenta` (tenant_config) | `codeCuenta` / `codigo_cuenta` |
+| Ubicación física del tenant | Bodega | `warehouseId` / `id_bodega` |
+| Personas que operan | Usuario + rol | `uid` + `id_rol` |
+
+**Regla de oro:** el **tenant** (`codeCuenta`) pertenece a una **empresa** (`codigoEmpresa`). Catálogos, órdenes, inventario y usuarios de cuenta cuelgan del **tenant**, no directamente de la empresa. Una empresa puede tener **varios tenants** (divisiones, marcas, contratos separados).
+
+**Todo empieza por el equipo TI (configurador), que ya tiene credenciales.** TI crea la **empresa** y le asigna un **administrador de cuenta**; después continúan tenant, bodegas y el flujo operativo que ya conoces.
+
+#### Autenticación V2.0 (usuarios de una empresa)
+
+Al ingresar a la app (custodio, operario, admin cuenta, etc.):
+
+1. Se ingresa el **código de empresa** (`codigoEmpresa`) → el sistema verifica que exista y esté activa.
+2. Se ingresa el **usuario** (correo o identificador) → se verifica que **pertenezca a esa empresa** (`usuario.codigo_empresa`).
+3. Si ambas validaciones son correctas, se pide la **contraseña** (Supabase Auth) y entra con **cualquier rol** que tenga asignado.
+
+El **configurador TI** no sigue ese flujo de empresa cliente: inicia sesión en el panel de plataforma con su correo y contraseña (sin `codigoEmpresa` de cliente).
+
+```text
+FASE A — Equipo TI (configurador · plataforma)
+────────────────────────────────────────────
+0. Iniciar sesión como configurador (credenciales TI · Supabase Auth)
+
+1. Crear EMPRESA (cliente SaaS)
+      empresas/{codigoEmpresa}/
+
+2. Crear y asignar ADMINISTRADOR DE CUENTA (responsable del cliente)
+      usuarios/{uid}  →  codigo_empresa = codigoEmpresa, rol = administrador_cuenta
+      (Supabase Auth + contraseña; pertenece a la empresa para el login V2)
+
+3. Crear TENANT bajo esa empresa
+      tenants/{codeCuenta}/config  →  codigo_empresa FK
+
+4. Crear BODEGAS del tenant (infraestructura)
+      warehouses/{warehouseId}  →  slots, capacidad, reglas del plano
+
+FASE B — Administrador de cuenta (ya dentro del tenant)
+──────────────────────────────────────────────────────
+5. Crear operador de cuenta y resto de usuarios de su equipo
+6. Catálogos: productos, clientes, proveedores, compradores
+7. Camiones, plantas, flota
+8. Asignar equipo de bodega (jefe, custodio, operario, procesador, transportista)
+9. SOL / OC / OV y operación diaria en las bodegas que levantó TI
+```
+
+El **administrador de cuenta no crea la empresa ni las bodegas**; las hereda del onboarding de TI.
+
+#### Qué queda asignado al tenant (`codeCuenta`)
+
+| Dominio | Recursos | Cómo se asocia |
+| --- | --- | --- |
+| Plataforma | Bodegas del tenant | `bodega.codigo_cuenta` → tenant |
+| Usuarios | Admin cuenta, operador cuenta, roles de bodega | `usuario.codigo_empresa` (login) + `codigo_cuenta` (operación); NULL solo configurador TI |
+| Catálogos | Productos, clientes, proveedores, compradores, camiones, plantas | FK `codigo_cuenta` |
+| Compras / ventas | SOL, OC, OV y líneas | `codigo_cuenta` + bodega |
+| Bodega operativa | `state/main` | Por `warehouseId` del tenant |
+| Procesamiento / transporte / historial | Igual que antes | Scoped al tenant |
+
+El **administrador de cuenta** opera **dentro del tenant** que le asignó el configurador. La **empresa** agrupa tenants a nivel comercial y de contrato; el **aislamiento operativo** en RLS es por `codeCuenta` (y por bodega cuando aplica).
+
+> **Multi-tenant:** filtrar por `codigo_cuenta` para que un tenant no vea datos de otro. El configurador ve empresas y tenants en el panel de plataforma.
+
 ## 2. Qué Cambia de V1.0 a V2.0
 
 | Característica | V1.0 | V2.0 |
@@ -63,17 +132,25 @@ Trazabilidad completa: Cada caja/lote tiene historial desde su ingreso hasta su 
 | --- | --- |
 | Cloud PostgreSQL (Supabase) | Almacena el estado actual de los slots, cajas, lotes y viajes en tiempo real. |
 
-```text
-PostgreSQL (Supabase) Security Rules
-```
-
-Configuración para que solo el UID del servidor NestJS pueda escribir. Supabase Storage Respaldo de firmas digitales y documentos adjuntos de la recepción. Supabase Cloud Messaging Envío de alertas push a los operarios cuando el sensor de temperatura falla.
+- **RLS (Row Level Security):** políticas por `codigo_cuenta` y, en bodega, por `id_bodega` vía asignación.
+- **Storage:** firmas y adjuntos de recepción (opcional si no van solo a Cloudinary).
+- **Realtime:** canales acotados por bodega; payload de `warehouse_state` acotado por diseño.
+- **FCM / push (propuesto):** alertas de temperatura a operarios.
 
 ```text
 Cloudinary (API)
 ```
 
 Almacenamiento y optimización de las evidencias fotográficas del transporte.
+
+### 3.1 Dev Hub (`flujo`) vs aplicación operativa (`frio`)
+
+| Artefacto | Repositorio | Stack en runtime | Rol |
+| --- | --- | --- | --- |
+| **Aplicación WMS** | `frio-frontend`, `frio-backend` | Next.js 16, NestJS, Supabase | Operación en bodega (producción) |
+| **Dev Hub** | `flujo` (este portal de documentación) | Vite, React 19, React Flow, Mermaid | Diagramas, ER, doc V2.0, paso a paso — **no sustituye** al producto |
+
+La documentación y el modelo ER del Dev Hub describen el **diseño objetivo** del producto. Cualquier divergencia debe resolverse en los repos `frio-*`, no solo en el hub.
 
 ## 4. Arquitectura del Sistema
 
@@ -108,13 +185,23 @@ frio-backend/
 │   └── modules/                # Módulos de dominio modularizados
 │       ├── ingreso/            # Lógica de recepción y OC
 │       ├── inventario/         # Gestión de slots y Locking
-PostgreSQL (Supabase) (NoSQL Structure) /
-├── tenants/                    # Configuración por cuenta
-│   └── {codeCuenta}/           # Namespace de la organización
-│       ├── config              # Reglas, capacidad y bodegas
-│       ├── catalogo/           # Productos primarios y secundarios
-│       └── providers/          # Lista de proveedores
-├── warehouses/                 # Datos operativos vivos
+│       ├── ventas/             # OV, FEFO, despacho
+│       ├── procesamiento/      # Solicitudes, merma, balance
+│       └── configuracion/      # Empresas, tenants, catálogos (plataforma + cuenta)
+PostgreSQL (Supabase) — rutas lógicas V2 /
+├── empresas/                   # Cliente jurídico del SaaS
+│   └── {codigoEmpresa}/        # ← El configurador crea la empresa primero
+├── tenants/                    # Cuenta operativa (pertenece a una empresa)
+│   └── {codeCuenta}/           # ← Luego el tenant bajo codigoEmpresa
+│       ├── config              # Metadatos del tenant (nombre, activa, reglas)
+│       ├── catalogo/           # Productos de ESTE tenant
+│       ├── clientes/           # Clientes comerciales del tenant
+│       ├── providers/          # Proveedores del tenant
+│       ├── compradores/        # Destinos OV del tenant
+│       ├── ordenesCompra/      # OC del tenant
+│       ├── ordenesVenta/       # OV del tenant
+│       └── solicitudesCompra/  # SOL del tenant
+├── warehouses/                 # Bodegas (cada una con codeCuenta del tenant)
 │   └── {warehouseId}/
 │       ├── state/
 │       │   └── main            # Slots, boxes y alertas en vivo [cite: 403, 404]
@@ -123,24 +210,47 @@ PostgreSQL (Supabase) (NoSQL Structure) /
 └── systemCounters/             # Contadores globales (ej. Viajes TV-####)
 ```
 
-#### Flujo de Datos
+#### Flujo de datos (lectura vs escritura)
 
 ```text
-LECTURA (Tiempo Real)
-Usuario ← Next.js SDK ← PostgreSQL (Supabase) / Realtime DB
-ESCRITURA (Validación Atómica)
-Usuario → Next.js Dashboard → NestJS Backend
+LECTURA (tiempo real, cliente)
+  Usuario → Next.js → Supabase client (PostgreSQL + Realtime)
+  · Suscripción a warehouse_state / cambios por bodega
+  · RLS filtra por codigo_cuenta (tenant) y rol
+
+ESCRITURA (validación server-side)
+  Usuario → Next.js → NestJS → Supabase Admin SDK
+  · OC, SOL, movimientos, saveWarehouseState(), locking
+  · StripInterceptor elimina undefined antes de persistir
+
+EXCEPCIONES (secretos)
+  Next.js Route Handlers → n8n (pedido proveedor), Cloudinary (evidencias)
 ```
 
-↘
+#### Modelo dual de persistencia
 
-## 1. Función Strip (Limpieza)
+| Capa | Qué es | Uso |
+| --- | --- | --- |
+| **Tablas 3NF** | `empresa`, `cuenta`, catálogos, SOL/OC/OV, `slot`, `caja`, … | Contratos, reportes, auditoría, integridad referencial |
+| **`warehouse_state` (jsonb)** | Vista agregada `state/main` por bodega | Inventario en vivo, Realtime, locking entre operarios |
 
-## 2. Balance de Masa (Pesos)
+Regla: el jsonb es la **proyección operativa** del mapa; las entidades 3NF son la **descomposición lógica** y el destino de reportes. Implementación debe evitar que ambas capas diverjan sin reconciliación.
 
-## 3. Locking (Bloqueo de Slots)
+#### Seguridad de datos
 
-## 4. Auth & Roles
+- **RLS** en tablas con `codigo_cuenta`: un tenant no lee ni escribe datos de otro.
+- **Configurador**: `codigo_cuenta` NULL; panel de plataforma con selector empresa → tenant.
+- **Escrituras sensibles** (inventario, contadores TV): preferir **NestJS + service role**, no insert directo desde el browser salvo políticas explícitas y acotadas.
+
+### 4.1 Funciones transversales (Strip, balance, locking)
+
+#### Strip (limpieza de payloads)
+
+#### Balance de masa (pesos en procesamiento)
+
+#### Locking (bloqueo de slots en tiempo real)
+
+### 4.2 Auth e integraciones
 
 ```text
 ↓
@@ -156,54 +266,76 @@ WhatsApp/Email (SLA)
 
 | Rol | Acceso Principal | Acciones Permitidas |
 | --- | --- | --- |
-| administrador | Todo el sistema | CRUD completo, configuración, reportes |
-| custodio | Ingresos, salidas, cartonaje | Recepción de mercancía, creación de órdenes, cartonaje |
-| operario | Cola de trabajo | Ejecutar órdenes de movimiento entre zonas |
-| procesador | Procesamiento | Avanzar estados, registrar secundario y merma |
-| jefe | Dashboard operativo, órdenes | Crear órdenes, ver estado general, gestionar alertas |
-| cliente | Vista de sus órdenes | Consultar estado de sus órdenes de compra/venta |
-| configurador | Configuración del sistema | Bodegas, cuentas, usuarios, solicitudes de integración |
-| operadorCuentas | Cuenta operativa | Solicitar procesamiento, gestionar su cuenta |
+| *(legacy V1)* administrador, jefe, cliente | — | Sustituidos por roles WMS de cuenta/bodega; ver filas siguientes |
+| configurador | Plataforma SaaS (TI) | **Crear empresas** y **tenants** (`codeCuenta`), bodegas, primer admin; no opera mercancía |
+| administrador_cuenta | Tenant (`codeCuenta`) | Usuarios, catálogos, OC/OV de su tenant |
+| operador_cuenta | Tenant | SOL, OC, OV, solicitudes de procesamiento |
+| administrador_bodega / jefe_bodega / custodio / operario / procesador / transportista | Bodega del tenant | Operación física y `state/main` (asignación por bodega) |
+| operadorCuentas | *(legacy V1)* | Alias histórico de operador de cuenta — ver `operador_cuenta` |
 | transporte | Viajes | Registrar entregas, evidencia fotográfica, cierre de viaje |
 
 ## 6. Flujo de Trabajo Completo V2.0
 
 ### 6.1 Configuración Inicial del Sistema
 
-**Responsable: Configurador / Administrador**
+**Todo empieza por el equipo TI.** TI deja empresa, tenant, bodegas y al **administrador de cuenta** (responsable). Ese admin crea operador, catálogos y equipo de bodega; luego arranca SOL/OC/recepción.
 
 ```text
-Antes de cualquier operación, el sistema debe estar configurado con:
-Configuración de bodegas: Se definen las bodegas del sistema (nombre, tipo: interna/externa, capacidad de slots).
-Configuración de cuentas: Se crean las cuentas operativas (codeCuenta) que agrupan clientes y bodegas.
-Alta de usuarios: Se crean los usuarios con sus roles en Supabase Auth y se registra su perfil en PostgreSQL (Supabase).
-Catálogo de productos: Se importa o crea manualmente el catálogo de productos.
-Proveedores y compradores: Se registran con sus datos de contacto.
-Flota de camiones y plantas: Se registran los vehículos disponibles y las plantas de destino.
-Asignación de bodegas a cuentas: El configurador vincula bodegas a cada codeCuenta.
+PASO A — Equipo TI (configurador con credenciales)
+────────────────────────────────────────────────
+0. Iniciar sesión como configurador (Auth · panel plataforma)
+1. Crear EMPRESA — codigoEmpresa, razón social
+2. Crear y asignar ADMINISTRADOR DE CUENTA (pertenece a la empresa)
+   • Supabase Auth + rol administrador_cuenta + codigo_empresa
+3. Crear TENANT — codeCuenta con FK a la empresa
+4. Crear BODEGA(S) — slots, capacidad, reglas
+
+PASO B — Administrador de cuenta (handoff TI → cliente)
+──────────────────────────────────────────────────
+5. Operador de cuenta y demás usuarios de su organización
+6. Catálogos: productos, clientes, proveedores, compradores
+7. Camiones, plantas
+8. Equipo de bodega (asignacion_bodega: jefe, custodio, operario, …)
+9. Operación: SOL, OC, recepción, mapa, OV, TV
 ```
 
-> **Mejora Propuesta V2.0: Implementar un wizard de onboarding guiado para configuración inicial, que valide cada paso antes de habilitar la operación.**
+Checklist de cierre (configurador):
 
-### 6.2 Autenticación y Bootstrap
+- [ ] Existe `empresas/{codigoEmpresa}/` activa
+- [ ] Existe `tenants/{codeCuenta}/config` con FK a esa empresa
+- [ ] Al menos una bodega con el mismo `codeCuenta`
+- [ ] Administrador de cuenta puede iniciar sesión y solo ve su tenant
+- [ ] Ningún recurso operativo sin `codeCuenta` (salvo usuarios de plataforma)
+
+> **Mejora Propuesta V2.0: Wizard: paso 1 Empresa → paso 2 Tenant → paso 3 Bodegas → paso 4 Admin cuenta → paso 5 Catálogo mínimo.**
+
+### 6.1.1 Administrador de cuenta (después del configurador)
+
+El administrador de cuenta **no crea la empresa ni el tenant**; los hereda del configurador y completa el setup comercial. Todo lo que registre queda bajo el mismo `codeCuenta` del tenant asignado.
+
+### 6.2 Autenticación y Bootstrap (V2.0)
 
 **Responsable: Todos los usuarios**
 
 ```text
 Abrir app
 ↓
-¿Sesión activa?
-├── NO → Pantalla de login (Supabase Auth) → Ingresar credenciales
-│         → ¿Válidas? → NO → Error / reintento
-│                    → SÍ → Cargar perfil
-└── SÍ → Cargar perfil
+¿Sesión activa? → SÍ → Cargar perfil
+                 → NO ↓
+¿Es login de configurador TI?
+├── SÍ → Correo + contraseña (panel plataforma, sin empresa cliente)
+└── NO → Ingresar codigoEmpresa
+         → ¿Empresa existe y activa? → NO → Error
+         → SÍ → Ingresar correo / usuario
+                → ¿Pertenece a esa empresa? → NO → Error
+                → SÍ → Solicitar contraseña (Supabase Auth)
+                       → ¿Válida? → NO → Reintento
+                       → SÍ → Cargar perfil (rol, empresa, tenant, permisos)
 ↓
-Leer rol, nombre, cuenta, permisos desde PostgreSQL (Supabase)
+¿Bodega interna? → SÍ → Suscribir warehouses/{id}/state/main
+                 → NO → Consultar inventario Fridem
 ↓
-¿Bodega interna? → SÍ → Suscribir estado principal (PostgreSQL (Supabase))
-→ NO → Consultar inventario Fridem (Realtime DB)
-↓
-Renderizar Dashboard según rol
+Dashboard según rol (cualquier rol de la empresa)
 ```
 
 > **Mejora Propuesta V2.0: Agregar autenticación por Google/SSO para organizaciones empresariales. Implementar tokens de sesión con refresh automático y expiración configurable.**
@@ -333,19 +465,51 @@ Capacidades de exportación: PDF (html2canvas + jsPDF) y Excel (xlsx).
 
 ### 6.11 Configuración Operativa
 
-**Responsable: Configurador**
+**Responsable: Configurador** (empresa, tenant y bodegas) · **Administrador de cuenta** (catálogos y usuarios de su tenant)
 
-Ruta Módulo /asignarbodegas Vincular bodegas a cuentas (codeCuenta) /catalogos CRUD catálogo de productos + importación masiva xlsx /proveedores CRUD proveedores + modal de órdenes /compradores CRUD compradores /camiones CRUD flota de vehículos /plantas CRUD plantas de destino
+Las rutas operativas usan el **`codeCuenta` activo** (tenant). El configurador elige empresa y tenant; el administrador de cuenta solo ve su tenant.
+
+| Ruta / módulo | Acción | Scope |
+| --- | --- | --- |
+| `/empresas` | Crear / editar **empresa** (`codigoEmpresa`) | Plataforma (configurador) |
+| `/tenants` o alta de cuenta | Crear / editar **tenant** (`codeCuenta`) | Plataforma (configurador) |
+| `/bodegas` | CRUD bodegas | `codeCuenta` del tenant |
+| `/usuarios` | Alta usuarios y roles | `codeCuenta` (+ asignación bodega si aplica) |
+| `/catalogos` | Productos + importación xlsx | `codeCuenta` |
+| `/proveedores`, `/compradores` | CRUD | `codeCuenta` |
+| `/camiones`, `/plantas` | Flota y destinos | `codeCuenta` |
 
 ## 7. Modelo de Datos (PostgreSQL (Supabase))
 
-#### Colecciones Principales
+#### Jerarquía empresa → tenant → bodega → operación
+
+En el modelo 3NF del Dev Hub: **`empresa`** agrupa contratos; **`cuenta`** es el tenant operativo (`codigo_cuenta`); catálogos y órdenes referencian el tenant; las bodegas referencian `codigo_cuenta`.
+
+| Entidad lógica | Tabla / ruta V2.0 | Pertenece a |
+| --- | --- | --- |
+| Empresa | `empresa` · `empresas/{codigoEmpresa}/` | — (cliente SaaS) |
+| Tenant | `cuenta` · `tenants/{codeCuenta}/config` | `codigo_empresa` |
+| Bodega | `bodega` · `warehouses/{warehouseId}` | `codigo_cuenta` (tenant) |
+| Usuario operativo | `usuario` · `usuarios/{uid}` | `codigo_cuenta` (vacío si configurador) |
+| Rol en bodega | `asignacion_bodega` | `id_usuario` + `id_bodega` + `id_rol` |
+| Catálogo / OC / OV / SOL | tablas `producto`, `orden_compra`, … | `codigo_cuenta` |
+| Inventario en vivo | `warehouse_state` · `state/main` | `id_bodega` → tenant |
+
+#### Colecciones Principales (vista documento / Firestore histórico)
 
 ```text
-warehouses/
-```
+empresas/{codigoEmpresa}/      ← Empresa; el configurador la crea primero
+tenants/{codeCuenta}/          ← Tenant operativo bajo una empresa
+    config, catalogo, clientes, providers, compradores,
+    ordenesCompra, ordenesVenta, solicitudesCompra, …
 
-{warehouseId}/ state/ main         → Estado operativo vivo (slots, cajas, órdenes, alertas) history      → Histórico + merma acumulada clientes/ {clientId}/ productos/ providers/ compradores/ ordenesCompra/ ordenesVenta/ solicitudesProcesamiento/ usuarios/            → Catálogo de usuarios operativos systemCounters/ viajesTransporte   → Contador global TV-####
+warehouses/{warehouseId}/      ← Bodega ligada a un codeCuenta
+    state/main                 → slots, cajas, órdenes, alertas (tiempo real)
+    history/                   → movimientos y merma
+
+usuarios/                      → Perfiles; codigo_cuenta indica la empresa
+systemCounters/              → Contadores (ej. TV-####)
+```
 
 #### Estructura del Estado Principal (state/main)
 
@@ -645,10 +809,15 @@ Persona responsable de la recepción y despacho físico de mercancía en bodega.
 | Término | Definición |
 | --- | --- |
 | Multi-tenant | Arquitectura donde un mismo sistema sirve a múltiples clientes de forma aislada. |
-| codeCuenta | Código único que identifica una cuenta operativa. Actúa como namespace dentro del sistema. |
+| Empresa | Cliente jurídico del SaaS (`codigoEmpresa`). El configurador la crea; puede tener varios tenants. |
+| Tenant | Unidad operativa (`codeCuenta` / tabla `cuenta`). Pertenece a una empresa; catálogos y órdenes cuelgan del tenant. |
+| codeCuenta | Identificador del tenant. Namespace: `tenants/{codeCuenta}/`. FK en catálogos, órdenes y usuarios. |
+| codigoEmpresa | Identificador de la empresa. Namespace: `empresas/{codigoEmpresa}/`. FK en `cuenta`. |
+| Configurador | Rol de plataforma (TI). Crea empresas, tenants y primer admin; `codigo_cuenta` NULL. |
+| Administrador de cuenta | Primer usuario **del tenant**, creado por el configurador. Gestiona su `codeCuenta`. |
 | Bootstrap | Proceso de inicialización de la app: sesión, perfil, suscripción a bodega y montaje de UI. |
 | Webhook | Mecanismo donde un sistema notifica a otro mediante una petición HTTP en tiempo real. |
-| PostgreSQL (Supabase) | Base de datos NoSQL en la nube de Supabase con sincronización en tiempo real. |
+| PostgreSQL (Supabase) | Base de datos relacional administrada por Supabase; Realtime sobre filas/canales autorizados. |
 | Merge (PostgreSQL (Supabase)) | Operación que actualiza solo los campos especificados sin sobreescribir el resto. |
 | RBAC | Control de acceso basado en roles que determina qué recursos puede ver y usar cada usuario. |
 | IoT | Red de dispositivos físicos conectados a internet que transmiten datos automáticamente. |

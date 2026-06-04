@@ -22,7 +22,7 @@ export function DocRichTable({ children, tableProps }) {
 
   return (
     <div className={tableShell}>
-      <div className="overflow-x-auto">
+      <div className="app-scroll-x">
         <table
           className="w-full min-w-[32rem] border-collapse text-left text-sm text-slate-200"
           {...tableProps}

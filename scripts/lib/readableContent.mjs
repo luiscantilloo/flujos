@@ -7,8 +7,9 @@ import { PORTAL_BRAND, portalMainSections, flowApplications } from '../../src/da
 import { hubProjects } from '../../src/data/hubProjects.js'
 import { referenceTopics } from '../../src/data/referenceTopics.js'
 import { bodegaStepByStepSteps, BODEGA_STEP_COUNT } from '../../src/data/bodegaStepByStepData.js'
-import { FRONTEND_TREE, BACKEND_TREE } from '../../src/data/projectArchitecture.js'
+import { FRONTEND_TREE, BACKEND_TREE } from '../../src/data/projectStructureTrees.js'
 import { ENTITIES, SCHEMA_META } from '../../src/data/bodegaDatabaseSchema.js'
+import { formatFieldType } from '../../src/data/schemaFieldTypes.js'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 
@@ -97,19 +98,27 @@ export function serializeHome() {
   return lines.join('\n').trim()
 }
 
-export function serializeArchitecture() {
+export function serializeProjectStructure() {
   return [
-    '# Arquitectura del proyecto — Bodega de frío',
+    '# Estructura del proyecto — Bodega de frío',
     '',
     SCHEMA_META.subtitle,
     '',
-    '## Frontend',
+    '## Frontend (frio-frontend/)',
     '',
     treeToMarkdown(FRONTEND_TREE),
     '',
-    '## Backend / API',
+    '## Backend (frio-backend/)',
     '',
     treeToMarkdown(BACKEND_TREE),
+  ].join('\n')
+}
+
+export function serializeArchitecture() {
+  return [
+    '# Arquitectura de datos — Bodega de frío',
+    '',
+    SCHEMA_META.subtitle,
     '',
     `## Base de datos (${ENTITIES.length} entidades)`,
     '',
@@ -139,7 +148,7 @@ export function serializeDatabaseSchema() {
       lines.push('| Campo | Tipo | Notas |', '| --- | --- | --- |')
       for (const f of entity.fields) {
         const notes = [f.pk && 'PK', f.fk && `FK → ${f.fk}`, f.desc].filter(Boolean).join(' · ')
-        lines.push(`| ${f.name} | ${f.type} | ${notes} |`)
+        lines.push(`| ${f.name} | ${formatFieldType(f)} | ${notes} |`)
       }
       lines.push('')
     }
@@ -243,9 +252,21 @@ export function collectReadableRoutes() {
       markdown: serializeDocsIndex(),
     },
     {
+      path: '/estructura-proyecto',
+      title: 'Estructura del proyecto',
+      description: 'Carpetas frio-frontend y frio-backend.',
+      markdown: serializeProjectStructure(),
+    },
+    {
+      path: '/arquitectura',
+      title: 'Arquitectura',
+      description: 'Modelo de datos Supabase y entidades 3NF.',
+      markdown: serializeArchitecture(),
+    },
+    {
       path: '/arquitectura-stack',
-      title: 'Arquitectura del proyecto',
-      description: 'Estructura de carpetas y tablas Supabase.',
+      title: 'Arquitectura',
+      description: 'Alias legado de /arquitectura.',
       markdown: serializeArchitecture(),
     },
     {

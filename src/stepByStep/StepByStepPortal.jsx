@@ -10,7 +10,7 @@ function StepByStepProjectPicker({ onSelectProject, onBack }) {
   const projects = getEnabledHubProjects().filter((p) => p.id === 'bodega-frio')
 
   return (
-    <div className="relative flex min-h-0 flex-1 flex-col overflow-auto bg-slate-950">
+    <div className="relative flex min-h-0 flex-1 flex-col app-scroll-page bg-slate-950">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_-5%,rgba(34,211,238,0.18),transparent)]" />
       <div className="frost-snow pointer-events-none absolute inset-0 opacity-30" aria-hidden />
 
