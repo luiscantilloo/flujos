@@ -7,9 +7,22 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const prismaPath = path.resolve(__dirname, '../../polaria-wms-api/prisma/schema.prisma')
 const manifestPath = path.resolve(__dirname, '../src/data/prismaEntityManifest.js')
 const entitiesPath = path.resolve(__dirname, '../src/data/supabaseEntities.generated.js')
+
+/** Orden: env → clone local (dev) → copia embebida (Vercel/CI) */
+const PRISMA_SCHEMA_CANDIDATES = [
+  process.env.POLARIA_WMS_API_SCHEMA,
+  path.resolve(__dirname, '../../polaria-wms-api/prisma/schema.prisma'),
+  path.resolve(__dirname, '../vendor/polaria-wms-api/prisma/schema.prisma'),
+].filter(Boolean)
+
+function resolvePrismaSchemaPath() {
+  for (const candidate of PRISMA_SCHEMA_CANDIDATES) {
+    if (fs.existsSync(candidate)) return candidate
+  }
+  return null
+}
 
 const DOMAIN_BY_TABLE = {
   rol: 'rbac',
@@ -238,6 +251,21 @@ function inferTableFromField(fieldName, _self) {
     lockedBy: 'usuario',
   }
   return map[fieldName] ?? snakeField(fieldName.replace(/^id/, '').replace(/^(codigo)/, 'codigo_'))
+}
+
+const prismaPath = resolvePrismaSchemaPath()
+if (!prismaPath) {
+  const hasGenerated = fs.existsSync(manifestPath) && fs.existsSync(entitiesPath)
+  if (hasGenerated) {
+    console.warn(
+      'sync-prisma-entities: schema.prisma no encontrado — usando archivos generados existentes',
+    )
+    console.warn('  Buscado en:', PRISMA_SCHEMA_CANDIDATES.join('\n  '))
+    process.exit(0)
+  }
+  console.error('sync-prisma-entities: schema.prisma no encontrado. Rutas probadas:')
+  for (const p of PRISMA_SCHEMA_CANDIDATES) console.error(' ', p)
+  process.exit(1)
 }
 
 const prismaSrc = fs.readFileSync(prismaPath, 'utf8')
