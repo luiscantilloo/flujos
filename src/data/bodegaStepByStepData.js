@@ -1,6 +1,6 @@
 /**
- * Recorrido interactivo «Paso a paso» — Bodega de frío.
- * Roles alineados con wmsRoles.js y modelo ER 3NF.
+ * Recorrido interactivo «Paso a paso» — Polaria WMS (id URL bodega-frio).
+ * Roles alineados con wmsRoles.js y modelo ER 3NF (40 modelos Prisma).
  */
 
 import { formatRoleLabel } from './wmsRoles.js'
@@ -37,10 +37,10 @@ export const bodegaStepByStepSteps = [
   {
     id: 'welcome',
     chapter: 'intro',
-    title: 'Bienvenido al túnel de frío',
+    title: 'Bienvenido a Polaria WMS',
     hook: 'Recorrido completo: del configurador TI al transportista con evidencias.',
     narrative:
-      'Mismo camino que el diagrama React Flow y el modelo ER: el equipo TI crea empresa, tenant y bodegas, y asigna al administrador de cuenta; él arma operador, catálogos y equipo de bodega. Luego recepción, mapa y despacho. Usa ← → o los botones.',
+      'Polaria WMS (antes «Bodega de Frío» en el Dev Hub) documenta diseño V2 + estado real jun 2026. El equipo TI crea empresa, tenant y bodegas vía API; el administrador de cuenta arma operador, catálogos e integraciones. Luego recepción, mapa y despacho (🔵 donde aún no hay API). Usa ← → o los botones.',
     roles: ['Todos los roles'],
     visual: 'aurora',
     interactive: { type: 'intro' },
@@ -51,7 +51,7 @@ export const bodegaStepByStepSteps = [
     title: 'Plataforma TI, empresa y tenant',
     hook: 'Empresa ≠ tenant: el tenant es la unidad operativa bajo la empresa.',
     narrative:
-      'El equipo TI tiene credenciales propias (configurador). Crea la empresa, asigna el administrador de cuenta (pertenece a esa empresa) y luego tenant y bodegas. Al ingresar, cualquier usuario de empresa valida codigoEmpresa + pertenencia + contraseña.',
+      'El equipo TI tiene credenciales propias (configurador). Crea la empresa, asigna el administrador de cuenta y luego tenant y bodegas. Al ingresar, cualquier usuario de empresa pasa por POST /auth/prelogin (empresa + usuario) y luego contraseña; SSO Mateo opcional.',
     roles: [formatRoleLabel('configurador'), formatRoleLabel('administrador_cuenta')],
     visual: 'cloud',
     flowRefs: ['hdr_dueno', 'hdr_inqu'],
@@ -112,10 +112,10 @@ export const bodegaStepByStepSteps = [
   {
     id: 'estructura',
     chapter: 'owner',
-    title: 'Bodegas, capacidad y reglas',
-    hook: 'El mapa físico debe caber en el plano digital.',
+    title: 'Bodegas vía API y capacidad',
+    hook: 'POST /configuracion/bodegas — no insert directo en Supabase desde el browser.',
     narrative:
-      'Se crean bodegas internas (y luego integraciones externas tipo Fridem). Cada una tiene slots, umbrales de temperatura y límites de kg. Si la capacidad física declarada supera el límite del plano, el sistema pide ajustar antes de seguir.',
+      'El configurador o administrador de cuenta crea bodegas internas con POST /configuracion/bodegas (bypass RLS en API). Bootstrap de layout con POST …/bootstrap-layout. Las integraciones externas las solicita el operador (POST /integracion/solicitudes) y las ve el configurador en /configurador/integracion. Cada bodega define slots, umbrales y kg; si la capacidad supera el plano, hay que ajustar.',
     roles: [formatRoleLabel('configurador'), formatRoleLabel('administrador_bodega')],
     visual: 'ice',
     flowRefs: ['estructura', 'v_cap'],
@@ -471,7 +471,7 @@ export const bodegaStepByStepSteps = [
       steps: [
         'Empaque / registro salida',
         'Cargar camión',
-        'contador_documento → TV-####',
+        'contador → TV-####',
         'Transporte al cliente',
       ],
     },
@@ -501,7 +501,7 @@ export const bodegaStepByStepSteps = [
     title: 'FIN: Cerrado-OK',
     hook: 'Ciclo completo — compra → bodega → venta → evidencia.',
     narrative:
-      'Estado final verde. historial_movimiento y audit_log por tenant. Recorrido: empresa → tenant → SOL/OC → recepción → mapa → procesamiento → OV/FEFO → TV-#### → evidencias.',
+      'Estado final verde. movimiento_inventario y auditoria_operacion por tenant. Recorrido: empresa → tenant → SOL/OC → recepción → mapa → procesamiento → OV/FEFO → TV-#### → evidencias.',
     roles: ['Todos'],
     visual: 'aurora',
     flowRefs: ['historial', 'fin_ok'],

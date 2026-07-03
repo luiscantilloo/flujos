@@ -52,14 +52,14 @@ const nodes = [
     data: { label: '¿Tenant válido y activo?', drillDownTo: 'sub_doc_auth' },
   },
   { id: 'err_t', type: 'error', data: { label: 'Bloqueo: tenant inválido o suspendido' } },
-  {
-    id: 'estructura',
-    type: 'process',
-    data: {
-      label: 'Definir Bodegas, Capacidad y Reglas',
-      drillDownTo: 'sub_doc_config_inicial',
+    {
+      id: 'estructura',
+      type: 'process',
+      data: {
+        label: 'Bodegas ✅ POST /configuracion/bodegas (API Polaria)',
+        drillDownTo: 'sub_doc_config_inicial',
+      },
     },
-  },
   { id: 'v_cap', type: 'decision', data: { label: '¿Capacidad Física < Límite?' } },
   {
     id: 'err_c',
@@ -94,6 +94,14 @@ const nodes = [
     data: {
       label: 'Administrador de cuenta: operador, catálogos, usuarios',
       drillDownTo: 'sub_doc_config_inicial',
+    },
+  },
+  {
+    id: 'integracion_ext',
+    type: 'process',
+    data: {
+      label: 'Integración bodega externa ✅ (operador → configurador)',
+      drillDownTo: 'sub_doc_integracion_operador',
     },
   },
   {
@@ -315,7 +323,7 @@ const nodes = [
     id: 'tv_viaje',
     type: 'process',
     data: {
-      label: 'Viaje TV-#### (contador_documento)',
+      label: 'Viaje TV-#### (contador)',
       drillDownTo: 'sub_doc_transporte',
     },
   },
@@ -363,7 +371,8 @@ const edges = [
   e('ed_vp_no', 'v_perm', 'err_p', { sourceHandle: 'no', label: 'N' }),
   e('ed_vp_si', 'v_perm', 'hdr_inqu', { sourceHandle: 'yes', label: 'S' }),
   e('ed_hi_adm', 'hdr_inqu', 'adm_cuenta'),
-  e('ed_ad_cat', 'adm_cuenta', 'catalogo'),
+  e('ed_ad_int', 'adm_cuenta', 'integracion_ext'),
+  e('ed_int_cat', 'integracion_ext', 'catalogo'),
   e('ed_cat_st', 'catalogo', 'strip'),
   e('ed_st_sol', 'strip', 'sol'),
   e('ed_sol_oc', 'sol', 'oc'),
@@ -480,7 +489,7 @@ const subTenantNodes = [
   {
     id: 'st_crear_bod',
     type: 'process',
-    data: { label: '4. Crear bodegas del tenant', drillDownTo: 'sub_doc_config_inicial' },
+    data: { label: '4. POST /configuracion/bodegas ✅ (API Polaria)', drillDownTo: 'sub_doc_config_inicial' },
   },
   {
     id: 'st_def_cap',

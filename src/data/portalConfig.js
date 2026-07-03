@@ -9,10 +9,11 @@ import { ENTITIES } from './bodegaDatabaseSchema.js'
 import { getEnabledHubProjects, getHubProject } from './hubProjects.js'
 import { getReferenceTopic } from './referenceTopics.js'
 import { BODEGA_STEP_COUNT } from './bodegaStepByStepData.js'
+import { POLARIA_WMS } from './polariaWmsMeta.js'
 
-/** Texto de la leyenda del diagrama (bodega de frío). */
+/** Leyenda diagrama WMS — Polaria WMS (id URL bodega-frio se mantiene). */
 export const BODEGA_FRIO_LEGEND =
-  'DUEÑO (morado): configurador TI (credenciales) → empresa → admin cuenta → tenant → bodegas. INQUILINO: admin arma operador, catálogos y equipo; luego SOL, OC, mapa, OV, TV. Login V2: empresa + usuario + contraseña. Sub-flujos con anillo. Amarillo/violeta: evidencias. Rojo: bloqueos. Verde: FIN.'
+  'Polaria WMS · DUEÑO (morado): configurador TI → empresa → admin → tenant → bodegas (vía API). INQUILINO: catálogos, integración externa, SOL/OC ✅; mapa/OV/TV 🟡/🔵. Auth: prelogin → login. ✅=implementado 🟡=parcial 🔵=diseño.'
 
 export const PORTAL_BRAND = {
   title: 'Dev Hub',
@@ -81,7 +82,7 @@ export const portalMainSections = [
     category: 'explore',
     title: 'Estructura del proyecto',
     description:
-      'Árbol completo frio-frontend y frio-backend: rutas, módulos, servicios, DTOs — doc V2.0 §4–§8.',
+      'Árbol polaria-wms-web y polaria-wms-api: módulos reales, ✅ implementado vs 🟡 pendiente.',
     icon: 'Folder',
     accent: 'sky',
     enabled: true,
@@ -348,7 +349,7 @@ export function getPortalPhaseMeta(phase, referenceCtx = null) {
     'dev-resources': { title: 'Stack y scripts', subtitle: 'Comandos, tecnologías y enlaces de desarrollo.' },
     'project-structure': {
       title: 'Estructura del proyecto',
-      subtitle: 'Carpetas de frio-frontend y frio-backend — explora y copia.',
+      subtitle: 'Carpetas polaria-wms-web y polaria-wms-api — ✅ vs 🟡 vs 🔵.',
     },
     'stack-architecture': {
       title: 'Arquitectura',

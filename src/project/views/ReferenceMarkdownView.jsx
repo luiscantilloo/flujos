@@ -4,26 +4,58 @@ import { DocMarkdownView } from '../../docs/DocMarkdownView.jsx'
 import { getDocumentationItemById } from '../../docs/docRegistry.js'
 import { fetchDocMarkdown } from '../../docs/utils/fetchDocMarkdown.js'
 import { extractSectionByTitle } from '../../docs/utils/extractMarkdownSection.js'
+import { formatPolariaApiMarkdown } from '../../data/polariaWmsMeta.js'
+import { formatPolariaSecurityMarkdown } from '../../data/polariaSecurityDoc.js'
+
+function resolveReferenceMarkdown(project, topic) {
+  if (topic.markdownSource === 'polaria-api' && project.id === 'bodega-frio') {
+    return Promise.resolve({
+      markdown: formatPolariaApiMarkdown(),
+      sourceLabel: 'polariaWmsMeta.js — alineado a polaria-wms-api',
+    })
+  }
+
+  if (topic.markdownSource === 'polaria-security' && project.id === 'bodega-frio') {
+    return Promise.resolve({
+      markdown: formatPolariaSecurityMarkdown(),
+      sourceLabel: 'polariaSecurityDoc.js — Supabase + evaluación técnica',
+    })
+  }
+
+  const docId = topic.sectionDocId ?? project.documentationDocId
+  const doc = getDocumentationItemById(docId)
+  if (!doc?.filePath || !topic.sectionPattern) {
+    return Promise.reject(new Error('No hay documentación configurada para este tema.'))
+  }
+
+  return fetchDocMarkdown(doc.filePath).then((full) => {
+    const section = extractSectionByTitle(full, topic.sectionPattern)
+    if (!section) {
+      throw new Error('No se encontró la sección en la documentación del proyecto.')
+    }
+    return {
+      markdown: section,
+      sourceLabel: `${doc.title} — sección extraída automáticamente`,
+    }
+  })
+}
 
 export function ReferenceMarkdownView({ project, topic, onBackToProjects }) {
   const [markdown, setMarkdown] = useState('')
+  const [sourceLabel, setSourceLabel] = useState('')
   const [status, setStatus] = useState('loading')
   const [error, setError] = useState(null)
 
-  const doc = getDocumentationItemById(project.documentationDocId)
-
   useEffect(() => {
-    if (!doc?.filePath || !topic.sectionPattern) return
-
     let cancelled = false
-    fetchDocMarkdown(doc.filePath)
-      .then((full) => {
+    setStatus('loading')
+    setError(null)
+
+    resolveReferenceMarkdown(project, topic)
+      .then(({ markdown: md, sourceLabel: label }) => {
         if (cancelled) return
-        const section = extractSectionByTitle(full, topic.sectionPattern)
-        if (!section) {
-          throw new Error('No se encontró la sección en la documentación del proyecto.')
-        }
-        setMarkdown(section)
+        setMarkdown(md)
+        setSourceLabel(label)
         setStatus('idle')
       })
       .catch((err) => {
@@ -35,7 +67,7 @@ export function ReferenceMarkdownView({ project, topic, onBackToProjects }) {
     return () => {
       cancelled = true
     }
-  }, [doc?.filePath, topic.sectionPattern])
+  }, [project, topic])
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-slate-950">
@@ -78,9 +110,9 @@ export function ReferenceMarkdownView({ project, topic, onBackToProjects }) {
             </div>
           ) : null}
 
-          <p className="mt-8 text-xs text-slate-500">
-            Fuente: documentación de {project.name} — sección extraída automáticamente.
-          </p>
+          {sourceLabel ? (
+            <p className="mt-8 text-xs text-slate-500">Fuente: {sourceLabel}</p>
+          ) : null}
         </div>
       </div>
     </div>

@@ -1,11 +1,16 @@
-# BODEGA DE FRÍO
+# Polaria WMS — Documentación V1 (legacy Dev Hub)
 
 | Meta | Detalle |
 | --- | --- |
+| Producto | **Polaria WMS** (subtítulo histórico: Bodega de Frío) |
 | Subtítulo | Documentación Técnica y Operacional |
 | Versión | Versión 1.0  \|  2026 |
-| Stack | Next.js 16 · React 19 · TypeScript · Firebase SDK 11 · Cloudinary · Tailwind CSS 4 |
-| Resumen | Plataforma web multi-rol y multi-bodega para operación logística en frío |
+| Stack | Next.js · React · TypeScript · Supabase · NestJS API · Tailwind |
+| Resumen | Plataforma multi-tenant WMS — ver doc V2.0 para estado real jun 2026 |
+
+> **Estado Polaria WMS — Jun 2026**
+> ✅ Implementado | 🟡 Parcial (schema/API) | 🔵 Diseño pendiente
+> Repos: `polaria-wms-web`, `polaria-wms-api`, `polaria-wms-db`
 
 ---
 

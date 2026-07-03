@@ -13,9 +13,6 @@ Cada **paso** es una pieza del rompecabezas. Léelos del **0 al 31** en orden, c
 2. **El equipo del programa** (configurador) monta el mundo; **el jefe de la empresa** lo usa.
 3. **Empresa** es el nombre grande del cliente; **cuenta** es el salón donde pasa el trabajo cada día.
 
-> Este cuento sigue el PDF **Bodega de Frío V2.0 — Decisiones de diseño** (`BodegaFrio_V2_Decisiones.pdf`).
-> Cuando el jefe **pide** una bodega, es un paso extra del diagrama ER (el PDF solo dice que el equipo del programa la **crea**).
-
 ### Los tres personajes principales
 
 | Personaje | ¿Quién es? |
@@ -56,7 +53,7 @@ Cada **paso** es una pieza del rompecabezas. Léelos del **0 al 31** en orden, c
 
 ---
 
-## FASE 0 — Encabezado: configurador TI (plataforma)
+## FASE 0 — Configurador TI (plataforma)
 
 **En palabras fáciles:**
 
@@ -83,23 +80,17 @@ Hay nueve roles fijos. No los inventa el cliente. El más especial es el configu
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Rol del sistema
+**Nombre en el sistema:** Rol WMS
 
-Tabla 0 — empieza aquí. Perfiles fijos del WMS. El configurador TI usa id_rol = configurador (nivel plataforma).
+✅ Catálogo de 9 roles WMS (seed). Scope plataforma / cuenta / bodega.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **usuario**: usuarios (cuenta/plataforma)
-- Se relaciona con **asignacion_bodega**: asignaciones bodega
-
-**Datos importantes en la tabla:**
-
-- **id_rol** (es el código único de la fila)
+Todavía no se conecta con otras tablas en el dibujo.
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_rol)
-- IX rol_nivel (nivel)
 
 </details>
 
@@ -139,9 +130,9 @@ Como el nombre de tu colegio en el carnet: todos los de ese colegio pertenecen a
 
 **Quién lo usa o lo crea:** El equipo que arregla y crea el programa (como los desarrolladores)
 
-**Antes de este paso:** Tras entender rol y Auth: el equipo del programa crea la empresa.
+**Antes de este paso:** Cliente SaaS.
 
-**Después sigue:** Paso 3 usuario (administrador de cuenta de esa empresa).
+**Después sigue:** usuario admin.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -152,23 +143,19 @@ El equipo del programa crea la empresa. Todos los usuarios de ese cliente llevan
 
 **Nombre en el sistema:** Empresa (cliente SaaS)
 
-Cliente jurídico del SaaS. La crea el configurador TI (usuario con rol configurador) tras iniciar sesión en plataforma.
+✅ Cliente jurídico SaaS. Creada por configurador TI.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **usuario**: creada por (configurador TI)
-- Se relaciona con **cuenta**: tiene tenants
-- Se relaciona con **usuario**: usuarios (login V2)
+Todavía no se conecta con otras tablas en el dibujo.
 
 **Datos importantes en la tabla:**
 
 - **codigo_empresa** (es el código único de la fila)
-- **id_creador** (apunta a otra tabla: usuario.id_usuario)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (codigo_empresa)
-- IX empresa_activa (esta_activa) WHERE esta_activa
 
 </details>
 
@@ -182,9 +169,9 @@ Como una ficha de jugador con nombre, correo y qué rol tiene.
 
 **Quién lo usa o lo crea:** El equipo que arregla y crea el programa (como los desarrolladores)
 
-**Antes de este paso:** Lee empresa (2). TI crea administrador_cuenta con codigo_empresa y Auth.
+**Antes de este paso:** id_auth → auth.users.
 
-**Después sigue:** Paso 4 cuenta (cuenta de trabajo). Luego más usuarios en tabla 12.
+**Después sigue:** cuenta.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -195,40 +182,31 @@ Primero creas al jefe de la empresa. Más tarde el jefe crea a sus ayudantes y a
 
 **Nombre en el sistema:** Usuario
 
-Tabla 3 (admin) y 14 (resto). Configurador TI: codigo_empresa NULL. Admin/operador: pertenecen a empresa y tenant. TI puede crear cualquier rol; admin crea operador_cuenta y equipo de bodega.
+✅ Perfil WMS; id_auth → Supabase auth.users (no tabla en public).
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **rol**: rol cuenta/plataforma
-- Se relaciona con **empresa**: pertenece a (login)
-- Se relaciona con **cuenta**: tenant operativo
-- Se relaciona con **sesion_auth**: login
-- Se relaciona con **asignacion_bodega**: bodegas
-- Se relaciona con **orden_compra**: crea OC
-- Se relaciona con **orden_venta**: crea OV
-- Se relaciona con **solicitud_compra**: solicita SOL
+- Se relaciona con **rol**: rol
+- Se relaciona con **empresa**: empresa
+- Se relaciona con **cuenta**: cuenta
 
 **Datos importantes en la tabla:**
 
 - **id_usuario** (es el código único de la fila)
-- **id_rol** (apunta a otra tabla: rol.id_rol)
-- **codigo_empresa** (apunta a otra tabla: empresa.codigo_empresa)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
-- **id_creador** (apunta a otra tabla: usuario.id_usuario)
+- **rol** (apunta a otra tabla: rol.id_rol)
+- **empresa** (apunta a otra tabla: empresa.codigo_empresa)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_usuario)
 - UNIQUE (correo)
-- IX usuario_empresa (codigo_empresa)
-- IX usuario_cuenta (codigo_cuenta)
-- IX usuario_rol (id_rol)
 
 </details>
 
 ---
 
-## FASE 2 — Tenant operativo (cuenta)
+## FASE 2 — Tenant (cuenta)
 
 **En palabras fáciles:**
 
@@ -244,9 +222,9 @@ La empresa es el colegio; la cuenta es el salón 5B donde guardas tus cosas, lis
 
 **Quién lo usa o lo crea:** El equipo que arregla y crea el programa (como los desarrolladores)
 
-**Antes de este paso:** Empresa (2) + admin (3). TI crea codeCuenta bajo codigo_empresa.
+**Antes de este paso:** código de la cuenta FK empresa.
 
-**Después sigue:** Paso 5 pedido de bodega.
+**Después sigue:** bodega.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -255,31 +233,28 @@ Una empresa puede tener varias cuentas. Productos, compras y ventas van pegados 
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Tenant (cuenta operativa)
+**Nombre en el sistema:** Tenant (cuenta)
 
-Tenant operativo bajo una empresa. El configurador (TI) lo crea tras empresa y admin cuenta; catálogos y órdenes los crea el admin.
+✅ Tenant operativo (codigo_cuenta). Scope C en catálogos y documentos.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **empresa**: pertenece a
+- Se relaciona con **empresa**: empresa
 
 **Datos importantes en la tabla:**
 
 - **codigo_cuenta** (es el código único de la fila)
-- **codigo_empresa** (apunta a otra tabla: empresa.codigo_empresa)
-- **id_creador** (apunta a otra tabla: usuario.id_usuario)
+- **empresa** (apunta a otra tabla: empresa.codigo_empresa)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (codigo_cuenta)
-- IX cuenta_empresa (codigo_empresa)
-- IX cuenta_activa (esta_activa)
 
 </details>
 
 ---
 
-## FASE 3 — Petición y alta de bodegas (interna / externa)
+## FASE 3 — Bodegas e integración
 
 **En palabras fáciles:**
 
@@ -295,9 +270,9 @@ Como pedir por formulario una casilla nueva en el estacionamiento.
 
 **Quién lo usa o lo crea:** El jefe de la empresa cliente
 
-**Antes de este paso:** Admin de cuenta pide bodega interna/externa con nombre personalizado.
+**Antes de este paso:** Admin pide bodega.
 
-**Después sigue:** Paso 6 bodega (TI atiende la petición y crea la fila).
+**Después sigue:** bodega.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -306,30 +281,30 @@ El administrador pide. El equipo del programa lee la petición y después crea l
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Petición de alta de bodega
+**Nombre en el sistema:** Solicitud alta bodega
 
-El administrador de cuenta solicita una bodega interna o externa con nombre personalizado. El configurador TI atiende la petición y crea la fila en bodega.
+✅ Admin cuenta solicita bodega; configurador atiende.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **cuenta**: tenant
+- Se relaciona con **empresa**: empresa
+- Se relaciona con **cuenta**: cuenta
 - Se relaciona con **usuario**: solicitante
-- Se relaciona con **bodega**: bodega creada
+- Se relaciona con **usuario**: atendido_por
+- Se relaciona con **bodega**: bodega_creada
 
 **Datos importantes en la tabla:**
 
 - **id_solicitud** (es el código único de la fila)
-- **codigo_empresa** (apunta a otra tabla: empresa.codigo_empresa)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
-- **id_solicitante** (apunta a otra tabla: usuario.id_usuario)
-- **id_bodega** (apunta a otra tabla: bodega.id_bodega)
-- **id_atendido_por** (apunta a otra tabla: usuario.id_usuario)
+- **empresa** (apunta a otra tabla: empresa.codigo_empresa)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **solicitante** (apunta a otra tabla: usuario.id_usuario)
+- **atendido_por** (apunta a otra tabla: usuario.id_usuario)
+- **bodega_creada** (apunta a otra tabla: bodega.id_bodega)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_solicitud)
-- IX sol_bodega_tenant (codigo_cuenta, estado)
-- IX sol_bodega_pendiente (estado) WHERE estado = pendiente
 
 </details>
 
@@ -343,9 +318,9 @@ Una nevera gigante con estantes: adentro guardas cajas de comida.
 
 **Quién lo usa o lo crea:** El equipo que arregla y crea el programa (como los desarrolladores)
 
-**Antes de este paso:** Petición (5) o alta directa por TI. Vincula código de la cuenta y tipo interna/externa.
+**Antes de este paso:** POST /configuracion/bodegas.
 
-**Después sigue:** Paso 7 quién trabaja en la bodega (admin se asigna).
+**Después sigue:** quién trabaja en la bodega.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -356,86 +331,116 @@ Solo el equipo del programa la crea en el sistema. Puede ser bodega interna o ex
 
 **Nombre en el sistema:** Bodega
 
-Bodega interna o externa del tenant. La crea el configurador TI (directo o atendiendo solicitud_alta_bodega). El admin de cuenta se asigna después en asignacion_bodega.
+✅ Bodega interna/externa. Alta vía POST /configuracion/bodegas (API).
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **cuenta**: tenant
-- Se relaciona con **solicitud_alta_bodega**: desde petición
-- Se relaciona con **asignacion_bodega**: equipo
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **solicitud_origen**: solicitud_origen
+- Se relaciona con **usuario**: creador
 
 **Datos importantes en la tabla:**
 
 - **id_bodega** (es el código único de la fila)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
-- **id_solicitud_origen** (apunta a otra tabla: solicitud_alta_bodega.id_solicitud)
-- **id_creador** (apunta a otra tabla: usuario.id_usuario)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **solicitud_origen** (apunta a otra tabla: solicitud_origen.id_solicitud)
+- **creador** (apunta a otra tabla: usuario.id_usuario)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_bodega)
-- IX bodega_tenant (codigo_cuenta)
-- IX bodega_tipo (tipo)
-- IX bodega_solicitud (id_solicitud) UNIQUE nullable
 
 </details>
 
-### Paso 7 — asignacion_bodega — Quién trabaja en qué bodega y con qué trabajo.
+### Paso 7 — solicitud_integracion — Pedido de conectar bodega externa (Fridem, etc.).
 
-**En una frase:** Quién trabaja en qué bodega y con qué trabajo.
+**En una frase:** Pedido de conectar bodega externa (Fridem, etc.).
 
-**Imagínalo así:**
+**Quién lo usa o lo crea:** La persona que hace pedidos y papeles en la oficina
 
-La lista del profe: "Pedro es capitan del equipo A, María del equipo B".
+**Antes de este paso:** Operador → configurador.
 
-**Quién lo usa o lo crea:** El jefe de la empresa cliente
-
-**Antes de este paso:** Bodega (6) creada. El admin de cuenta se asigna (y asigna equipo después).
-
-**Después sigue:** Tablas 8–11 catálogos.
+**Después sigue:** tarea_cuenta.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
-El jefe se apunta primero a su bodega. Luego apunta a custodios, operarios y choferes.
+Operador → bandeja configurador.
 
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Asignación usuario ↔ bodega
+**Nombre en el sistema:** Solicitud integración
 
-Tabla 7 — el administrador de cuenta se auto-asigna a la bodega creada; luego asigna custodio, operario, jefe, etc. Siempre amarrado a bodegas del tenant.
+✅ Operador solicita integración bodega externa → configurador.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **usuario**: usuario
-- Se relaciona con **bodega**: bodega
-- Se relaciona con **rol**: rol bodega
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **cliente**: cliente
+- Se relaciona con **usuario**: solicitante
 
 **Datos importantes en la tabla:**
 
-- **id_asignacion** (es el código único de la fila)
-- **id_usuario** (apunta a otra tabla: usuario.id_usuario)
-- **id_bodega** (apunta a otra tabla: bodega.id_bodega)
-- **id_rol** (apunta a otra tabla: rol.id_rol)
+- **id_solicitud_integracion** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **cliente** (apunta a otra tabla: cliente.id_cliente)
+- **solicitante** (apunta a otra tabla: usuario.id_usuario)
 
 **Índices (para que el programa vaya rápido):**
 
-- PK (id_asignacion)
-- UNIQUE (id_usuario, id_bodega, id_rol)
-- IX asig_bodega (id_bodega)
-- IX asig_usuario (id_usuario)
+- PK (id_solicitud_integracion)
+
+</details>
+
+### Paso 8 — tarea_cuenta — Tarea pendiente para el configurador en un tenant.
+
+**En una frase:** Tarea pendiente para el configurador en un tenant.
+
+**Quién lo usa o lo crea:** El equipo que arregla y crea el programa (como los desarrolladores)
+
+**Antes de este paso:** Bandeja configurador.
+
+**Después sigue:** catálogos.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Complementa solicitud_integracion.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Tarea cuenta
+
+🟡 Tabla tarea_cuenta · polaria-wms-db / Supabase.
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **cliente**: cliente
+- Se relaciona con **usuario**: creador
+
+**Datos importantes en la tabla:**
+
+- **id_tarea_cuenta** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **cliente** (apunta a otra tabla: cliente.id_cliente)
+- **creador** (apunta a otra tabla: usuario.id_usuario)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_tarea_cuenta)
 
 </details>
 
 ---
 
-## FASE 4 — Catálogos y operador de cuenta
+## FASE 4 — Catálogos
 
 **En palabras fáciles:**
 
 El jefe llena sus libretas: quién le vende, quién compra, camiones, productos y ayudantes.
 
-### Paso 8 — proveedor — Quién te vende las cosas que compras.
+### Paso 9 — proveedor — Quién te vende las cosas que compras.
 
 **En una frase:** Quién te vende las cosas que compras.
 
@@ -445,9 +450,9 @@ La tienda donde la mamá compra ingredientes.
 
 **Quién lo usa o lo crea:** El jefe de la empresa cliente
 
-**Antes de este paso:** cuenta de trabajo (4) activo. Admin de cuenta da de alta proveedores.
+**Antes de este paso:** Scope C.
 
-**Después sigue:** Paso 9 comprador, 10 camion, 11 planta.
+**Después sigue:** cliente.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -458,27 +463,108 @@ El jefe guarda el nombre de cada proveedor para hacer pedidos después.
 
 **Nombre en el sistema:** Proveedor
 
-Proveedor de compras del tenant. Alta por administrador de cuenta (paso 7).
+✅ Tabla proveedor · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **cuenta**: tenant
-- Se relaciona con **orden_compra**: OC
-- Se relaciona con **solicitud_compra**: SOL
+- Se relaciona con **cuenta**: cuenta
 
 **Datos importantes en la tabla:**
 
 - **id_proveedor** (es el código único de la fila)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_proveedor)
-- IX proveedor_tenant (codigo_cuenta)
 
 </details>
 
-### Paso 9 — comprador — Quién te compra a ti (a quien envías producto).
+### Paso 10 — cliente — Dueño de una marca o línea de productos.
+
+**En una frase:** Dueño de una marca o línea de productos.
+
+**Imagínalo así:**
+
+La marca que pone su nombre en el empaque.
+
+**Quién lo usa o lo crea:** El jefe de la empresa cliente
+
+**Antes de este paso:** Scope C.
+
+**Después sigue:** producto.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Antes de crear un producto, dices de qué cliente es.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Cliente
+
+✅ Tabla cliente · polaria-wms-db / Supabase.
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **cuenta**: cuenta
+
+**Datos importantes en la tabla:**
+
+- **id_cliente** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_cliente)
+
+</details>
+
+### Paso 11 — producto — Cada cosa que guardas, compras o vendes (con su código).
+
+**En una frase:** Cada cosa que guardas, compras o vendes (con su código).
+
+**Imagínalo así:**
+
+Cada ítem del inventario del videojuego.
+
+**Quién lo usa o lo crea:** El jefe de la empresa cliente
+
+**Antes de este paso:** SKU por cuenta de trabajo.
+
+**Después sigue:** comprador.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Helado de vainilla, caja de 10 kg, etc. Tiene código y nombre.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Producto
+
+✅ Tabla producto · polaria-wms-db / Supabase.
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **cliente**: cliente
+- Se relaciona con **producto_primario**: producto_primario
+
+**Datos importantes en la tabla:**
+
+- **id_producto** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **cliente** (apunta a otra tabla: cliente.id_cliente)
+- **producto_primario** (apunta a otra tabla: producto_primario.id_producto)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_producto)
+
+</details>
+
+### Paso 12 — comprador — Quién te compra a ti (a quien envías producto).
 
 **En una frase:** Quién te compra a ti (a quien envías producto).
 
@@ -488,9 +574,9 @@ El vecino que te encarga un pastel.
 
 **Quién lo usa o lo crea:** El jefe de la empresa cliente
 
-**Antes de este paso:** Mismo scope cuenta de trabajo (4).
+**Antes de este paso:** Scope C.
 
-**Después sigue:** Paso 10 camion.
+**Después sigue:** planta.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -499,28 +585,66 @@ Cuando vendes, eliges a qué comprador va el envío.
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Comprador (destino OV)
+**Nombre en el sistema:** Comprador
 
-Destino de ventas / OV. Alta por administrador de cuenta (paso 7).
+✅ Tabla comprador · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **cuenta**: tenant
-- Se relaciona con **orden_venta**: OV
+- Se relaciona con **cuenta**: cuenta
 
 **Datos importantes en la tabla:**
 
 - **id_comprador** (es el código único de la fila)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_comprador)
-- IX comprador_tenant (codigo_cuenta)
 
 </details>
 
-### Paso 10 — camion — Los camiones de la empresa.
+### Paso 13 — planta — A dónde puede ir el producto (otra fábrica o sitio).
+
+**En una frase:** A dónde puede ir el producto (otra fábrica o sitio).
+
+**Imagínalo así:**
+
+La dirección de entrega en el mapa.
+
+**Quién lo usa o lo crea:** El jefe de la empresa cliente
+
+**Antes de este paso:** Destino OV.
+
+**Después sigue:** camion.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Algunas ventas van a una planta especial.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Planta
+
+✅ Tabla planta · polaria-wms-db / Supabase.
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **cuenta**: cuenta
+
+**Datos importantes en la tabla:**
+
+- **id_planta** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_planta)
+
+</details>
+
+### Paso 14 — camion — Los camiones de la empresa.
 
 **En una frase:** Los camiones de la empresa.
 
@@ -530,9 +654,9 @@ Los carritos de reparto.
 
 **Quién lo usa o lo crea:** El jefe de la empresa cliente
 
-**Antes de este paso:** Catálogos del admin.
+**Antes de este paso:** Flota cuenta de trabajo.
 
-**Después sigue:** Paso 11 planta, luego 12 cliente.
+**Después sigue:** quién trabaja en la bodega.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -543,223 +667,84 @@ Cuando mandas una venta, eliges qué camión lleva la carga.
 
 **Nombre en el sistema:** Camión
 
-Flota del tenant. Alta por administrador de cuenta (paso 8).
+✅ Tabla camion · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **cuenta**: tenant
-- Se relaciona con **viaje_transporte**: viajes
+- Se relaciona con **cuenta**: cuenta
 
 **Datos importantes en la tabla:**
 
 - **id_camion** (es el código único de la fila)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_camion)
-- IX camion_tenant (codigo_cuenta)
-
-</details>
-
-### Paso 11 — planta — A dónde puede ir el producto (otra fábrica o sitio).
-
-**En una frase:** A dónde puede ir el producto (otra fábrica o sitio).
-
-**Imagínalo así:**
-
-La dirección de entrega en el mapa.
-
-**Quién lo usa o lo crea:** El jefe de la empresa cliente
-
-**Antes de este paso:** Catálogos del admin.
-
-**Después sigue:** Paso 12 cliente.
-
-#### Cuenta esto en voz alta (30–60 segundos)
-
-Algunas ventas van a una planta especial.
-
-<details>
-<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
-
-**Nombre en el sistema:** Planta destino
-
-Planta destino logística. Alta por administrador de cuenta (paso 8).
-
-**Conexiones en el dibujo ER:**
-
-- Se relaciona con **cuenta**: tenant
-- Se relaciona con **orden_venta**: destino OV
-
-**Datos importantes en la tabla:**
-
-- **id_planta** (es el código único de la fila)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
-
-**Índices (para que el programa vaya rápido):**
-
-- PK (id_planta)
-- IX planta_tenant (codigo_cuenta)
-
-</details>
-
-### Paso 12 — cliente — Dueño de una marca o línea de productos.
-
-**En una frase:** Dueño de una marca o línea de productos.
-
-**Imagínalo así:**
-
-La marca que pone su nombre en el empaque.
-
-**Quién lo usa o lo crea:** El jefe de la empresa cliente
-
-**Antes de este paso:** cuenta de trabajo (4). Necesario antes de producto.
-
-**Después sigue:** Paso 13 producto; tabla 14 operador_cuenta (otros usuarios).
-
-#### Cuenta esto en voz alta (30–60 segundos)
-
-Antes de crear un producto, dices de qué cliente es.
-
-<details>
-<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
-
-**Nombre en el sistema:** Cliente comercial
-
-Cliente comercial del tenant. Alta por administrador de cuenta (paso 6).
-
-**Conexiones en el dibujo ER:**
-
-- Se relaciona con **cuenta**: tenant
-- Se relaciona con **producto**: productos
-- Se relaciona con **caja**: lotes
-
-**Datos importantes en la tabla:**
-
-- **id_cliente** (es el código único de la fila)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
-
-**Índices (para que el programa vaya rápido):**
-
-- PK (id_cliente)
-- IX cliente_tenant (codigo_cuenta)
-
-</details>
-
-### Paso 13 — producto — Cada cosa que guardas, compras o vendes (con su código).
-
-**En una frase:** Cada cosa que guardas, compras o vendes (con su código).
-
-**Imagínalo así:**
-
-Cada ítem del inventario del videojuego.
-
-**Quién lo usa o lo crea:** El jefe de la empresa cliente
-
-**Antes de este paso:** Cliente (12) + cuenta de trabajo (4).
-
-**Después sigue:** Paso 14 más usuarios; FASE 5 reusa quién trabaja en la bodega (7).
-
-#### Cuenta esto en voz alta (30–60 segundos)
-
-Helado de vainilla, caja de 10 kg, etc. Tiene código y nombre.
-
-<details>
-<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
-
-**Nombre en el sistema:** Producto (SKU)
-
-Catálogo del tenant. Lo crea el administrador de cuenta (paso 6), no el configurador.
-
-**Conexiones en el dibujo ER:**
-
-- Se relaciona con **cuenta**: tenant
-- Se relaciona con **cliente**: cliente
-- Se relaciona con **linea_orden_compra**: líneas OC
-- Se relaciona con **linea_orden_venta**: líneas OV
-
-**Datos importantes en la tabla:**
-
-- **id_producto** (es el código único de la fila)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
-- **id_cliente** (apunta a otra tabla: cliente.id_cliente)
-
-**Índices (para que el programa vaya rápido):**
-
-- PK (id_producto)
-- IX producto_tenant (codigo_cuenta)
-- IX producto_cliente (id_cliente)
-
-</details>
-
-### Paso 14 — usuario — Cada persona que usa el sistema.
-
-**En una frase:** Cada persona que usa el sistema.
-
-**Imagínalo así:**
-
-Como una ficha de jugador con nombre, correo y qué rol tiene.
-
-**Quién lo usa o lo crea:** El jefe de la empresa cliente
-
-**Antes de este paso:** Misma tabla 3: operador_cuenta lo crea admin; custodio/operario/etc. vía asignacion (7). TI puede crear cualquier rol.
-
-**Después sigue:** FASE 6: solicitud_compra (15).
-
-#### Cuenta esto en voz alta (30–60 segundos)
-
-Primero creas al jefe de la empresa. Más tarde el jefe crea a sus ayudantes y a la gente de la bodega.
-
-<details>
-<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
-
-**Nombre en el sistema:** Usuario
-
-Tabla 3 (admin) y 14 (resto). Configurador TI: codigo_empresa NULL. Admin/operador: pertenecen a empresa y tenant. TI puede crear cualquier rol; admin crea operador_cuenta y equipo de bodega.
-
-**Conexiones en el dibujo ER:**
-
-- Se relaciona con **rol**: rol cuenta/plataforma
-- Se relaciona con **empresa**: pertenece a (login)
-- Se relaciona con **cuenta**: tenant operativo
-- Se relaciona con **sesion_auth**: login
-- Se relaciona con **asignacion_bodega**: bodegas
-- Se relaciona con **orden_compra**: crea OC
-- Se relaciona con **orden_venta**: crea OV
-- Se relaciona con **solicitud_compra**: solicita SOL
-
-**Datos importantes en la tabla:**
-
-- **id_usuario** (es el código único de la fila)
-- **id_rol** (apunta a otra tabla: rol.id_rol)
-- **codigo_empresa** (apunta a otra tabla: empresa.codigo_empresa)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
-- **id_creador** (apunta a otra tabla: usuario.id_usuario)
-
-**Índices (para que el programa vaya rápido):**
-
-- Ver orden 3 — mismos índices
 
 </details>
 
 ---
 
-## FASE 5 — Equipo de bodega (roles físicos)
+## FASE 5 — Equipo de bodega
 
 **En palabras fáciles:**
 
 Se elige quién trabaja en cada bodega: custodio, operario, chofer, etc.
 
+### Paso 15 — asignacion_bodega — Quién trabaja en qué bodega y con qué trabajo.
+
+**En una frase:** Quién trabaja en qué bodega y con qué trabajo.
+
+**Imagínalo así:**
+
+La lista del profe: "Pedro es capitan del equipo A, María del equipo B".
+
+**Quién lo usa o lo crea:** El jefe de la empresa cliente
+
+**Antes de este paso:** Roles físicos por bodega.
+
+**Después sigue:** SOL.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+El jefe se apunta primero a su bodega. Luego apunta a custodios, operarios y choferes.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Asignación bodega
+
+✅ Tabla asignacion_bodega · polaria-wms-db / Supabase.
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **usuario**: usuario
+- Se relaciona con **bodega**: bodega
+- Se relaciona con **rol**: rol
+
+**Datos importantes en la tabla:**
+
+- **id_asignacion** (es el código único de la fila)
+- **usuario** (apunta a otra tabla: usuario.id_usuario)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **rol** (apunta a otra tabla: rol.id_rol)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_asignacion)
+
+</details>
+
 ---
 
-## FASE 6 — Compras (SOL / OC)
+## FASE 6 — Compras SOL / OC / recepción
 
 **En palabras fáciles:**
 
 Llegan los pedidos de compra: primero un borrador (solicitud), luego el pedido firme con lista de cosas.
 
-### Paso 15 — solicitud_compra — Borrador de "quiero comprar esto".
+### Paso 16 — solicitud_compra — Borrador de "quiero comprar esto".
 
 **En una frase:** Borrador de "quiero comprar esto".
 
@@ -769,9 +754,9 @@ La lista del súper antes de ir a pagar.
 
 **Quién lo usa o lo crea:** La persona que hace pedidos y papeles en la oficina
 
-**Antes de este paso:** Catálogos y usuarios de cuenta listos.
+**Antes de este paso:** Estados aprobación.
 
-**Después sigue:** Paso 16 orden_compra.
+**Después sigue:** solicitud_compra_linea.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -780,31 +765,72 @@ Primero la solicitud; si está bien, se convierte en orden de compra.
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Solicitud de compra (SOL)
+**Nombre en el sistema:** Solicitud compra (SOL)
 
-Operador de cuenta solicita material; al aprobarse genera la OC (strip-oc).
+✅ Tabla solicitud_compra · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **orden_compra**: genera OC
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **bodega**: bodega
 - Se relaciona con **proveedor**: proveedor
+- Se relaciona con **orden_compra**: orden_compra
+- Se relaciona con **usuario**: solicitante
 
 **Datos importantes en la tabla:**
 
 - **id_solicitud_compra** (es el código único de la fila)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
-- **id_proveedor** (apunta a otra tabla: proveedor.id_proveedor)
-- **id_solicitante** (apunta a otra tabla: usuario.id_usuario)
-- **id_orden_compra** (apunta a otra tabla: orden_compra.id_orden_compra)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **proveedor** (apunta a otra tabla: proveedor.id_proveedor)
+- **orden_compra** (apunta a otra tabla: orden_compra.id_orden_compra)
+- **solicitante** (apunta a otra tabla: usuario.id_usuario)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_solicitud_compra)
-- IX sol_compra_tenant (codigo_cuenta)
 
 </details>
 
-### Paso 16 — orden_compra — Pedido de compra ya en serio.
+### Paso 17 — solicitud_compra_linea — Cada producto del borrador de compra (SOL).
+
+**En una frase:** Cada producto del borrador de compra (SOL).
+
+**Quién lo usa o lo crea:** La persona que hace pedidos y papeles en la oficina
+
+**Antes de este paso:** Detalle SOL.
+
+**Después sigue:** orden_compra.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Detalle de la solicitud antes de convertirla en OC.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Línea SOL
+
+✅ Tabla solicitud_compra_linea · polaria-wms-db / Supabase.
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **solicitud_compra**: solicitud_compra
+- Se relaciona con **producto**: producto
+
+**Datos importantes en la tabla:**
+
+- **id_linea_solicitud_compra** (es el código único de la fila)
+- **solicitud_compra** (apunta a otra tabla: solicitud_compra.id_solicitud_compra)
+- **producto** (apunta a otra tabla: producto.id_producto)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_linea_solicitud_compra)
+
+</details>
+
+### Paso 18 — orden_compra — Pedido de compra ya en serio.
 
 **En una frase:** Pedido de compra ya en serio.
 
@@ -814,9 +840,9 @@ El ticket de compra con fecha y proveedor.
 
 **Quién lo usa o lo crea:** La persona que hace pedidos y papeles en la oficina
 
-**Antes de este paso:** Proveedor (8) + bodega destino (6).
+**Antes de este paso:** emitida / recepción.
 
-**Después sigue:** Paso 17 líneas del pedido de compra.
+**Después sigue:** líneas del pedido de compra.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -825,34 +851,34 @@ Dice qué bodega recibirá las cajas y de qué proveedor vienen.
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Orden de compra (OC)
+**Nombre en el sistema:** Orden compra (OC)
 
-Operador de cuenta / administrador de cuenta. Paso a paso: strip-oc → recepción.
+✅ Tabla orden_compra · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **linea_orden_compra**: líneas
-- Se relaciona con **solicitud_compra**: desde SOL
-- Se relaciona con **caja**: ingresos
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **bodega**: bodega
+- Se relaciona con **proveedor**: proveedor
+- Se relaciona con **solicitud_compra**: solicitud_compra
+- Se relaciona con **usuario**: creador
 
 **Datos importantes en la tabla:**
 
 - **id_orden_compra** (es el código único de la fila)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
-- **id_proveedor** (apunta a otra tabla: proveedor.id_proveedor)
-- **id_bodega_destino** (apunta a otra tabla: bodega.id_bodega)
-- **id_creador** (apunta a otra tabla: usuario.id_usuario)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **proveedor** (apunta a otra tabla: proveedor.id_proveedor)
+- **solicitud_compra** (apunta a otra tabla: solicitud_compra.id_solicitud_compra)
+- **creador** (apunta a otra tabla: usuario.id_usuario)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_orden_compra)
-- IX oc_tenant (codigo_cuenta)
-- IX oc_bodega (id_bodega_destino)
-- IX oc_estado (estado)
 
 </details>
 
-### Paso 17 — linea_orden_compra — Cada línea del ticket: producto y cantidad.
+### Paso 19 — orden_compra_linea — Cada línea del ticket: producto y cantidad.
 
 **En una frase:** Cada línea del ticket: producto y cantidad.
 
@@ -862,9 +888,9 @@ En el ticket: 3 leches, 2 quesos — cada línea es una fila.
 
 **Quién lo usa o lo crea:** La persona que hace pedidos y papeles en la oficina
 
-**Antes de este paso:** OC (16) + producto (13).
+**Antes de este paso:** cantidad_recibida.
 
-**Después sigue:** FASE 7 mapa en vivo de la bodega (18).
+**Después sigue:** recepcion_compra.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -875,173 +901,391 @@ Sin líneas no sabes cuántas cajas esperar.
 
 **Nombre en el sistema:** Línea OC
 
-
+✅ Tabla orden_compra_linea · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **orden_compra**: OC
+- Se relaciona con **orden_compra**: orden_compra
 - Se relaciona con **producto**: producto
 
 **Datos importantes en la tabla:**
 
-- **id_orden_compra** (es el código único de la fila) (apunta a otra tabla: orden_compra.id_orden_compra)
-- **id_linea** (es el código único de la fila)
-- **id_producto** (apunta a otra tabla: producto.id_producto)
+- **id_linea_orden_compra** (es el código único de la fila)
+- **orden_compra** (apunta a otra tabla: orden_compra.id_orden_compra)
+- **producto** (apunta a otra tabla: producto.id_producto)
 
 **Índices (para que el programa vaya rápido):**
 
-- PK (id_orden_compra, id_linea)
-- IX loc_producto (id_producto)
+- PK (id_linea_orden_compra)
+
+</details>
+
+### Paso 20 — recepcion_compra — Acta de lo que llegó contra la orden de compra.
+
+**En una frase:** Acta de lo que llegó contra la orden de compra.
+
+**Quién lo usa o lo crea:** La gente que trabaja dentro del almacén o en el camión
+
+**Antes de este paso:** 🟡 Schema listo.
+
+**Después sigue:** recepcion_compra_linea.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+🟡 Schema listo; API recepción en roadmap.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Recepción compra
+
+🟡 Tabla recepcion_compra · polaria-wms-db / Supabase.
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **bodega**: bodega
+- Se relaciona con **orden_compra**: orden_compra
+- Se relaciona con **usuario**: usuario_cierre
+
+**Datos importantes en la tabla:**
+
+- **id_recepcion** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **orden_compra** (apunta a otra tabla: orden_compra.id_orden_compra)
+- **usuario_cierre** (apunta a otra tabla: usuario.id_usuario)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_recepcion)
+
+</details>
+
+### Paso 21 — recepcion_compra_linea — Línea recepción
+
+**En una frase:** Línea recepción
+
+**Quién lo usa o lo crea:** La gente que trabaja dentro del almacén o en el camión
+
+**Antes de este paso:** Conciliación OC.
+
+**Después sigue:** layout bodega.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Conciliación OC.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Línea recepción
+
+🟡 Tabla recepcion_compra_linea · polaria-wms-db / Supabase.
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **recepcion_compra**: recepcion
+- Se relaciona con **orden_compra_linea**: linea_orden_compra
+- Se relaciona con **producto**: producto
+
+**Datos importantes en la tabla:**
+
+- **id_linea_recepcion** (es el código único de la fila)
+- **recepcion** (apunta a otra tabla: recepcion_compra.id_recepcion)
+- **linea_orden_compra** (apunta a otra tabla: orden_compra_linea.id_linea_orden_compra)
+- **producto** (apunta a otra tabla: producto.id_producto)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_linea_recepcion)
 
 </details>
 
 ---
 
-## FASE 7 — Bodega en vivo + historial
+## FASE 7 — Layout e inventario
 
 **En palabras fáciles:**
 
 Dentro de la bodega se ve en vivo dónde está cada caja; también queda un diario de movimientos.
 
-### Paso 18 — warehouse_state — Foto en vivo de cómo está la bodega ahora mismo.
+### Paso 22 — tipo_ubicacion — Tipos de hueco: recepción, picking, almacén.
 
-**En una frase:** Foto en vivo de cómo está la bodega ahora mismo.
+**En una frase:** Tipos de hueco: recepción, picking, almacén.
 
-**Imagínalo así:**
+**Quién lo usa o lo crea:** El equipo que arregla y crea el programa (como los desarrolladores)
 
-El mapa del nivel que se actualiza al instante en el juego.
+**Antes de este paso:** bootstrap-layout.
 
-**Quién lo usa o lo crea:** El programa solo, sin persona
-
-**Antes de este paso:** Bodega (6) con equipo asignado. Una fila por bodega; Realtime.
-
-**Después sigue:** Tablas 19–22 proyección lógica (opcional en SQL).
+**Después sigue:** zona.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
-Un archivo especial por bodega: dónde hay huecos libres, qué cajas hay, alertas. Va muy rápido para ver en pantalla.
+Se crean con bootstrap-layout de bodega interna.
 
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Estado en vivo (documento)
+**Nombre en el sistema:** Tipo ubicación
 
-Pilar 1 PDF (modelo dual) + R4: una fila jsonb por bodega (state/main). Lectura Realtime; escritura con locking vía NestJS; proyección en slot/caja/OT.
+🟡 Tabla tipo_ubicacion · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
+- Se relaciona con **cuenta**: cuenta
 - Se relaciona con **bodega**: bodega
-- Se relaciona con **slot**: slots
-- Se relaciona con **caja**: cajas
-- Se relaciona con **orden_trabajo**: OT
-- Se relaciona con **tarea_cola**: tareas
-- Se relaciona con **alerta**: alertas
 
 **Datos importantes en la tabla:**
 
-- **id_bodega** (es el código único de la fila) (apunta a otra tabla: bodega.id_bodega)
+- **id_tipo_ubicacion** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
 
 **Índices (para que el programa vaya rápido):**
 
-- PK (id_bodega)
-- GIN (estado_json) opcional
+- PK (id_tipo_ubicacion)
 
 </details>
 
-### Paso 19 — slot — Un hueco o estante en la bodega.
+### Paso 23 — zona — Zona física dentro de la bodega.
 
-**En una frase:** Un hueco o estante en la bodega.
+**En una frase:** Zona física dentro de la bodega.
 
-**Imagínalo así:**
+**Quién lo usa o lo crea:** El equipo que arregla y crea el programa (como los desarrolladores)
 
-Cada casillero del locker del colegio.
+**Antes de este paso:** Agrupa ubicaciones.
 
-**Quién lo usa o lo crea:** El programa solo, sin persona
-
-**Antes de este paso:** mapa en vivo de la bodega (18).
-
-**Después sigue:** Paso 20 caja.
+**Después sigue:** ubicacion.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
-Puede estar libre, ocupado o reservado.
+Agrupa ubicaciones (slots).
 
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Casillero (SlotState)
+**Nombre en el sistema:** Zona
 
-libre | ocupado | reservado | en_proceso — paso locking.
+🟡 Tabla zona · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **estado_bodega**: estado
-- Se relaciona con **caja**: caja actual
-- Se relaciona con **alerta**: alertas
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **bodega**: bodega
 
 **Datos importantes en la tabla:**
 
-- **id_bodega** (es el código único de la fila) (apunta a otra tabla: estado_bodega.id_bodega)
-- **id_slot** (es el código único de la fila)
-- **id_caja** (apunta a otra tabla: caja.id_caja)
+- **id_zona** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
 
 **Índices (para que el programa vaya rápido):**
 
-- PK (id_bodega, id_slot) si se normaliza a tabla
+- PK (id_zona)
 
 </details>
 
-### Paso 20 — caja — Una caja con producto adentro.
+### Paso 24 — ubicacion — Un hueco o estante (slot).
 
-**En una frase:** Una caja con producto adentro.
+**En una frase:** Un hueco o estante (slot).
 
 **Imagínalo así:**
 
-Una caja de zapatos con etiqueta que dice qué hay dentro.
+Cada casillero del locker.
+
+**Quién lo usa o lo crea:** El equipo que arregla y crea el programa (como los desarrolladores)
+
+**Antes de este paso:** estado_slot en fila.
+
+**Después sigue:** lote.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+estado_slot: libre, ocupado, reservado.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Ubicación (slot)
+
+🟡 Tabla ubicacion · polaria-wms-db / Supabase.
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **bodega**: bodega
+- Se relaciona con **zona**: zona
+- Se relaciona con **tipo_ubicacion**: tipo_ubicacion
+
+**Datos importantes en la tabla:**
+
+- **id_ubicacion** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **zona** (apunta a otra tabla: zona.id_zona)
+- **tipo_ubicacion** (apunta a otra tabla: tipo_ubicacion.id_tipo_ubicacion)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_ubicacion)
+
+</details>
+
+### Paso 25 — lote — Lote trazable de producto.
+
+**En una frase:** Lote trazable de producto.
+
+**Imagínalo así:**
+
+Etiqueta con fecha de vencimiento.
 
 **Quién lo usa o lo crea:** La gente que trabaja dentro del almacén o en el camión
 
-**Antes de este paso:** Slots (19) + OC (16–17).
+**Antes de este paso:** Trazabilidad FEFO.
 
-**Después sigue:** Paso 21 orden_trabajo.
+**Después sigue:** mapa en vivo de la bodega.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
-Entra cuando compras; sale cuando vendes.
+FEFO y trazabilidad.
 
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Caja / lote (BoxRecord)
+**Nombre en el sistema:** Lote
 
-Custodio ingresa; operario mueve; zonas según paso a paso.
+🟡 Tabla lote · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
+- Se relaciona con **cuenta**: cuenta
 - Se relaciona con **bodega**: bodega
 - Se relaciona con **producto**: producto
-- Se relaciona con **orden_compra**: ingreso OC
-- Se relaciona con **orden_venta**: salida OV
-- Se relaciona con **orden_trabajo**: movimientos
+- Se relaciona con **cliente**: cliente
 
 **Datos importantes en la tabla:**
 
-- **id_caja** (es el código único de la fila)
-- **id_bodega** (apunta a otra tabla: bodega.id_bodega)
-- **id_producto** (apunta a otra tabla: producto.id_producto)
-- **id_cliente** (apunta a otra tabla: cliente.id_cliente)
-- **id_orden_compra** (apunta a otra tabla: orden_compra.id_orden_compra)
-- **id_orden_venta** (apunta a otra tabla: orden_venta.id_orden_venta)
+- **id_lote** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **producto** (apunta a otra tabla: producto.id_producto)
+- **cliente** (apunta a otra tabla: cliente.id_cliente)
 
 **Índices (para que el programa vaya rápido):**
 
-- PK (id_caja)
-- IX caja_bodega (id_bodega)
-- IX caja_zona (zona)
+- PK (id_lote)
 
 </details>
 
-### Paso 21 — orden_trabajo — Orden de mover una caja de un sitio a otro.
+### Paso 26 — warehouse_state — Stock en vivo por ubicación y producto.
+
+**En una frase:** Stock en vivo por ubicación y producto.
+
+**Imagínalo así:**
+
+El mapa del nivel que se actualiza al instante.
+
+**Quién lo usa o lo crea:** El programa solo, sin persona
+
+**Antes de este paso:** Escritura solo API.
+
+**Después sigue:** movimiento_inventario.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Escritura solo vía API (Prisma). Realtime en web.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Inventario en vivo (warehouse_state)
+
+🟡 Stock en vivo por ubicación+producto+lote. Escritura solo API.
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **bodega**: bodega
+- Se relaciona con **ubicacion**: ubicacion
+- Se relaciona con **producto**: producto
+- Se relaciona con **lote**: lote
+- Se relaciona con **usuario**: usuario_lock
+
+**Datos importantes en la tabla:**
+
+- **id_warehouse_state** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **ubicacion** (apunta a otra tabla: ubicacion.id_ubicacion)
+- **producto** (apunta a otra tabla: producto.id_producto)
+- **lote** (apunta a otra tabla: lote.id_lote)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_warehouse_state)
+
+</details>
+
+### Paso 27 — movimiento_inventario — Diario append-only de movimientos.
+
+**En una frase:** Diario append-only de movimientos.
+
+**Imagínalo así:**
+
+Cuaderno del profe con cada cambio.
+
+**Quién lo usa o lo crea:** El programa solo, sin persona
+
+**Antes de este paso:** Append-only audit.
+
+**Después sigue:** orden_trabajo.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Reemplaza historial_movimiento legacy.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Movimiento inventario
+
+🟡 Historial append-only. Escritura solo API (Prisma bypass RLS).
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **bodega**: bodega
+- Se relaciona con **ubicacion_origen**: ubicacion_origen
+- Se relaciona con **ubicacion_destino**: ubicacion_destino
+- Se relaciona con **producto**: producto
+- Se relaciona con **lote**: lote
+- Se relaciona con **usuario**: usuario
+
+**Datos importantes en la tabla:**
+
+- **id_movimiento_inventario** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **ubicacion_origen** (apunta a otra tabla: ubicacion_origen.id_ubicacion)
+- **ubicacion_destino** (apunta a otra tabla: ubicacion_destino.id_ubicacion)
+- **producto** (apunta a otra tabla: producto.id_producto)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_movimiento_inventario)
+
+</details>
+
+---
+
+## FASE 8 — Cola operativa y procesamiento
+
+**En palabras fáciles:**
+
+A veces un producto se transforma en otro; si algo se pierde, se anota la merma.
+
+### Paso 28 — orden_trabajo — Orden de mover una caja de un sitio a otro.
 
 **En una frase:** Orden de mover una caja de un sitio a otro.
 
@@ -1051,9 +1295,9 @@ Misión del juego: llevar el cofre del punto A al B.
 
 **Quién lo usa o lo crea:** La gente que trabaja dentro del almacén o en el camión
 
-**Antes de este paso:** Cajas (20).
+**Antes de este paso:** Cola mapa.
 
-**Después sigue:** Paso 22 alerta; 23 historial.
+**Después sigue:** orden_trabajo_linea.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -1062,33 +1306,77 @@ Un operario la hace; el jefe puede crearla.
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Orden de trabajo (WorkOrder)
+**Nombre en el sistema:** Orden trabajo
 
-Jefe/custodio crean; operario ejecuta. Tipos: a_bodega | a_salida | revisar.
+🟡 Tabla orden_trabajo · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **estado_bodega**: bodega
-- Se relaciona con **caja**: caja
-- Se relaciona con **usuario**: operario
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **bodega**: bodega
+- Se relaciona con **usuario**: asignado
+- Se relaciona con **usuario**: solicitante
+- Se relaciona con **lote**: lote
+- Se relaciona con **ubicacion_origen**: ubicacion_origen
+- Se relaciona con **ubicacion_destino**: ubicacion_destino
+- Se relaciona con **solicitud_procesamiento**: solicitud_procesamiento
 
 **Datos importantes en la tabla:**
 
 - **id_orden_trabajo** (es el código único de la fila)
-- **id_bodega** (apunta a otra tabla: estado_bodega.id_bodega)
-- **id_caja** (apunta a otra tabla: caja.id_caja)
-- **id_slot_destino** (apunta a otra tabla: slot.id_slot)
-- **id_asignado** (apunta a otra tabla: usuario.id_usuario)
-- **id_solicitante** (apunta a otra tabla: usuario.id_usuario)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **asignado** (apunta a otra tabla: usuario.id_usuario)
+- **solicitante** (apunta a otra tabla: usuario.id_usuario)
+- **lote** (apunta a otra tabla: lote.id_lote)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_orden_trabajo)
-- IX ot_bodega_estado (id_bodega, estado)
 
 </details>
 
-### Paso 22 — alerta — Aviso de que algo va mal.
+### Paso 29 — orden_trabajo_linea — Línea OT
+
+**En una frase:** Línea OT
+
+**Quién lo usa o lo crea:** La gente que trabaja dentro del almacén o en el camión
+
+**Antes de este paso:** Entrada/salida OT.
+
+**Después sigue:** alerta_operativa.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Entrada/salida OT.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Línea OT
+
+🟡 Tabla orden_trabajo_linea · polaria-wms-db / Supabase.
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **orden_trabajo**: orden_trabajo
+- Se relaciona con **producto**: producto
+- Se relaciona con **ubicacion**: ubicacion
+
+**Datos importantes en la tabla:**
+
+- **id_linea_orden_trabajo** (es el código único de la fila)
+- **orden_trabajo** (apunta a otra tabla: orden_trabajo.id_orden_trabajo)
+- **producto** (apunta a otra tabla: producto.id_producto)
+- **ubicacion** (apunta a otra tabla: ubicacion.id_ubicacion)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_linea_orden_trabajo)
+
+</details>
+
+### Paso 30 — alerta_operativa — Aviso de que algo va mal.
 
 **En una frase:** Aviso de que algo va mal.
 
@@ -1098,93 +1386,87 @@ Luces rojas en el tablero del carro.
 
 **Quién lo usa o lo crea:** La gente que trabaja dentro del almacén o en el camión
 
-**Antes de este paso:** Mapa en vivo (18–21).
+**Antes de este paso:** Temperatura / demora.
 
-**Después sigue:** Paso 23 historial_movimiento.
+**Después sigue:** tarea_cola.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
-Ejemplo: un hueco lleva mucho tiempo raro o hay problema de frío.
+Temperatura, demora, OT reportada.
 
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
 **Nombre en el sistema:** Alerta operativa
 
-temperatura | demora | orden_reportada — jefe de bodega atiende.
+🟡 Tabla alerta_operativa · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **estado_bodega**: bodega
-- Se relaciona con **slot**: slot
-- Se relaciona con **usuario**: jefe bodega
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **bodega**: bodega
+- Se relaciona con **ubicacion**: ubicacion
+- Se relaciona con **orden_trabajo**: orden_trabajo
+- Se relaciona con **usuario**: responsable
 
 **Datos importantes en la tabla:**
 
 - **id_alerta** (es el código único de la fila)
-- **id_bodega** (apunta a otra tabla: estado_bodega.id_bodega)
-- **id_slot** (apunta a otra tabla: slot.id_slot)
-- **id_responsable** (apunta a otra tabla: usuario.id_usuario)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **ubicacion** (apunta a otra tabla: ubicacion.id_ubicacion)
+- **orden_trabajo** (apunta a otra tabla: orden_trabajo.id_orden_trabajo)
+- **responsable** (apunta a otra tabla: usuario.id_usuario)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_alerta)
-- IX alerta_bodega_abierta (id_bodega) WHERE motivo_cierre IS NULL
 
 </details>
 
-### Paso 23 — historial_movimiento — Diario de todo lo que se movió.
+### Paso 31 — tarea_cola — Tarea en la cola de trabajo de bodega.
 
-**En una frase:** Diario de todo lo que se movió.
+**En una frase:** Tarea en la cola de trabajo de bodega.
 
-**Imagínalo así:**
+**Quién lo usa o lo crea:** La gente que trabaja dentro del almacén o en el camión
 
-El cuaderno del profe con fecha de cada cambio.
+**Antes de este paso:** Ingreso / movimiento.
 
-**Quién lo usa o lo crea:** El programa solo, sin persona
-
-**Antes de este paso:** Operación en bodega en marcha.
-
-**Después sigue:** FASE 8 procesamiento (24).
+**Después sigue:** solicitud_procesamiento.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
-No borras el pasado: queda guardado para revisar después.
+Ingreso, movimiento, despacho, procesamiento.
 
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Historial de movimientos
+**Nombre en el sistema:** Tarea cola
 
-
+🟡 Tabla tarea_cola · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
+- Se relaciona con **cuenta**: cuenta
 - Se relaciona con **bodega**: bodega
-- Se relaciona con **usuario**: actor
+- Se relaciona con **usuario**: asignado
+- Se relaciona con **orden_trabajo**: orden_trabajo
 
 **Datos importantes en la tabla:**
 
-- **id_movimiento** (es el código único de la fila)
-- **id_bodega** (apunta a otra tabla: bodega.id_bodega)
-- **id_usuario** (apunta a otra tabla: usuario.id_usuario)
+- **id_tarea** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **asignado** (apunta a otra tabla: usuario.id_usuario)
+- **orden_trabajo** (apunta a otra tabla: orden_trabajo.id_orden_trabajo)
 
 **Índices (para que el programa vaya rápido):**
 
-- PK (id_movimiento)
-- IX hist_bodega_fecha (id_bodega, creado_en DESC)
+- PK (id_tarea)
 
 </details>
 
----
-
-## FASE 8 — Procesamiento y merma
-
-**En palabras fáciles:**
-
-A veces un producto se transforma en otro; si algo se pierde, se anota la merma.
-
-### Paso 24 — solicitud_procesamiento — Pedido de transformar un producto en otro.
+### Paso 32 — solicitud_procesamiento — Pedido de transformar un producto en otro.
 
 **En una frase:** Pedido de transformar un producto en otro.
 
@@ -1194,9 +1476,9 @@ Pedir convertir jugo de naranja en concentrado.
 
 **Quién lo usa o lo crea:** La persona que hace pedidos y papeles en la oficina
 
-**Antes de este paso:** Producto (13) + bodega (6).
+**Antes de este paso:** Balance masa.
 
-**Después sigue:** Paso 25 registro_merma.
+**Después sigue:** registro_merma.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -1205,34 +1487,33 @@ Entra materia prima; sale otro producto con cantidades.
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Solicitud de procesamiento
+**Nombre en el sistema:** Solicitud procesamiento
 
-Operador de cuenta solicita; procesador ejecuta (paso procesamiento).
+🟡 Tabla solicitud_procesamiento · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **registro_merma**: merma
+- Se relaciona con **cuenta**: cuenta
 - Se relaciona con **bodega**: bodega
-- Se relaciona con **producto**: primario/secundario
-- Se relaciona con **usuario**: procesador
+- Se relaciona con **cliente**: cliente
+- Se relaciona con **producto_primario**: producto_primario
+- Se relaciona con **producto_secundario**: producto_secundario
+- Se relaciona con **usuario**: solicitante
+- Se relaciona con **procesador**: procesador
 
 **Datos importantes en la tabla:**
 
-- **id_solicitud** (es el código único de la fila)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
-- **id_bodega** (apunta a otra tabla: bodega.id_bodega)
-- **id_producto_primario** (apunta a otra tabla: producto.id_producto)
-- **id_producto_secundario** (apunta a otra tabla: producto.id_producto)
-- **id_procesador** (apunta a otra tabla: usuario.id_usuario)
+- **id_solicitud_procesamiento** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
 
 **Índices (para que el programa vaya rápido):**
 
-- PK (id_solicitud)
-- IX sol_proc_bodega (id_bodega, estado)
+- PK (id_solicitud_procesamiento)
 
 </details>
 
-### Paso 25 — registro_merma — Lo que se perdió o no salió bien.
+### Paso 33 — registro_merma — Lo que se perdió o no salió bien.
 
 **En una frase:** Lo que se perdió o no salió bien.
 
@@ -1242,9 +1523,9 @@ Si se derramó leche, anotas cuánto se perdió.
 
 **Quién lo usa o lo crea:** La gente que trabaja dentro del almacén o en el camión
 
-**Antes de este paso:** Solicitud procesamiento (24).
+**Antes de este paso:** Acumulado kg.
 
-**Después sigue:** FASE 9 orden_venta (26).
+**Después sigue:** orden_venta.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -1253,25 +1534,26 @@ Va ligado al procesamiento.
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Registro de merma
+**Nombre en el sistema:** Registro merma
 
-
+🟡 Tabla registro_merma · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **solicitud_procesamiento**: solicitud
+- Se relaciona con **solicitud_procesamiento**: solicitud_procesamiento
 - Se relaciona con **bodega**: bodega
+- Se relaciona con **cuenta**: cuenta
 
 **Datos importantes en la tabla:**
 
 - **id_registro** (es el código único de la fila)
-- **id_solicitud** (apunta a otra tabla: solicitud_procesamiento.id_solicitud)
-- **id_bodega** (apunta a otra tabla: bodega.id_bodega)
+- **solicitud_procesamiento** (apunta a otra tabla: solicitud_procesamiento.id_solicitud_procesamiento)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_registro)
-- IX merma_bodega_periodo (id_bodega, periodo)
 
 </details>
 
@@ -1283,7 +1565,7 @@ Va ligado al procesamiento.
 
 Se vende, sale el camión y se guarda la prueba de que llegó; al final el sistema cuenta números y apunta quién hizo qué.
 
-### Paso 26 — orden_venta — Pedido de venta: quiero mandar esto a alguien.
+### Paso 34 — orden_venta — Pedido de venta: quiero mandar esto a alguien.
 
 **En una frase:** Pedido de venta: quiero mandar esto a alguien.
 
@@ -1293,9 +1575,9 @@ La nota del cliente que pide entrega.
 
 **Quién lo usa o lo crea:** La persona que hace pedidos y papeles en la oficina
 
-**Antes de este paso:** Comprador (9) + bodega origen (6).
+**Antes de este paso:** Estados despacho.
 
-**Después sigue:** Paso 27 líneas de la venta.
+**Después sigue:** líneas de la venta.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -1304,33 +1586,36 @@ Sale de una bodega hacia un comprador.
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Orden de venta (OV)
+**Nombre en el sistema:** Orden venta (OV)
 
-
+🟡 Tabla orden_venta · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **linea_orden_venta**: líneas
-- Se relaciona con **viaje_transporte**: TV
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **bodega**: bodega
+- Se relaciona con **cliente**: cliente
+- Se relaciona con **comprador**: comprador
+- Se relaciona con **planta**: planta
+- Se relaciona con **usuario**: creador
+- Se relaciona con **bodega_destino**: bodega_destino
 
 **Datos importantes en la tabla:**
 
 - **id_orden_venta** (es el código único de la fila)
-- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
-- **id_comprador** (apunta a otra tabla: comprador.id_comprador)
-- **id_bodega_origen** (apunta a otra tabla: bodega.id_bodega)
-- **id_planta** (apunta a otra tabla: planta.id_planta)
-- **id_creador** (apunta a otra tabla: usuario.id_usuario)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **cliente** (apunta a otra tabla: cliente.id_cliente)
+- **comprador** (apunta a otra tabla: comprador.id_comprador)
+- **planta** (apunta a otra tabla: planta.id_planta)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_orden_venta)
-- IX ov_tenant (codigo_cuenta)
-- IX ov_estado (estado)
 
 </details>
 
-### Paso 27 — linea_orden_venta — Cada producto de esa venta.
+### Paso 35 — orden_venta_linea — Cada producto de esa venta.
 
 **En una frase:** Cada producto de esa venta.
 
@@ -1340,9 +1625,9 @@ Cada renglón de la nota de venta.
 
 **Quién lo usa o lo crea:** La persona que hace pedidos y papeles en la oficina
 
-**Antes de este paso:** OV (26).
+**Antes de este paso:** cantidad_despachada.
 
-**Después sigue:** Paso 28 viaje_transporte.
+**Después sigue:** viaje_transporte.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -1353,27 +1638,26 @@ Cantidad y qué producto van en el camión.
 
 **Nombre en el sistema:** Línea OV
 
-
+🟡 Tabla orden_venta_linea · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **orden_venta**: OV
+- Se relaciona con **orden_venta**: orden_venta
 - Se relaciona con **producto**: producto
-- Se relaciona con **evidencia_entrega**: evidencias
 
 **Datos importantes en la tabla:**
 
-- **id_orden_venta** (es el código único de la fila) (apunta a otra tabla: orden_venta.id_orden_venta)
-- **id_linea** (es el código único de la fila)
-- **id_producto** (apunta a otra tabla: producto.id_producto)
+- **id_linea_orden_venta** (es el código único de la fila)
+- **orden_venta** (apunta a otra tabla: orden_venta.id_orden_venta)
+- **producto** (apunta a otra tabla: producto.id_producto)
 
 **Índices (para que el programa vaya rápido):**
 
-- PK (id_orden_venta, id_linea)
+- PK (id_linea_orden_venta)
 
 </details>
 
-### Paso 28 — viaje_transporte — El viaje del camión con la mercancía.
+### Paso 36 — viaje_transporte — El viaje del camión con la mercancía.
 
 **En una frase:** El viaje del camión con la mercancía.
 
@@ -1383,9 +1667,9 @@ El reparto de Amazon con número de seguimiento.
 
 **Quién lo usa o lo crea:** La gente que trabaja dentro del almacén o en el camión
 
-**Antes de este paso:** OV (26–27) + camion (10).
+**Antes de este paso:** Transportista.
 
-**Después sigue:** Paso 29 evidencia_entrega.
+**Después sigue:** guia_envio.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -1394,32 +1678,72 @@ Une la venta, el camión y el chofer.
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Viaje (TV)
+**Nombre en el sistema:** Viaje transporte
 
-Transportista. TV-#### desde contador_documento.
+🟡 Tabla viaje_transporte · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **evidencia_entrega**: evidencias
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **bodega**: bodega
+- Se relaciona con **camion**: camion
+- Se relaciona con **usuario**: transportista
 
 **Datos importantes en la tabla:**
 
 - **id_viaje** (es el código único de la fila)
-- **id_orden_venta** (apunta a otra tabla: orden_venta.id_orden_venta)
-- **id_camion** (apunta a otra tabla: camion.id_camion)
-- **id_transportista** (apunta a otra tabla: usuario.id_usuario)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **camion** (apunta a otra tabla: camion.id_camion)
+- **transportista** (apunta a otra tabla: usuario.id_usuario)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_viaje)
-- UNIQUE (numero_documento)
-- IX viaje_ov (id_orden_venta)
 
 </details>
 
-### Paso 29 — evidencia_entrega — Prueba de que llegó (foto, firma).
+### Paso 37 — guia_envio — Guía que agrupa entregas de un viaje.
 
-**En una frase:** Prueba de que llegó (foto, firma).
+**En una frase:** Guía que agrupa entregas de un viaje.
+
+**Quién lo usa o lo crea:** La gente que trabaja dentro del almacén o en el camión
+
+**Antes de este paso:** Agrupa OV.
+
+**Después sigue:** evidencia_transporte.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Un viaje puede tener varias guías / OV.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Guía envío
+
+🟡 Tabla guia_envio · polaria-wms-db / Supabase.
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **viaje_transporte**: viaje
+- Se relaciona con **orden_venta**: orden_venta
+
+**Datos importantes en la tabla:**
+
+- **id_guia** (es el código único de la fila)
+- **viaje** (apunta a otra tabla: viaje_transporte.id_viaje)
+- **orden_venta** (apunta a otra tabla: orden_venta.id_orden_venta)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_guia)
+
+</details>
+
+### Paso 38 — evidencia_transporte — Prueba de entrega (foto, firma Cloudinary).
+
+**En una frase:** Prueba de entrega (foto, firma Cloudinary).
 
 **Imagínalo así:**
 
@@ -1427,43 +1751,41 @@ La foto que el repartidor manda de la puerta.
 
 **Quién lo usa o lo crea:** transportista
 
-**Antes de este paso:** Viaje (28).
+**Antes de este paso:** Foto / firma Cloudinary.
 
-**Después sigue:** Paso 30 contador_documento.
+**Después sigue:** contador.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
-Se guarda cuando termina el viaje.
+Se guarda al cerrar la guía / viaje.
 
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Evidencia de entrega
+**Nombre en el sistema:** Evidencia transporte
 
-
+🟡 Tabla evidencia_transporte · polaria-wms-db / Supabase.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **viaje_transporte**: viaje
-- Se relaciona con **linea_orden_venta**: línea OV
+- Se relaciona con **guia_envio**: guia
+- Se relaciona con **orden_venta_linea**: linea_orden_venta
 
 **Datos importantes en la tabla:**
 
 - **id_evidencia** (es el código único de la fila)
-- **id_viaje** (apunta a otra tabla: viaje_transporte.id_viaje)
-- **id_orden_venta** (apunta a otra tabla: orden_venta.id_orden_venta)
-- **id_linea** (apunta a otra tabla: linea_orden_venta.id_linea)
+- **guia** (apunta a otra tabla: guia_envio.id_guia)
+- **linea_orden_venta** (apunta a otra tabla: orden_venta_linea.id_linea_orden_venta)
 
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_evidencia)
-- IX evidencia_viaje (id_viaje)
 
 </details>
 
-### Paso 30 — contador_documento — Contador para números automáticos (viaje 001, 002…).
+### Paso 39 — contador — Contador para números automáticos (OC, OV, TV…).
 
-**En una frase:** Contador para números automáticos (viaje 001, 002…).
+**En una frase:** Contador para números automáticos (OC, OV, TV…).
 
 **Imagínalo así:**
 
@@ -1471,36 +1793,39 @@ Como el turno en la fila del banco que sube solo.
 
 **Quién lo usa o lo crea:** El programa solo, sin persona
 
-**Antes de este paso:** Al implementar numeración automática de viajes.
+**Antes de este paso:** Solo API.
 
-**Después sigue:** Paso 31 auditoria.
+**Después sigue:** auditoria_operacion.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
-El programa no repite el mismo número dos veces.
+Escritura solo API.
 
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Contador de documentos
+**Nombre en el sistema:** Contador documentos
 
-
+🟡 Numeración OC/OV/TV. Escritura solo API.
 
 **Conexiones en el dibujo ER:**
 
-- Se relaciona con **viaje_transporte**: numera TV
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **bodega**: bodega
 
 **Datos importantes en la tabla:**
 
-- **nombre_contador** (es el código único de la fila)
+- **id_contador** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
 
 **Índices (para que el programa vaya rápido):**
 
-- PK (nombre_contador)
+- PK (id_contador)
 
 </details>
 
-### Paso 31 — auditoria — Cuaderno de "quién hizo qué y cuándo".
+### Paso 40 — auditoria_operacion — Cuaderno de "quién hizo qué y cuándo".
 
 **En una frase:** Cuaderno de "quién hizo qué y cuándo".
 
@@ -1510,34 +1835,37 @@ La cámara de seguridad del sistema.
 
 **Quién lo usa o lo crea:** El programa solo, sin persona
 
-**Antes de este paso:** Cuando todo lo anterior está claro.
+**Antes de este paso:** INSERT solo backend.
 
-**Después sigue:** Fin de la secuencia — repasa FASE 0–9 en diagrama ER onboarding.
+**Después sigue:** Fin secuencia 40 tablas.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
-Si alguien borra o cambia algo importante, queda anotado.
+INSERT solo backend.
 
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
 
-**Nombre en el sistema:** Auditoría
+**Nombre en el sistema:** Auditoría operación
 
-
+🟡 Log operativo. INSERT solo backend.
 
 **Conexiones en el dibujo ER:**
 
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **bodega**: bodega
 - Se relaciona con **usuario**: usuario
 
 **Datos importantes en la tabla:**
 
-- **id_evento** (es el código único de la fila)
-- **id_usuario** (apunta a otra tabla: usuario.id_usuario)
+- **id_auditoria** (es el código único de la fila)
+- **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **bodega** (apunta a otra tabla: bodega.id_bodega)
+- **usuario** (apunta a otra tabla: usuario.id_usuario)
 
 **Índices (para que el programa vaya rápido):**
 
-- PK (id_evento)
-- IX audit_usuario_fecha (id_usuario, creado_en DESC)
+- PK (id_auditoria)
 
 </details>
 
@@ -1554,57 +1882,40 @@ Si alguien borra o cambia algo importante, queda anotado.
 | 4 | `cuenta` | El "salón de trabajo" donde pasa la operación diaria. | El equipo que arregla y crea el programa (como los desarrolladores) |
 | 5 | `solicitud_alta_bodega` | El jefe pide: "quiero una bodega con este nombre". | El jefe de la empresa cliente |
 | 6 | `bodega` | El almacén frío (de la empresa o afuera). | El equipo que arregla y crea el programa (como los desarrolladores) |
-| 7 | `asignacion_bodega` | Quién trabaja en qué bodega y con qué trabajo. | El jefe de la empresa cliente |
-| 8 | `proveedor` | Quién te vende las cosas que compras. | El jefe de la empresa cliente |
-| 9 | `comprador` | Quién te compra a ti (a quien envías producto). | El jefe de la empresa cliente |
-| 10 | `camion` | Los camiones de la empresa. | El jefe de la empresa cliente |
-| 11 | `planta` | A dónde puede ir el producto (otra fábrica o sitio). | El jefe de la empresa cliente |
-| 12 | `cliente` | Dueño de una marca o línea de productos. | El jefe de la empresa cliente |
-| 13 | `producto` | Cada cosa que guardas, compras o vendes (con su código). | El jefe de la empresa cliente |
-| 14 | `usuario` | Cada persona que usa el sistema. | El jefe de la empresa cliente |
-| 15 | `solicitud_compra` | Borrador de "quiero comprar esto". | La persona que hace pedidos y papeles en la oficina |
-| 16 | `orden_compra` | Pedido de compra ya en serio. | La persona que hace pedidos y papeles en la oficina |
-| 17 | `linea_orden_compra` | Cada línea del ticket: producto y cantidad. | La persona que hace pedidos y papeles en la oficina |
-| 18 | `warehouse_state` | Foto en vivo de cómo está la bodega ahora mismo. | El programa solo, sin persona |
-| 19 | `slot` | Un hueco o estante en la bodega. | El programa solo, sin persona |
-| 20 | `caja` | Una caja con producto adentro. | La gente que trabaja dentro del almacén o en el camión |
-| 21 | `orden_trabajo` | Orden de mover una caja de un sitio a otro. | La gente que trabaja dentro del almacén o en el camión |
-| 22 | `alerta` | Aviso de que algo va mal. | La gente que trabaja dentro del almacén o en el camión |
-| 23 | `historial_movimiento` | Diario de todo lo que se movió. | El programa solo, sin persona |
-| 24 | `solicitud_procesamiento` | Pedido de transformar un producto en otro. | La persona que hace pedidos y papeles en la oficina |
-| 25 | `registro_merma` | Lo que se perdió o no salió bien. | La gente que trabaja dentro del almacén o en el camión |
-| 26 | `orden_venta` | Pedido de venta: quiero mandar esto a alguien. | La persona que hace pedidos y papeles en la oficina |
-| 27 | `linea_orden_venta` | Cada producto de esa venta. | La persona que hace pedidos y papeles en la oficina |
-| 28 | `viaje_transporte` | El viaje del camión con la mercancía. | La gente que trabaja dentro del almacén o en el camión |
-| 29 | `evidencia_entrega` | Prueba de que llegó (foto, firma). | transportista |
-| 30 | `contador_documento` | Contador para números automáticos (viaje 001, 002…). | El programa solo, sin persona |
-| 31 | `auditoria` | Cuaderno de "quién hizo qué y cuándo". | El programa solo, sin persona |
-
----
-
-## Alineación con Decisiones V2.0 (PDF)
-
-Documento: **Bodega de Frío V2.0 — Decisiones de diseño** (`BodegaFrio_V2_Decisiones.pdf`).
-
-Pilares del PDF: (1) BD jerárquica + modelo dual, (2) módulos por rol, (3) arquitectura front/back/Supabase.
-
-### Requisitos → tablas
-
-| Req | En el PDF | Tablas ER |
-| --- | --- | --- |
-| R1 | Jerarquía empresa → tenant → bodega con RLS por codigo_cuenta. | `empresa`, `cuenta` |
-| R2 | Varias bodegas por tenant; el PDF dice que TI las crea; el ER añade solicitud del admin. | `bodega`, `asignacion_bodega`, `solicitud_alta_bodega` |
-| R3 | OC → caja → movimientos → OV → TV → evidencia. | `orden_compra`, `caja`, `historial_movimiento`, `orden_venta`, `viaje_transporte`, `evidencia_entrega` |
-| R4 | warehouse_state (jsonb) + Realtime; locking en escritura vía NestJS. | `estado_bodega`, `slot`, `orden_trabajo`, `tarea_cola` |
-| R5 | Nueve perfiles; configurador = usuario con rol configurador (sin tabla aparte). | `rol`, `usuario`, `asignacion_bodega` |
-
-### Onboarding
-
-- **PDF (Fase A):** configurador → empresa → tenant → bodegas.
-- **ER (refinamiento):** entre tenant y bodega, `solicitud_alta_bodega` registra la petición del administrador de cuenta; TI materializa `bodega` y el admin se asigna en `asignacion_bodega`.
-- **Vista ER:** «PDF · Fase A» y «Onboarding completo» muestran el mismo flujo con numeración 0–14.
-
----
+| 7 | `solicitud_integracion` | Pedido de conectar bodega externa (Fridem, etc.). | La persona que hace pedidos y papeles en la oficina |
+| 8 | `tarea_cuenta` | Tarea pendiente para el configurador en un tenant. | El equipo que arregla y crea el programa (como los desarrolladores) |
+| 9 | `proveedor` | Quién te vende las cosas que compras. | El jefe de la empresa cliente |
+| 10 | `cliente` | Dueño de una marca o línea de productos. | El jefe de la empresa cliente |
+| 11 | `producto` | Cada cosa que guardas, compras o vendes (con su código). | El jefe de la empresa cliente |
+| 12 | `comprador` | Quién te compra a ti (a quien envías producto). | El jefe de la empresa cliente |
+| 13 | `planta` | A dónde puede ir el producto (otra fábrica o sitio). | El jefe de la empresa cliente |
+| 14 | `camion` | Los camiones de la empresa. | El jefe de la empresa cliente |
+| 15 | `asignacion_bodega` | Quién trabaja en qué bodega y con qué trabajo. | El jefe de la empresa cliente |
+| 16 | `solicitud_compra` | Borrador de "quiero comprar esto". | La persona que hace pedidos y papeles en la oficina |
+| 17 | `solicitud_compra_linea` | Cada producto del borrador de compra (SOL). | La persona que hace pedidos y papeles en la oficina |
+| 18 | `orden_compra` | Pedido de compra ya en serio. | La persona que hace pedidos y papeles en la oficina |
+| 19 | `orden_compra_linea` | Cada línea del ticket: producto y cantidad. | La persona que hace pedidos y papeles en la oficina |
+| 20 | `recepcion_compra` | Acta de lo que llegó contra la orden de compra. | La gente que trabaja dentro del almacén o en el camión |
+| 21 | `recepcion_compra_linea` | Línea recepción | La gente que trabaja dentro del almacén o en el camión |
+| 22 | `tipo_ubicacion` | Tipos de hueco: recepción, picking, almacén. | El equipo que arregla y crea el programa (como los desarrolladores) |
+| 23 | `zona` | Zona física dentro de la bodega. | El equipo que arregla y crea el programa (como los desarrolladores) |
+| 24 | `ubicacion` | Un hueco o estante (slot). | El equipo que arregla y crea el programa (como los desarrolladores) |
+| 25 | `lote` | Lote trazable de producto. | La gente que trabaja dentro del almacén o en el camión |
+| 26 | `warehouse_state` | Stock en vivo por ubicación y producto. | El programa solo, sin persona |
+| 27 | `movimiento_inventario` | Diario append-only de movimientos. | El programa solo, sin persona |
+| 28 | `orden_trabajo` | Orden de mover una caja de un sitio a otro. | La gente que trabaja dentro del almacén o en el camión |
+| 29 | `orden_trabajo_linea` | Línea OT | La gente que trabaja dentro del almacén o en el camión |
+| 30 | `alerta_operativa` | Aviso de que algo va mal. | La gente que trabaja dentro del almacén o en el camión |
+| 31 | `tarea_cola` | Tarea en la cola de trabajo de bodega. | La gente que trabaja dentro del almacén o en el camión |
+| 32 | `solicitud_procesamiento` | Pedido de transformar un producto en otro. | La persona que hace pedidos y papeles en la oficina |
+| 33 | `registro_merma` | Lo que se perdió o no salió bien. | La gente que trabaja dentro del almacén o en el camión |
+| 34 | `orden_venta` | Pedido de venta: quiero mandar esto a alguien. | La persona que hace pedidos y papeles en la oficina |
+| 35 | `orden_venta_linea` | Cada producto de esa venta. | La persona que hace pedidos y papeles en la oficina |
+| 36 | `viaje_transporte` | El viaje del camión con la mercancía. | La gente que trabaja dentro del almacén o en el camión |
+| 37 | `guia_envio` | Guía que agrupa entregas de un viaje. | La gente que trabaja dentro del almacén o en el camión |
+| 38 | `evidencia_transporte` | Prueba de entrega (foto, firma Cloudinary). | transportista |
+| 39 | `contador` | Contador para números automáticos (OC, OV, TV…). | El programa solo, sin persona |
+| 40 | `auditoria_operacion` | Cuaderno de "quién hizo qué y cuándo". | El programa solo, sin persona |
 
 ## Preguntas que suele hacer un niño (y la respuesta)
 
@@ -1629,4 +1940,4 @@ Para ver al instante dónde está cada caja, como un GPS del almacén.
 
 ---
 
-*32 piezas del rompecabezas · modelo 3NF · Dev Hub Bodega de Frío*
+*40 piezas del rompecabezas · modelo 3NF · Dev Hub Bodega de Frío*

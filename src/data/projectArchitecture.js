@@ -7,9 +7,9 @@ import { getReadingStepForEntity } from './schemaReadingGuide.js'
  * @typedef {{ id: string, name: string, hint?: string, children?: ArchNode[] }} ArchNode
  */
 
-import { BACKEND_TREE, FRONTEND_TREE } from './projectStructureTrees.js'
+import { API_TREE, BACKEND_TREE, FRONTEND_TREE, WEB_TREE } from './polariaStructureTrees.js'
 
-export { FRONTEND_TREE, BACKEND_TREE }
+export { WEB_TREE, API_TREE, FRONTEND_TREE, BACKEND_TREE }
 
 /** @param {{ getTree?: () => ArchNode[], view?: string }} section */
 export function isTreeSection(section) {
@@ -21,21 +21,21 @@ export function getSectionTree(section) {
   return isTreeSection(section) ? section.getTree() : []
 }
 
-/** Carpetas de código — repos frio-frontend y frio-backend (doc V2.0 §4). */
+/** Carpetas de código — polaria-wms-web y polaria-wms-api. */
 export const PROJECT_STRUCTURE_SECTIONS = [
   {
     id: 'frontend',
     label: 'Frontend',
-    rootLabel: 'frio-frontend/',
+    rootLabel: 'polaria-wms-web/',
     accent: 'sky',
-    getTree: () => FRONTEND_TREE,
+    getTree: () => WEB_TREE,
   },
   {
     id: 'backend',
     label: 'Backend',
-    rootLabel: 'frio-backend/',
+    rootLabel: 'polaria-wms-api/',
     accent: 'violet',
-    getTree: () => BACKEND_TREE,
+    getTree: () => API_TREE,
   },
 ]
 

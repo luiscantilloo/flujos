@@ -7,7 +7,7 @@ import { PORTAL_BRAND, portalMainSections, flowApplications } from '../../src/da
 import { hubProjects } from '../../src/data/hubProjects.js'
 import { referenceTopics } from '../../src/data/referenceTopics.js'
 import { bodegaStepByStepSteps, BODEGA_STEP_COUNT } from '../../src/data/bodegaStepByStepData.js'
-import { FRONTEND_TREE, BACKEND_TREE } from '../../src/data/projectStructureTrees.js'
+import { WEB_TREE, API_TREE } from '../../src/data/polariaStructureTrees.js'
 import { ENTITIES, SCHEMA_META } from '../../src/data/bodegaDatabaseSchema.js'
 import { formatFieldType } from '../../src/data/schemaFieldTypes.js'
 
@@ -100,23 +100,23 @@ export function serializeHome() {
 
 export function serializeProjectStructure() {
   return [
-    '# Estructura del proyecto — Bodega de frío',
+    '# Estructura del proyecto — Polaria WMS',
     '',
     SCHEMA_META.subtitle,
     '',
-    '## Frontend (frio-frontend/)',
+    '## Frontend (polaria-wms-web/)',
     '',
-    treeToMarkdown(FRONTEND_TREE),
+    treeToMarkdown(WEB_TREE),
     '',
-    '## Backend (frio-backend/)',
+    '## Backend (polaria-wms-api/)',
     '',
-    treeToMarkdown(BACKEND_TREE),
+    treeToMarkdown(API_TREE),
   ].join('\n')
 }
 
 export function serializeArchitecture() {
   return [
-    '# Arquitectura de datos — Bodega de frío',
+    '# Arquitectura de datos — Polaria WMS',
     '',
     SCHEMA_META.subtitle,
     '',
@@ -254,7 +254,7 @@ export function collectReadableRoutes() {
     {
       path: '/estructura-proyecto',
       title: 'Estructura del proyecto',
-      description: 'Carpetas frio-frontend y frio-backend.',
+      description: 'Carpetas polaria-wms-web y polaria-wms-api.',
       markdown: serializeProjectStructure(),
     },
     {

@@ -1,17 +1,23 @@
 /**
  * Proyectos del Dev Hub. Cada uno define su documentación fuente y referencias disponibles.
  */
+import { POLARIA_WMS } from './polariaWmsMeta.js'
+
 export const hubProjects = [
   {
     id: 'bodega-frio',
-    name: 'Bodega de frío',
+    name: 'Polaria WMS',
+    legacyName: 'Bodega de frío',
     summary:
-      'WMS multi-rol: empresa → tenant → bodega. Producto Next.js + NestJS + Supabase; este Dev Hub documenta flujos y ER.',
+      'WMS SaaS multi-rol: empresa → tenant → bodega. Producto en polaria-wms-web + polaria-wms-api + polaria-wms-db; este Dev Hub documenta diseño y estado real.',
     accent: 'sky',
-    tags: ['WMS', 'Empresa · Tenant', 'Supabase'],
+    tags: ['Polaria WMS', 'Empresa · Tenant', 'Supabase'],
+    repos: POLARIA_WMS.repos,
     enabled: true,
     /** Documento principal para secciones de referencia (v1.0 operacional). */
     documentationDocId: 'bodega-frio-v2',
+    /** Documento diseño objetivo V2. */
+    designDocId: 'bodega-frio-documentacion-v20',
   },
 ]
 

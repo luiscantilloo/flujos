@@ -144,41 +144,60 @@ const STEP_KIDS = {
     analogia: 'El ticket de compra con fecha y proveedor.',
     guion: 'Dice qué bodega recibirá las cajas y de qué proveedor vienen.',
   },
-  linea_orden_compra: {
+  orden_compra_linea: {
     frase: 'Cada línea del ticket: producto y cantidad.',
     analogia: 'En el ticket: 3 leches, 2 quesos — cada línea es una fila.',
     guion: 'Sin líneas no sabes cuántas cajas esperar.',
   },
-  estado_bodega: {
-    frase: 'Foto en vivo de cómo está la bodega ahora mismo.',
-    analogia: 'El mapa del nivel que se actualiza al instante en el juego.',
-    guion:
-      'Un archivo especial por bodega: dónde hay huecos libres, qué cajas hay, alertas. Va muy rápido para ver en pantalla.',
+  solicitud_compra_linea: {
+    frase: 'Cada producto del borrador de compra (SOL).',
+    guion: 'Detalle de la solicitud antes de convertirla en OC.',
   },
-  slot: {
-    frase: 'Un hueco o estante en la bodega.',
-    analogia: 'Cada casillero del locker del colegio.',
-    guion: 'Puede estar libre, ocupado o reservado.',
+  recepcion_compra: {
+    frase: 'Acta de lo que llegó contra la orden de compra.',
+    guion: '🟡 Schema listo; API recepción en roadmap.',
   },
-  caja: {
-    frase: 'Una caja con producto adentro.',
-    analogia: 'Una caja de zapatos con etiqueta que dice qué hay dentro.',
-    guion: 'Entra cuando compras; sale cuando vendes.',
+  warehouse_state: {
+    frase: 'Stock en vivo por ubicación y producto.',
+    analogia: 'El mapa del nivel que se actualiza al instante.',
+    guion: 'Escritura solo vía API (Prisma). Realtime en web.',
+  },
+  tipo_ubicacion: {
+    frase: 'Tipos de hueco: recepción, picking, almacén.',
+    guion: 'Se crean con bootstrap-layout de bodega interna.',
+  },
+  zona: {
+    frase: 'Zona física dentro de la bodega.',
+    guion: 'Agrupa ubicaciones (slots).',
+  },
+  ubicacion: {
+    frase: 'Un hueco o estante (slot).',
+    analogia: 'Cada casillero del locker.',
+    guion: 'estado_slot: libre, ocupado, reservado.',
+  },
+  lote: {
+    frase: 'Lote trazable de producto.',
+    analogia: 'Etiqueta con fecha de vencimiento.',
+    guion: 'FEFO y trazabilidad.',
+  },
+  movimiento_inventario: {
+    frase: 'Diario append-only de movimientos.',
+    analogia: 'Cuaderno del profe con cada cambio.',
+    guion: 'Reemplaza historial_movimiento legacy.',
   },
   orden_trabajo: {
     frase: 'Orden de mover una caja de un sitio a otro.',
     analogia: 'Misión del juego: llevar el cofre del punto A al B.',
     guion: 'Un operario la hace; el jefe puede crearla.',
   },
-  alerta: {
+  alerta_operativa: {
     frase: 'Aviso de que algo va mal.',
     analogia: 'Luces rojas en el tablero del carro.',
-    guion: 'Ejemplo: un hueco lleva mucho tiempo raro o hay problema de frío.',
+    guion: 'Temperatura, demora, OT reportada.',
   },
-  historial_movimiento: {
-    frase: 'Diario de todo lo que se movió.',
-    analogia: 'El cuaderno del profe con fecha de cada cambio.',
-    guion: 'No borras el pasado: queda guardado para revisar después.',
+  tarea_cola: {
+    frase: 'Tarea en la cola de trabajo de bodega.',
+    guion: 'Ingreso, movimiento, despacho, procesamiento.',
   },
   solicitud_procesamiento: {
     frase: 'Pedido de transformar un producto en otro.',
@@ -195,30 +214,42 @@ const STEP_KIDS = {
     analogia: 'La nota del cliente que pide entrega.',
     guion: 'Sale de una bodega hacia un comprador.',
   },
-  linea_orden_venta: {
+  orden_venta_linea: {
     frase: 'Cada producto de esa venta.',
     analogia: 'Cada renglón de la nota de venta.',
     guion: 'Cantidad y qué producto van en el camión.',
+  },
+  guia_envio: {
+    frase: 'Guía que agrupa entregas de un viaje.',
+    guion: 'Un viaje puede tener varias guías / OV.',
   },
   viaje_transporte: {
     frase: 'El viaje del camión con la mercancía.',
     analogia: 'El reparto de Amazon con número de seguimiento.',
     guion: 'Une la venta, el camión y el chofer.',
   },
-  evidencia_entrega: {
-    frase: 'Prueba de que llegó (foto, firma).',
+  evidencia_transporte: {
+    frase: 'Prueba de entrega (foto, firma Cloudinary).',
     analogia: 'La foto que el repartidor manda de la puerta.',
-    guion: 'Se guarda cuando termina el viaje.',
+    guion: 'Se guarda al cerrar la guía / viaje.',
   },
-  contador_documento: {
-    frase: 'Contador para números automáticos (viaje 001, 002…).',
+  contador: {
+    frase: 'Contador para números automáticos (OC, OV, TV…).',
     analogia: 'Como el turno en la fila del banco que sube solo.',
-    guion: 'El programa no repite el mismo número dos veces.',
+    guion: 'Escritura solo API.',
   },
-  auditoria: {
+  auditoria_operacion: {
     frase: 'Cuaderno de "quién hizo qué y cuándo".',
     analogia: 'La cámara de seguridad del sistema.',
-    guion: 'Si alguien borra o cambia algo importante, queda anotado.',
+    guion: 'INSERT solo backend.',
+  },
+  solicitud_integracion: {
+    frase: 'Pedido de conectar bodega externa (Fridem, etc.).',
+    guion: 'Operador → bandeja configurador.',
+  },
+  tarea_cuenta: {
+    frase: 'Tarea pendiente para el configurador en un tenant.',
+    guion: 'Complementa solicitud_integracion.',
   },
 }
 
@@ -233,8 +264,8 @@ function simplifyThenRead(text) {
     .replace(/solicitud_alta_bodega/g, 'pedido de bodega')
     .replace(/asignacion_bodega/g, 'quién trabaja en la bodega')
     .replace(/warehouse_state/g, 'mapa en vivo de la bodega')
-    .replace(/linea_orden_compra/g, 'líneas del pedido de compra')
-    .replace(/linea_orden_venta/g, 'líneas de la venta')
+    .replace(/orden_compra_linea/g, 'líneas del pedido de compra')
+    .replace(/orden_venta_linea/g, 'líneas de la venta')
     .replace(/tenant/gi, 'cuenta de trabajo')
     .replace(/codigo_cuenta/g, 'código de la cuenta')
     .replace(/configurador TI/gi, 'equipo del programa')

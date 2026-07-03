@@ -15,11 +15,14 @@ export const referenceTopics = {
   api: {
     id: 'api',
     title: 'API y endpoints',
-    subtitle: 'Contratos HTTP, modos de subida y respuestas del backend.',
+    subtitle: 'Contratos HTTP de polaria-wms-api — auth, compras, bodegas, integración.',
     icon: 'CodeBracket',
     accent: 'sky',
     view: 'markdown',
-    sectionPattern: /documentación de api/i,
+    /** Generado desde polariaWmsMeta.js (sincronizado con controllers del repo API). */
+    markdownSource: 'polaria-api',
+    sectionDocId: 'bodega-frio-documentacion-v20',
+    sectionPattern: /API — polaria-wms-api|documentación de api/i,
   },
   'env-vars': {
     id: 'env-vars',
@@ -33,10 +36,12 @@ export const referenceTopics = {
   security: {
     id: 'security',
     title: 'Seguridad y RBAC',
-    subtitle: 'Autenticación, roles, permisos y políticas de acceso.',
+    subtitle: 'Supabase Auth, RLS multi-tenant, guards API y evaluación técnica.',
     icon: 'ShieldCheck',
     accent: 'rose',
     view: 'markdown',
+    /** Generado desde polariaSecurityDoc.js (Supabase + evaluación técnica). */
+    markdownSource: 'polaria-security',
     sectionPattern: /seguridad y autenticación/i,
   },
   onboarding: {

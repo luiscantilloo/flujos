@@ -1,7 +1,7 @@
 /**
  * Rutas URL del WMS — espejo de app/ (App Router).
  * Los grupos (auth) y (dashboard) no aparecen en la URL.
- * Copiar a frio-frontend/routes/paths.ts al crear el repo.
+ * Copiar a polaria-wms-web/routes/paths.ts (referencia Dev Hub).
  */
 
 const enc = (v) => encodeURIComponent(String(v))

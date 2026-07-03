@@ -1,4 +1,22 @@
-# BODEGA DE FRÍO
+# POLARIA WMS
+
+| Meta | Detalle |
+| --- | --- |
+| Producto | **Polaria WMS** (referencia histórica: Bodega de Frío V2) |
+| Subtítulo | Documentación Técnica · diseño + estado implementación |
+| Repos | [polaria-wms-web](https://github.com/PolariaTech/polaria-wms-web) · [polaria-wms-api](https://github.com/PolariaTech/polaria-wms-api) · [polaria-wms-db](https://github.com/PolariaTech/polaria-wms-db) |
+| Dev Hub | [flujos](https://flujos-nine.vercel.app) — este portal (Vite + React) |
+| Stack | Next.js · React · TypeScript · NestJS 11 · Prisma · Supabase |
+| Fecha | Jun 2026 |
+
+> **Estado Polaria WMS — Jun 2026**
+> ✅ Implementado en API/web · 🟡 Schema/BD listo, API operativa pendiente · 🔵 Diseño roadmap (Dev Hub)
+>
+> **Regla:** el Dev Hub documenta diseño objetivo **y** estado real. Lo no implementado se marca explícitamente.
+
+---
+
+# BODEGA DE FRÍO (diseño V2 — referencia)
 
 | Meta | Detalle |
 | --- | --- |
@@ -143,19 +161,17 @@ Cloudinary (API)
 
 Almacenamiento y optimización de las evidencias fotográficas del transporte.
 
-### 3.1 Dev Hub (`flujo`) vs aplicación operativa (`frio`)
+### 3.1 Dev Hub (`flujo`) vs Polaria WMS
 
 | Artefacto | Repositorio | Stack en runtime | Rol |
 | --- | --- | --- | --- |
-| **Aplicación WMS** | `frio-frontend`, `frio-backend` | Next.js 16, NestJS, Supabase | Operación en bodega (producción) |
-| **Dev Hub** | `flujo` (este portal de documentación) | Vite, React 19, React Flow, Mermaid | Diagramas, ER, doc V2.0, paso a paso — **no sustituye** al producto |
+| **Aplicación WMS** | `polaria-wms-web`, `polaria-wms-api`, `polaria-wms-db` | Next.js, NestJS 11, Prisma, Supabase | Operación en bodega (producción) |
+| **Dev Hub** | `flujo` (este portal de documentación) | Vite, React 19, React Flow, Mermaid | Diagramas, ER, doc — **no sustituye** al producto |
 
-La documentación y el modelo ER del Dev Hub describen el **diseño objetivo** del producto. Cualquier divergencia debe resolverse en los repos `frio-*`, no solo en el hub.
-
-## 4. Arquitectura del Sistema
+> **Nombres legacy:** `frio-frontend` → `polaria-wms-web` · `frio-backend` → `polaria-wms-api`
 
 ```text
-frio-frontend/
+polaria-wms-web/
 ├── app/                        # Next.js App Router
 │   ├── (auth)/                 # Rutas de login y recuperación
 │   ├── (dashboard)/            # Vistas principales por rol
@@ -166,11 +182,11 @@ frio-frontend/
 │   ├── components/             # UI Components (SlotCard, Modal, etc.)
 │   ├── context/                # AuthContext (Sesión y Cuenta)
 │   ├── hooks/                  # useWarehouse (Suscripción real-time)
-│   └── services/               # Clientes API (Llamadas a NestJS)
-├── public/                     # Assets estáticos
+│   └── services/               # Clientes API → polaria-wms-api
+├── public/
 ├── styles/                     # Tailwind CSS 4
-└── lib/                        # Utils y validaciones de esquema (Zod)
-frio-backend/
+└── lib/                        # Supabase client, schemas
+polaria-wms-api/
 ├── src/
 │   ├── main.ts                 # Punto de entrada y Swagger
 │   ├── app.module.ts           # Módulo raíz
@@ -236,11 +252,18 @@ EXCEPCIONES (secretos)
 
 Regla: el jsonb es la **proyección operativa** del mapa; las entidades 3NF son la **descomposición lógica** y el destino de reportes. Implementación debe evitar que ambas capas diverjan sin reconciliación.
 
-#### Seguridad de datos
+#### Seguridad de datos — RLS híbrido (polaria-wms-db · TENANT-RLS)
 
-- **RLS** en tablas con `codigo_cuenta`: un tenant no lee ni escribe datos de otro.
-- **Configurador**: `codigo_cuenta` NULL; panel de plataforma con selector empresa → tenant.
-- **Escrituras sensibles** (inventario, contadores TV): preferir **NestJS + service role**, no insert directo desde el browser salvo políticas explícitas y acotadas.
+| Canal | Credencial | RLS |
+| --- | --- | --- |
+| Web lecturas | supabase-js + JWT usuario | ✅ Aplica |
+| API escrituras sensibles | Prisma + `DATABASE_URL` | Bypass + validación tenant en código |
+
+Tablas solo-backend (INSERT solo vía API): `warehouse_state`, `movimiento_inventario`, `contador`, `auditoria_operacion`.
+
+**Anti-patrones:** no exponer service role al browser; **no insert directo en `bodega` desde web** — usar `POST /configuracion/bodegas`.
+
+Guards API: `JwtAuthGuard`, `TenantGuard`, `RolesGuard`, `SensitiveWriteGuard`.
 
 ### 4.1 Funciones transversales (Strip, balance, locking)
 
@@ -532,45 +555,64 @@ inboundBoxes: BoxRecord[],               // Zona de ingreso
 
 > **Mejora Propuesta V2.0: Separar el historial en subcolecciones paginadas por mes para evitar documentos con payload excesivo. Implementar reglas de seguridad PostgreSQL (Supabase) granulares por rol y por codeCuenta.**
 
-## 8. API Routes Internas
+## 8. API — polaria-wms-api
 
-#### `POST /api/pedido-proveedor`
+Fuente: [github.com/PolariaTech/polaria-wms-api](https://github.com/PolariaTech/polaria-wms-api)
 
-```text
-Proxy que recibe un pedido consolidado desde el frontend y lo reenvía al webhook n8n del proveedor.
-```
+Swagger: `GET /api/docs` · OpenAPI: `GET /api/docs-json`
 
-#### Payload esperado:
+Guards: `JwtAuthGuard`, `TenantGuard`, `RolesGuard` · Header opcional: `x-auth-client: wms | mateo`
 
-```json
-{
-"proveedorId": "string",
-"lineas": [
-```
+### ✅ Implementado
 
-{ "productoId": "string", "cantidad": 0, "unidad": "string" } ],
+| Método | Ruta | Notas |
+| --- | --- | --- |
+| GET | `/` | Health check |
+| POST | `/auth/prelogin` | platform \| tenant |
+| POST | `/auth/login` | JWT + contexto |
+| POST | `/auth/mateo-handoff` | Bearer · SSO → Mateo |
+| POST | `/auth/mateo-exchange` | Canje SSO |
+| GET | `/auth/me` | Perfil sesión |
+| POST | `/auth/logout` | 204 |
+| POST | `/configurador/usuarios` | Rol configurador |
+| POST | `/administracion/usuarios` | administrador_cuenta (tenant JWT) |
+| POST | `/configuracion/bodegas` | configurador \| admin cuenta |
+| POST | `/configuracion/bodegas/:idBodega/bootstrap-layout` | Layout bodega interna |
+| POST | `/compras/solicitudes` | Crear SOL |
+| GET | `/compras/solicitudes` | Listar SOL |
+| GET | `/compras/solicitudes/:id` | Detalle SOL |
+| PATCH | `/compras/solicitudes/:id` | Editar borrador |
+| POST | `/compras/solicitudes/:id/enviar-aprobacion` | |
+| POST | `/compras/solicitudes/:id/aprobar` | |
+| POST | `/compras/solicitudes/:id/rechazar` | |
+| POST | `/compras/solicitudes/:id/cancelar` | |
+| POST | `/compras/solicitudes/:id/convertir-oc` | SOL → OC |
+| POST | `/compras/ordenes` | Crear OC |
+| GET | `/compras/ordenes` | Listar OC |
+| GET | `/compras/ordenes/:id` | Detalle OC |
+| POST | `/compras/ordenes/:id/emitir` | borrador → emitida |
+| POST | `/compras/ordenes/:id/cancelar` | |
+| POST | `/integracion/solicitudes` | operador \| admin cuenta |
+| GET | `/integracion/solicitudes` | Tenant |
+| GET | `/configurador/integracion/solicitudes` | Bandeja configurador |
 
-```json
-"bodegaDestino": "string",
-"fechaEntregaEstimada": "ISO8601"
-}
-```
+### Módulos NestJS
 
-#### `POST /api/evidencia-transporte`
+| Módulo | Estado |
+| --- | --- |
+| auth, configurator, configuracion, purchases, integration | ✅ |
+| inventory, processing, sales, transport, warehouses | 🟡 placeholder (schema BD listo) |
 
-```text
-Recibe un archivo (FormData) y lo sube a Cloudinary, devolviendo la URL segura.
-Recibe FormData con campo file
-Si hay CLOUDINARY_URL configurada: firma la subida (signed upload)
-```
+### 🔵 Pendiente (diseño V2)
 
-Si no: usa preset sin firma (CLOUDINARY_UNSIGNED_UPLOAD_PRESET)
+Recepción compra (`parcialmente_recibida`, `recibida`, `cerrada`), inventario/locking, procesamiento, ventas OV, transporte TV, alertas, cola operativa.
 
-```text
-Devuelve URL segura para guardar en PostgreSQL (Supabase)
-```
+### Web — route handlers legacy
 
-> **Mejora Propuesta V2.0: Agregar validación de tipo MIME y tamaño máximo de archivo. Implementar compresión de imagen antes de subir para reducir costos de almacenamiento.**
+| Ruta | Estado |
+| --- | --- |
+| `POST /api/solicitud-compra` (n8n) | 🟡 parcial en polaria-wms-web |
+| `POST /api/evidencia-transporte` (Cloudinary) | 🔵 diseño |
 
 ## 9. Integración con Servicios Externos
 

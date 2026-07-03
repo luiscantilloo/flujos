@@ -1,6 +1,5 @@
 /**
- * Subflujos extraídos de la documentación Bodega de Frío (v1 / v2).
- * Cada flujo es independiente; las pestañas usan `tabShort` cuando existe.
+ * Subflujos — Polaria WMS (diseño V2 + estado implementación jun 2026).
  */
 
 const L = {
@@ -54,7 +53,17 @@ const sub_doc_config_inicial = {
     {
       id: 'ci_bod',
       type: 'process',
-      data: { label: '4. Bodegas: slots, capacidad, reglas del plano' },
+      data: {
+        label: '4. Bodegas ✅ POST /configuracion/bodegas (API; no insert browser)',
+      },
+    },
+    {
+      id: 'ci_sol_bod',
+      type: 'process',
+      data: {
+        label: '4b. Admin puede solicitar bodega (solicitud_alta_bodega) o integración externa',
+        drillDownTo: 'sub_doc_integracion_operador',
+      },
     },
     {
       id: 'ci_handoff',
@@ -109,7 +118,8 @@ const sub_doc_config_inicial = {
     e('ci_e2', 'ci_emp', 'ci_admin'),
     e('ci_e3', 'ci_admin', 'ci_cta'),
     e('ci_e4', 'ci_cta', 'ci_bod'),
-    e('ci_e5', 'ci_bod', 'ci_handoff'),
+    e('ci_e4b', 'ci_bod', 'ci_sol_bod'),
+    e('ci_e5', 'ci_sol_bod', 'ci_handoff'),
     e('ci_e6', 'ci_handoff', 'ci_adm_hdr'),
     e('ci_e7', 'ci_adm_hdr', 'ci_oper'),
     e('ci_e8', 'ci_oper', 'ci_cat'),
@@ -122,10 +132,10 @@ const sub_doc_config_inicial = {
   ],
 }
 
-/** 6.2 Autenticación V2 — empresa + pertenencia + contraseña */
+/** 6.2 Auth — prelogin ✅ + login + SSO Mateo ✅ */
 const sub_doc_auth = {
   id: 'sub_doc_auth',
-  title: '6.2 — Autenticación V2 (empresa → usuario → contraseña)',
+  title: '6.2 — Auth (prelogin → login → Mateo SSO)',
   tabShort: '6.2 Auth',
   nodes: [
     { id: 'au_app', type: 'process', data: { label: 'Abrir aplicación' } },
@@ -134,49 +144,52 @@ const sub_doc_auth = {
     {
       id: 'au_login_ti',
       type: 'process',
-      data: { label: 'TI: correo + contraseña (sin empresa cliente)' },
+      data: { label: 'TI: correo + contraseña (scope platform)' },
     },
     {
       id: 'au_cod_emp',
       type: 'process',
       data: { label: 'Usuario empresa: ingresar codigoEmpresa' },
     },
-    { id: 'au_v_emp', type: 'decision', data: { label: '¿Empresa existe y está activa?' } },
-    { id: 'au_err_emp', type: 'error', data: { label: 'Empresa no encontrada / inactiva' } },
     {
-      id: 'au_ident',
+      id: 'au_pre',
       type: 'process',
-      data: { label: 'Ingresar correo o usuario' },
+      data: { label: '✅ POST /auth/prelogin (empresa + usuario; platform | tenant)' },
     },
-    { id: 'au_v_usr', type: 'decision', data: { label: '¿Usuario pertenece a esa empresa?' } },
-    { id: 'au_err_usr', type: 'error', data: { label: 'Usuario no pertenece a la empresa' } },
+    { id: 'au_v_emp', type: 'decision', data: { label: '¿Prelogin OK?' } },
+    { id: 'au_err_emp', type: 'error', data: { label: 'Empresa/usuario inválido' } },
     {
       id: 'au_pwd',
       type: 'process',
-      data: { label: 'Solicitar contraseña (Supabase Auth)' },
+      data: { label: '✅ POST /auth/login (contraseña Supabase Auth)' },
     },
-    { id: 'au_val_pwd', type: 'decision', data: { label: '¿Contraseña válida?' } },
+    { id: 'au_val_pwd', type: 'decision', data: { label: '¿JWT válido?' } },
     { id: 'au_err_pwd', type: 'error', data: { label: 'Contraseña incorrecta / reintento' } },
+    {
+      id: 'au_mateo',
+      type: 'process',
+      data: { label: '✅ SSO Mateo: mateo-handoff / mateo-exchange (x-auth-client)' },
+    },
     {
       id: 'au_per',
       type: 'process',
-      data: { label: 'Cargar perfil: rol, empresa, tenant, permisos' },
+      data: { label: 'GET /auth/me — rol, empresa, tenant, permisos' },
     },
     { id: 'au_bod', type: 'decision', data: { label: '¿Bodega interna?' } },
     {
       id: 'au_sub',
       type: 'process',
-      data: { label: 'Suscribir estado: warehouses/{id}/state/main (tiempo real)' },
+      data: { label: '🟡 Suscribir warehouse_state (Realtime; API inventario pendiente)' },
     },
     {
       id: 'au_fri',
       type: 'process',
-      data: { label: 'Bodega externa: consultar inventario Fridem (Realtime DB)' },
+      data: { label: '🔵 Bodega externa: Fridem solo lectura (diseño)' },
     },
     {
       id: 'au_dash',
       type: 'success',
-      data: { label: 'Dashboard según rol (cualquier rol de la empresa)' },
+      data: { label: 'Dashboard según rol' },
     },
   ],
   edges: [
@@ -185,19 +198,17 @@ const sub_doc_auth = {
     e('au_1n', 'au_ses', 'au_tipo', { sourceHandle: 'no', label: 'N' }),
     e('au_ti', 'au_tipo', 'au_login_ti', { sourceHandle: 'yes', label: 'S · TI' }),
     e('au_cl', 'au_tipo', 'au_cod_emp', { sourceHandle: 'no', label: 'N · Empresa' }),
-    e('au_2ti', 'au_login_ti', 'au_val_pwd'),
-    e('au_3', 'au_cod_emp', 'au_v_emp'),
+    e('au_2ti', 'au_login_ti', 'au_pre'),
+    e('au_3', 'au_cod_emp', 'au_pre'),
     e('au_3n', 'au_v_emp', 'au_err_emp', { sourceHandle: 'no', label: 'N' }),
-    e('au_3s', 'au_v_emp', 'au_ident', { sourceHandle: 'yes', label: 'S' }),
+    e('au_3s', 'au_v_emp', 'au_pwd', { sourceHandle: 'yes', label: 'S' }),
+    e('au_pre_e', 'au_pre', 'au_v_emp'),
     e('au_re_emp', 'au_err_emp', 'au_cod_emp', { ...L }),
-    e('au_4', 'au_ident', 'au_v_usr'),
-    e('au_4n', 'au_v_usr', 'au_err_usr', { sourceHandle: 'no', label: 'N' }),
-    e('au_4s', 'au_v_usr', 'au_pwd', { sourceHandle: 'yes', label: 'S' }),
-    e('au_re_usr', 'au_err_usr', 'au_ident', { ...L }),
     e('au_5', 'au_pwd', 'au_val_pwd'),
     e('au_5n', 'au_val_pwd', 'au_err_pwd', { sourceHandle: 'no', label: 'N' }),
-    e('au_5s', 'au_val_pwd', 'au_per', { sourceHandle: 'yes', label: 'S' }),
+    e('au_5s', 'au_val_pwd', 'au_mateo', { sourceHandle: 'yes', label: 'S' }),
     e('au_re_pwd', 'au_err_pwd', 'au_pwd', { ...L }),
+    e('au_m', 'au_mateo', 'au_per'),
     e('au_6', 'au_per', 'au_bod'),
     e('au_7s', 'au_bod', 'au_sub', { sourceHandle: 'yes', label: 'S' }),
     e('au_7n', 'au_bod', 'au_fri', { sourceHandle: 'no', label: 'N' }),
@@ -206,43 +217,91 @@ const sub_doc_auth = {
   ],
 }
 
-/** 6.3 Gestión de proveedores y OC */
+/** 6.3 Compras SOL/OC — ✅ polaria-wms-api */
 const sub_doc_oc = {
   id: 'sub_doc_oc',
-  title: '6.3 — Órdenes de compra y proveedor',
-  tabShort: '6.3 OC',
+  title: '6.3 — SOL y OC (compras)',
+  tabShort: '6.3 SOL/OC',
   nodes: [
+    { id: 'oc_hdr', type: 'header', data: { label: '✅ Módulo /compras (API implementada)' } },
     {
-      id: 'oc_hdr',
-      type: 'header',
-      data: { label: 'Orden de compra (campos y estados)' },
-    },
-    {
-      id: 'oc_cam',
+      id: 'oc_sol',
       type: 'process',
-      data: {
-        label: 'Campos: proveedor, líneas SKU/cantidad/unidad/precio, fecha estimada, bodega destino',
-      },
+      data: { label: 'SOL: borrador → pendiente_aprobacion → aprobada → convertida' },
     },
-    { id: 'oc_pend', type: 'process', data: { label: 'Estado: Pendiente' } },
-    { id: 'oc_trans', type: 'process', data: { label: 'Estado: En tránsito' } },
-    { id: 'oc_rec', type: 'process', data: { label: 'Estado: Recibida' } },
-    { id: 'oc_cerr', type: 'process', data: { label: 'Estado: Cerrada' } },
+    {
+      id: 'oc_sol_act',
+      type: 'process',
+      data: { label: 'Acciones: enviar-aprobacion, aprobar, rechazar, cancelar, convertir-oc' },
+    },
+    {
+      id: 'oc_conv',
+      type: 'process',
+      data: { label: 'Conversión SOL → OC atómica' },
+    },
+    {
+      id: 'oc_oc',
+      type: 'process',
+      data: { label: 'OC: borrador → emitida → cancelada' },
+    },
+    {
+      id: 'oc_rec',
+      type: 'process',
+      data: { label: '🟡 Recepción: parcialmente_recibida, recibida, cerrada (API pendiente)' },
+    },
     {
       id: 'oc_n8n',
       type: 'process',
-      data: { label: 'Disparo POST /api/pedido-proveedor → webhook n8n (pedido al proveedor)' },
+      data: { label: '🟡 Web n8n pedido proveedor (route handler web)' },
     },
-    { id: 'oc_fin', type: 'success', data: { label: 'OC integrada al flujo de ingreso' } },
+    { id: 'oc_fin', type: 'success', data: { label: 'OC lista para ingreso (🔵 recepción custodio)' } },
   ],
   edges: [
-    e('oc_0', 'oc_hdr', 'oc_cam'),
-    e('oc_1', 'oc_cam', 'oc_pend'),
-    e('oc_2', 'oc_pend', 'oc_trans'),
-    e('oc_3', 'oc_trans', 'oc_rec'),
-    e('oc_4', 'oc_rec', 'oc_cerr'),
-    e('oc_5', 'oc_pend', 'oc_n8n'),
-    e('oc_6', 'oc_cerr', 'oc_fin'),
+    e('oc_0', 'oc_hdr', 'oc_sol'),
+    e('oc_1', 'oc_sol', 'oc_sol_act'),
+    e('oc_2', 'oc_sol_act', 'oc_conv'),
+    e('oc_3', 'oc_conv', 'oc_oc'),
+    e('oc_4', 'oc_oc', 'oc_rec'),
+    e('oc_5', 'oc_sol', 'oc_n8n'),
+    e('oc_6', 'oc_rec', 'oc_fin'),
+  ],
+}
+
+/** Integración operador → configurador (bodega externa) ✅ */
+const sub_doc_integracion_operador = {
+  id: 'sub_doc_integracion_operador',
+  title: 'Integración — operador solicita, configurador atiende',
+  tabShort: 'Integración',
+  nodes: [
+    { id: 'io_hdr', type: 'header', data: { label: 'Bodega externa / integración' } },
+    {
+      id: 'io_sol',
+      type: 'process',
+      data: { label: '✅ POST /integracion/solicitudes (operador_cuenta / admin)' },
+    },
+    {
+      id: 'io_band',
+      type: 'process',
+      data: { label: '✅ GET /configurador/integracion/solicitudes — bandeja TI' },
+    },
+    {
+      id: 'io_ui',
+      type: 'process',
+      data: { label: 'Web: /configurador/integracion (IntegracionView)' },
+    },
+    {
+      id: 'io_bod',
+      type: 'process',
+      data: { label: 'Configurador crea bodega externa vía POST /configuracion/bodegas' },
+    },
+    { id: 'io_ok', type: 'success', data: { label: 'Tenant con bodega integrada' } },
+  ],
+  edges: [
+    e('io_0', 'io_hdr', 'io_sol'),
+    e('io_1', 'io_sol', 'io_band'),
+    e('io_2', 'io_band', 'io_ui'),
+    e('io_3', 'io_ui', 'io_bod'),
+    e('io_4', 'io_bod', 'io_ok'),
   ],
 }
 
@@ -615,6 +674,7 @@ export const docSubFlows = {
   sub_doc_config_inicial,
   sub_doc_auth,
   sub_doc_oc,
+  sub_doc_integracion_operador,
   sub_doc_ingreso,
   sub_doc_cola_mapa,
   sub_doc_procesamiento,
@@ -631,6 +691,7 @@ export const docSubFlowKeys = [
   'sub_doc_config_inicial',
   'sub_doc_auth',
   'sub_doc_oc',
+  'sub_doc_integracion_operador',
   'sub_doc_ingreso',
   'sub_doc_cola_mapa',
   'sub_doc_procesamiento',

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/generate-er-explanation-doc.mjs && vite build && node scripts/generate-readable-html.mjs",
+    "build": "node scripts/sync-prisma-entities.mjs && node scripts/generate-er-explanation-doc.mjs && vite build && node scripts/generate-readable-html.mjs",
+    "docs:sync-schema": "node scripts/sync-prisma-entities.mjs",
     "docs:er-guia": "node scripts/generate-er-explanation-doc.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
