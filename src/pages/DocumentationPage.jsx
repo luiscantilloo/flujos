@@ -11,7 +11,6 @@ export default function DocumentationPage() {
       key={`${docId ?? 'index'}-${headingId ?? ''}`}
       docId={docId ?? null}
       headingId={headingId ?? null}
-      onBackToMain={() => navigate(paths.home)}
       onNavigateDoc={(id, heading) => {
         if (!id) navigate(paths.docs)
         else navigate(paths.doc(id, heading ?? undefined))

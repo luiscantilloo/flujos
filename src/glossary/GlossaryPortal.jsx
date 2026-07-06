@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { FiSearch } from 'react-icons/fi'
 import { HiArrowLeft, HiOutlineBookOpen } from 'react-icons/hi2'
+import { DocDownloadMenu } from '../docs/components/DocDownloadMenu.jsx'
 import { getDocumentationItemById } from '../docs/docRegistry.js'
 import { fetchDocMarkdown } from '../docs/utils/fetchDocMarkdown.js'
 import { extractSectionByTitle, parseMarkdownTableFromText } from '../docs/utils/extractMarkdownSection.js'
@@ -28,6 +29,7 @@ function GlossaryTermCard({ term, definition, system }) {
 
 export function GlossaryPortal({ project, onBackToMain, onBackToProjects }) {
   const [terms, setTerms] = useState([])
+  const [sectionMarkdown, setSectionMarkdown] = useState('')
   const [status, setStatus] = useState('loading')
   const [error, setError] = useState(null)
   const [query, setQuery] = useState('')
@@ -45,6 +47,7 @@ export function GlossaryPortal({ project, onBackToMain, onBackToProjects }) {
       .then((md) => {
         if (cancelled) return
         const section = extractSectionByTitle(md, /glosario/i)
+        setSectionMarkdown(section)
         const { headers, rows } = parseMarkdownTableFromText(section)
         const termIdx = headers.findIndex((h) => /término/i.test(h))
         const defIdx = headers.findIndex((h) => /definición/i.test(h))
@@ -121,14 +124,21 @@ export function GlossaryPortal({ project, onBackToMain, onBackToProjects }) {
               </p>
             </div>
             {status === 'idle' ? (
-              <div className="flex shrink-0 gap-3">
-                <div className="rounded-xl border border-slate-700/60 bg-slate-900/50 px-4 py-3 text-center">
-                  <p className="text-2xl font-bold text-amber-200">{terms.length}</p>
-                  <p className="text-xs text-slate-500">términos</p>
-                </div>
-                <div className="rounded-xl border border-slate-700/60 bg-slate-900/50 px-4 py-3 text-center">
-                  <p className="text-2xl font-bold text-violet-200">{filtered.length}</p>
-                  <p className="text-xs text-slate-500">visibles</p>
+              <div className="flex shrink-0 flex-wrap items-center gap-3">
+                <DocDownloadMenu
+                  title={`${project?.name ?? 'Polaria WMS'} — Glosario`}
+                  markdown={sectionMarkdown}
+                  sourcePath={doc.filePath}
+                />
+                <div className="flex gap-3">
+                  <div className="rounded-xl border border-slate-700/60 bg-slate-900/50 px-4 py-3 text-center">
+                    <p className="text-2xl font-bold text-amber-200">{terms.length}</p>
+                    <p className="text-xs text-slate-500">términos</p>
+                  </div>
+                  <div className="rounded-xl border border-slate-700/60 bg-slate-900/50 px-4 py-3 text-center">
+                    <p className="text-2xl font-bold text-violet-200">{filtered.length}</p>
+                    <p className="text-xs text-slate-500">visibles</p>
+                  </div>
                 </div>
               </div>
             ) : null}

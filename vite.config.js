@@ -6,4 +6,12 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   appType: 'spa',
+  resolve: {
+    alias: {
+      html2canvas: 'html2canvas-pro',
+    },
+  },
+  optimizeDeps: {
+    include: ['html2canvas-pro', 'jspdf'],
+  },
 })

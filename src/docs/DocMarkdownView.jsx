@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { forwardRef, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import rehypeSlug from 'rehype-slug'
 import remarkGfm from 'remark-gfm'
@@ -18,11 +18,11 @@ function normalizeDocMarkdown(markdown) {
     .trim()
 }
 
-export function DocMarkdownView({ markdown }) {
+export const DocMarkdownView = forwardRef(function DocMarkdownView({ markdown }, ref) {
   const cleanMarkdown = useMemo(() => normalizeDocMarkdown(markdown), [markdown])
 
   return (
-    <div className="doc-rich">
+    <div className="doc-rich" ref={ref}>
       <div className="doc-content px-1 pb-28 pt-2 sm:px-4">
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
@@ -218,4 +218,4 @@ export function DocMarkdownView({ markdown }) {
       </div>
     </div>
   )
-}
+})

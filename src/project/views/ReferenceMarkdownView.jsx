@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { HiArrowLeft } from 'react-icons/hi2'
 import { DocMarkdownView } from '../../docs/DocMarkdownView.jsx'
+import { DocDownloadMenu } from '../../docs/components/DocDownloadMenu.jsx'
 import { getDocumentationItemById } from '../../docs/docRegistry.js'
 import { fetchDocMarkdown } from '../../docs/utils/fetchDocMarkdown.js'
 import { extractSectionByTitle } from '../../docs/utils/extractMarkdownSection.js'
@@ -12,6 +13,7 @@ function resolveReferenceMarkdown(project, topic) {
     return Promise.resolve({
       markdown: formatPolariaApiMarkdown(),
       sourceLabel: 'polariaWmsMeta.js — alineado a polaria-wms-api',
+      sourcePath: null,
     })
   }
 
@@ -19,6 +21,7 @@ function resolveReferenceMarkdown(project, topic) {
     return Promise.resolve({
       markdown: formatPolariaSecurityMarkdown(),
       sourceLabel: 'polariaSecurityDoc.js — Supabase + evaluación técnica',
+      sourcePath: null,
     })
   }
 
@@ -36,15 +39,18 @@ function resolveReferenceMarkdown(project, topic) {
     return {
       markdown: section,
       sourceLabel: `${doc.title} — sección extraída automáticamente`,
+      sourcePath: doc.filePath,
     }
   })
 }
 
 export function ReferenceMarkdownView({ project, topic, onBackToProjects }) {
   const [markdown, setMarkdown] = useState('')
+  const [sourcePath, setSourcePath] = useState(null)
   const [sourceLabel, setSourceLabel] = useState('')
   const [status, setStatus] = useState('loading')
   const [error, setError] = useState(null)
+  const docViewRef = useRef(null)
 
   useEffect(() => {
     let cancelled = false
@@ -52,10 +58,11 @@ export function ReferenceMarkdownView({ project, topic, onBackToProjects }) {
     setError(null)
 
     resolveReferenceMarkdown(project, topic)
-      .then(({ markdown: md, sourceLabel: label }) => {
+      .then(({ markdown: md, sourceLabel: label, sourcePath: path }) => {
         if (cancelled) return
         setMarkdown(md)
         setSourceLabel(label)
+        setSourcePath(path ?? null)
         setStatus('idle')
       })
       .catch((err) => {
@@ -90,6 +97,16 @@ export function ReferenceMarkdownView({ project, topic, onBackToProjects }) {
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-50">{topic.title}</h2>
           <p className="mt-2 text-sm text-slate-400">{topic.subtitle}</p>
 
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <DocDownloadMenu
+              title={`${project.name} — ${topic.title}`}
+              markdown={markdown}
+              sourcePath={sourcePath}
+              contentRef={docViewRef}
+              disabled={status !== 'idle'}
+            />
+          </div>
+
           {status === 'loading' ? (
             <div className="mt-10 space-y-4">
               <div className="h-8 w-2/3 animate-pulse rounded-lg bg-slate-800/60" />
@@ -104,11 +121,14 @@ export function ReferenceMarkdownView({ project, topic, onBackToProjects }) {
             </p>
           ) : null}
 
-          {status === 'idle' ? (
-            <div className="mt-8 overflow-hidden rounded-2xl border border-slate-700/60 bg-slate-900/35 p-4 sm:p-8">
-              <DocMarkdownView markdown={markdown} />
-            </div>
-          ) : null}
+            {status === 'idle' ? (
+              <div
+                ref={docViewRef}
+                className="mt-8 overflow-hidden rounded-2xl border border-slate-700/60 bg-slate-900/35 p-4 sm:p-8"
+              >
+                <DocMarkdownView markdown={markdown} />
+              </div>
+            ) : null}
 
           {sourceLabel ? (
             <p className="mt-8 text-xs text-slate-500">Fuente: {sourceLabel}</p>

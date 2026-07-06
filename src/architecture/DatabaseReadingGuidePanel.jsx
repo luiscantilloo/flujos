@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { HiOutlineBookOpen } from 'react-icons/hi2'
+import { DocDownloadMenu } from '../docs/components/DocDownloadMenu.jsx'
 import {
   ONBOARDING_FLOW_ASCII,
   SCHEMA_READING_PHASES,
@@ -41,6 +42,11 @@ export function DatabaseReadingGuidePanel({ onSelectTable }) {
           </p>
         </div>
         <CopyButton text={markdown} label="Copiar guía" />
+        <DocDownloadMenu
+          title="Guía de lectura — tablas ER"
+          markdown={markdown}
+          sourcePath="/docs/guia_explicacion_tablas_er.md"
+        />
         <a
           href="/docs/guia_explicacion_tablas_er.md"
           target="_blank"

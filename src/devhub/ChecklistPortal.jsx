@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { HiArrowLeft, HiOutlineClipboardDocumentCheck } from 'react-icons/hi2'
+import { DocDownloadMenu } from '../docs/components/DocDownloadMenu.jsx'
 import { getDocumentationItemById } from '../docs/docRegistry.js'
 import { fetchDocMarkdown } from '../docs/utils/fetchDocMarkdown.js'
 import { extractSectionByTitle, parseMarkdownTableFromText } from '../docs/utils/extractMarkdownSection.js'
@@ -34,6 +35,7 @@ function PriorityDot({ priority }) {
 
 export function ChecklistPortal({ project, onBackToMain, onBackToProjects }) {
   const [items, setItems] = useState([])
+  const [sectionMarkdown, setSectionMarkdown] = useState('')
   const [status, setStatus] = useState('loading')
   const [error, setError] = useState(null)
   const [filter, setFilter] = useState('all')
@@ -50,6 +52,7 @@ export function ChecklistPortal({ project, onBackToMain, onBackToProjects }) {
       .then((md) => {
         if (cancelled) return
         const section = extractSectionByTitle(md, /estado de la documentación/i)
+        setSectionMarkdown(section)
         const { headers, rows } = parseMarkdownTableFromText(section)
         const numIdx = headers.findIndex((h) => /^#$/.test(h) || h === '#')
         const nameIdx = headers.findIndex((h) => /elemento/i.test(h))
@@ -124,7 +127,13 @@ export function ChecklistPortal({ project, onBackToMain, onBackToProjects }) {
               </p>
             </div>
             {status === 'idle' ? (
-              <div className="flex shrink-0 items-center gap-4 rounded-2xl border border-slate-700/60 bg-slate-900/50 px-5 py-4">
+              <div className="flex shrink-0 flex-col items-end gap-3 sm:flex-row sm:items-center">
+                <DocDownloadMenu
+                  title={`${project?.name ?? 'Polaria WMS'} — Checklist`}
+                  markdown={sectionMarkdown}
+                  sourcePath={doc.filePath}
+                />
+                <div className="flex items-center gap-4 rounded-2xl border border-slate-700/60 bg-slate-900/50 px-5 py-4">
                 <div className="relative h-16 w-16">
                   <svg className="h-16 w-16 -rotate-90" viewBox="0 0 36 36">
                     <circle cx="18" cy="18" r="15.5" fill="none" className="stroke-slate-800" strokeWidth="3" />
@@ -146,6 +155,7 @@ export function ChecklistPortal({ project, onBackToMain, onBackToProjects }) {
                 <div>
                   <p className="text-sm font-semibold text-slate-100">{stats.complete} completos</p>
                   <p className="text-xs text-amber-300">{stats.pending} pendientes</p>
+                </div>
                 </div>
               </div>
             ) : null}

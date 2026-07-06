@@ -11,6 +11,7 @@ import { paths } from '../router/paths.js'
 import { HiArrowRight, HiOutlineArchiveBox, HiOutlineBookOpen } from 'react-icons/hi2'
 import { FiSearch } from 'react-icons/fi'
 import { DocMarkdownView } from './DocMarkdownView.jsx'
+import { DocDownloadMenu } from './components/DocDownloadMenu.jsx'
 import { documentationItems, getDocumentationItemById } from './docRegistry.js'
 import { bodegaPlainToMarkdown } from './utils/bodegaPlainToMarkdown.js'
 import { filterMarkdownByQuery } from './utils/filterMarkdownByQuery.js'
@@ -73,7 +74,7 @@ function DocReaderExperience({ doc, onBackToIndex, initialHeadingId, onInitialHe
   const [toc, setToc] = useState([])
 
   const scrollRef = useRef(null)
-  const articleRef = useRef(null)
+  const docViewRef = useRef(null)
 
   useEffect(() => {
     let cancelled = false
@@ -110,7 +111,7 @@ function DocReaderExperience({ doc, onBackToIndex, initialHeadingId, onInitialHe
   useLayoutEffect(() => {
     if (status !== 'idle') return
     requestAnimationFrame(() => {
-      const root = articleRef.current
+      const root = docViewRef.current
       if (!root) return
       const hs = [...root.querySelectorAll('.doc-content h2, .doc-content h3')]
       setToc(
@@ -191,8 +192,8 @@ function DocReaderExperience({ doc, onBackToIndex, initialHeadingId, onInitialHe
             </h2>
             {doc.sourceNote ? <p className="mt-1 max-w-3xl text-xs text-slate-500">{doc.sourceNote}</p> : null}
           </div>
-          <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center lg:w-[min(100%,28rem)]">
-            <label className="relative w-full">
+          <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center lg:w-auto lg:max-w-[36rem]">
+            <label className="relative min-w-0 flex-1 sm:min-w-[14rem]">
               <span className="sr-only">Buscar en el documento</span>
               <input
                 value={search}
@@ -204,6 +205,13 @@ function DocReaderExperience({ doc, onBackToIndex, initialHeadingId, onInitialHe
               />
               <FiSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" aria-hidden />
             </label>
+            <DocDownloadMenu
+              title={doc.title}
+              markdown={markdown}
+              sourcePath={doc.filePath}
+              contentRef={docViewRef}
+              disabled={status !== 'idle'}
+            />
             <button
               type="button"
               className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-700/80 bg-slate-900/70 px-3 py-2.5 text-sm font-medium text-slate-200 shadow-sm transition-colors hover:border-violet-500/40 hover:bg-slate-900 lg:hidden"
@@ -264,7 +272,7 @@ function DocReaderExperience({ doc, onBackToIndex, initialHeadingId, onInitialHe
             {status === 'error' ? <p className="text-sm text-red-300">{error}</p> : null}
             {status === 'idle' ? (
               <div
-                ref={articleRef}
+                ref={docViewRef}
                 className="relative overflow-hidden rounded-2xl border border-slate-700/60 bg-slate-900/35 p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.03)] ring-1 ring-white/5 backdrop-blur-sm sm:p-8"
               >
                 <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-violet-600/10 blur-3xl" />
@@ -329,7 +337,6 @@ function DocIndexCard({ doc, onOpen }) {
 }
 
 export function DocumentationPortal({
-  onBackToMain,
   docId = null,
   headingId = null,
   onNavigateDoc,
