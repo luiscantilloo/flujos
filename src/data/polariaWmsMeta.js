@@ -1,32 +1,37 @@
 /**
- * Metadatos Polaria WMS — fuente de verdad para el Dev Hub (jun 2026).
- * Repos: polaria-wms-api, polaria-wms-web, polaria-wms-db
+ * Metadatos Polaria WMS — fuente de verdad para el Dev Hub (jul 2026).
+ * Repos: polaria-wms-api, polaria-wms-web, polaria-wms-db, Widget-react
  */
 
 export const POLARIA_WMS = {
   productName: 'Polaria WMS',
   legacySubtitle: 'Bodega de Frío (referencia de diseño V2)',
-  statusDate: 'Jun 2026',
+  statusDate: 'Jul 2026',
   repos: {
     api: {
       name: 'polaria-wms-api',
       url: 'https://github.com/PolariaTech/polaria-wms-api',
-      role: 'NestJS 11, Prisma, guards tenant, endpoints',
+      role: 'NestJS 11, Prisma, guards tenant, endpoints REST',
     },
     web: {
       name: 'polaria-wms-web',
       url: 'https://github.com/PolariaTech/polaria-wms-web',
-      role: 'Next.js frontend, módulos por dominio, supabase-js lecturas',
+      role: 'Next.js 16, React 19, módulos por dominio, supabase-js lecturas',
     },
     db: {
       name: 'polaria-wms-db',
       url: 'https://github.com/PolariaTech/polaria-wms-db',
-      role: 'Migraciones Supabase, RLS, modelo operativo',
+      role: 'Migraciones Supabase (052+), RLS multi-tenant, modelo operativo',
+    },
+    widget: {
+      name: 'Widget-react',
+      url: 'https://github.com/PolariaTech/Widget-react',
+      role: 'Chat widget Mateo Support — Shadow DOM, n8n, Cloudinary, i18n es/en',
     },
     hub: {
       name: 'flujo',
       url: 'https://flujos-nine.vercel.app',
-      role: 'Dev Hub — diseño objetivo + estado de implementación',
+      role: 'Dev Hub — diseño objetivo + estado de implementación + manuales de usuario',
     },
   },
   /** Nombres legacy → actuales */
@@ -34,7 +39,7 @@ export const POLARIA_WMS = {
     'frio-frontend': 'polaria-wms-web',
     'frio-backend': 'polaria-wms-api',
   },
-  prismaModelCount: 40,
+  prismaModelCount: 42,
   swaggerPath: '/api/docs',
 }
 
@@ -44,10 +49,10 @@ export const IMPLEMENTATION_STATUS = {
   design: { icon: '🔵', label: 'Diseño (no implementado)', key: 'design' },
 }
 
-export const POLARIA_STATUS_CALLOUT = `> **Estado Polaria WMS — Jun 2026**
+export const POLARIA_STATUS_CALLOUT = `> **Estado Polaria WMS — Jul 2026**
 > ✅ Implementado en API/web · 🟡 Schema/BD listo, API operativa pendiente · 🔵 Diseño roadmap (Dev Hub)
 >
-> Repos fuente de verdad: [polaria-wms-api](${POLARIA_WMS.repos.api.url}) · [polaria-wms-web](${POLARIA_WMS.repos.web.url}) · [polaria-wms-db](${POLARIA_WMS.repos.db.url})`
+> Repos fuente de verdad: [polaria-wms-api](${POLARIA_WMS.repos.api.url}) · [polaria-wms-web](${POLARIA_WMS.repos.web.url}) · [polaria-wms-db](${POLARIA_WMS.repos.db.url}) · [Widget-react](${POLARIA_WMS.repos.widget.url})`
 
 /** Endpoints HTTP implementados — alineado a polaria-wms-api (controllers + Swagger) */
 export const POLARIA_API_ENDPOINTS = [
@@ -57,14 +62,21 @@ export const POLARIA_API_ENDPOINTS = [
   // Auth
   { method: 'POST', path: '/auth/prelogin', status: 'done', note: 'Header opcional x-auth-client: wms | mateo', group: 'auth' },
   { method: 'POST', path: '/auth/login', status: 'done', note: 'JWT Supabase + contexto tenant/platform', group: 'auth' },
-  { method: 'POST', path: '/auth/mateo-handoff', status: 'done', note: 'Bearer · SSO WMS → Mateo (60s)', group: 'auth' },
-  { method: 'POST', path: '/auth/mateo-exchange', status: 'done', note: 'Canje código SSO → tokens', group: 'auth' },
+  { method: 'POST', path: '/auth/mateo-handoff', status: 'done', note: 'Bearer · SSO WMS ↔ Mateo bidireccional (60s)', group: 'auth' },
+  { method: 'POST', path: '/auth/mateo-exchange', status: 'done', note: 'Canje código SSO → tokens Supabase', group: 'auth' },
   { method: 'GET', path: '/auth/me', status: 'done', note: 'Bearer · perfil + idBodegas[]', group: 'auth' },
-  { method: 'POST', path: '/auth/logout', status: 'done', note: 'Bearer · 204', group: 'auth' },
+  { method: 'POST', path: '/auth/logout', status: 'done', note: 'Bearer · 204 logout global Supabase', group: 'auth' },
+  // Widget Mateo
+  { method: 'POST', path: '/auth/mateo/widget-token', status: 'done', note: 'Bearer WMS · JWT HS256 300s para n8n', group: 'widget-mateo' },
+  { method: 'GET', path: '/mateo/conversaciones', status: 'done', note: 'Bearer · lista conversaciones del usuario', group: 'widget-mateo' },
+  { method: 'GET', path: '/mateo/conversaciones/:id', status: 'done', note: 'Bearer · detalle + mensajes', group: 'widget-mateo' },
+  { method: 'POST', path: '/mateo/conversaciones', status: 'done', note: 'Bearer · crear conversación', group: 'widget-mateo' },
+  { method: 'POST', path: '/mateo/conversaciones/:id/mensajes', status: 'done', note: 'Bearer · append mensaje (id debe ser UUID)', group: 'widget-mateo' },
+  { method: 'DELETE', path: '/mateo/conversaciones/:id', status: 'done', note: 'Bearer · eliminar si pertenece al usuario', group: 'widget-mateo' },
   // Usuarios
   { method: 'POST', path: '/configurador/usuarios', status: 'done', note: 'Rol configurador · scope plataforma', group: 'usuarios' },
   { method: 'POST', path: '/administracion/usuarios', status: 'done', note: 'Rol administrador_cuenta · tenant del JWT', group: 'usuarios' },
-  // Bodegas
+  // Configuración bodegas
   { method: 'POST', path: '/configuracion/bodegas', status: 'done', note: 'configurador | administrador_cuenta · bypass RLS', group: 'configuracion' },
   { method: 'POST', path: '/configuracion/bodegas/:idBodega/bootstrap-layout', status: 'done', note: 'Layout tipo_ubicacion/zona/ubicacion (interna)', group: 'configuracion' },
   // Compras SOL
@@ -83,31 +95,38 @@ export const POLARIA_API_ENDPOINTS = [
   { method: 'GET', path: '/compras/ordenes/:id', status: 'done', note: 'Detalle OC', group: 'compras-oc' },
   { method: 'POST', path: '/compras/ordenes/:id/emitir', status: 'done', note: 'borrador → emitida', group: 'compras-oc' },
   { method: 'POST', path: '/compras/ordenes/:id/cancelar', status: 'done', note: '→ cancelada', group: 'compras-oc' },
-  // Integración
+  // Integración bodega externa
   { method: 'POST', path: '/integracion/solicitudes', status: 'done', note: 'operador_cuenta | administrador_cuenta', group: 'integracion' },
   { method: 'GET', path: '/integracion/solicitudes', status: 'done', note: 'Listar del tenant', group: 'integracion' },
   { method: 'GET', path: '/configurador/integracion/solicitudes', status: 'done', note: 'Bandeja configurador (todas las cuentas)', group: 'integracion' },
 ]
 
 export const POLARIA_API_MODULE_STATUS = [
-  { module: 'auth', path: '/auth', status: 'done', note: 'Login, sesión, SSO Mateo' },
-  { module: 'configurator', path: '/configurador, /administracion', status: 'done', note: 'Alta usuarios por rol' },
+  { module: 'auth', path: '/auth', status: 'done', note: 'Login, sesión, SSO Mateo bidireccional' },
+  { module: 'mateo-widget', path: '/auth/mateo/widget-token, /mateo/conversaciones', status: 'done', note: 'JWT widget + CRUD conversaciones (mig. 051/052)' },
+  { module: 'configurator', path: '/configurador, /administracion', status: 'done', note: 'Alta usuarios por rol (configurador + admin cuenta)' },
   { module: 'configuracion', path: '/configuracion/bodegas', status: 'done', note: 'Bodegas + bootstrap layout' },
-  { module: 'purchases', path: '/compras', status: 'done', note: 'SOL + OC (sin recepción aún)' },
+  { module: 'purchases', path: '/compras', status: 'done', note: 'SOL + OC (recepción pendiente)' },
   { module: 'integration', path: '/integracion, /configurador/integracion', status: 'done', note: 'Solicitudes bodega externa' },
-  { module: 'inventory', path: '—', status: 'partial', note: 'Placeholder · schema BD listo' },
-  { module: 'processing', path: '—', status: 'partial', note: 'Placeholder' },
-  { module: 'sales', path: '—', status: 'partial', note: 'Placeholder' },
-  { module: 'transport', path: '—', status: 'partial', note: 'Placeholder' },
-  { module: 'warehouses', path: '—', status: 'partial', note: 'Placeholder' },
+  { module: 'inventory', path: '—', status: 'partial', note: 'Mapa UI listo · endpoints warehouse_state pendientes' },
+  { module: 'processing', path: '—', status: 'partial', note: 'Shell UI · API endpoints pendientes' },
+  { module: 'sales', path: '—', status: 'partial', note: 'Shell UI · API endpoints pendientes' },
+  { module: 'transport', path: '—', status: 'partial', note: 'Shell UI (guías) · API endpoints pendientes' },
+  { module: 'warehouses', path: '—', status: 'partial', note: 'Schema BD listo · API operativa pendiente' },
+  { module: 'accounts', path: '—', status: 'partial', note: 'Placeholder · schema BD listo' },
+  { module: 'audit', path: '—', status: 'partial', note: 'Estructura clean arch · INSERT solo backend' },
+  { module: 'notifications', path: '—', status: 'partial', note: 'Placeholder · diseño pendiente' },
 ]
 
 export const POLARIA_API_PENDING = [
-  'Recepción compra (parcialmente_recibida, recibida, cerrada)',
-  'Inventario: warehouse_state, locking, movimientos',
-  'Procesamiento, ventas OV, transporte TV, alertas, cola operativa',
+  'Recepción compra (parcialmente_recibida, recibida, cerrada) — mig. 034 lista',
+  'Inventario: warehouse_state Realtime, locking, movimientos',
+  'Procesamiento: OT, SolicitudProcesamiento, RegistroMerma',
+  'Ventas OV: endpoints CRUD + líneas',
+  'Transporte TV: ViajeTransporte, GuiaEnvio, EvidenciaTransporte',
+  'Alertas operativas y cola de tareas',
   'Conciliación ciega completa, FEFO automático, salida cruzada',
-  'Fridem read-only, Cloudinary evidencias, n8n pedido proveedor (web parcial)',
+  'Fridem read-only, Cloudinary evidencias, n8n pedido proveedor',
 ]
 
 export const POLARIA_RLS_STRATEGY = {
@@ -132,18 +151,29 @@ export const POLARIA_ENV_VARS = {
   api: [
     { name: 'SUPABASE_URL', required: true },
     { name: 'SUPABASE_ANON_KEY', required: true },
-    { name: 'SUPABASE_SERVICE_ROLE_KEY', required: true },
-    { name: 'DATABASE_URL', required: true, note: 'Postgres directo Prisma, bypass RLS' },
-    { name: 'MATEO_HANDOFF_SECRET', required: true },
-    { name: 'MATEO_ALLOWED_ORIGINS', required: false },
+    { name: 'SUPABASE_SERVICE_ROLE_KEY', required: true, note: 'crear/borrar usuarios Auth, logout global' },
+    { name: 'DATABASE_URL', required: true, note: 'Postgres directo Prisma, bypass RLS (rol postgres)' },
+    { name: 'MATEO_HANDOFF_SECRET', required: true, note: 'JWT HS256 SSO WMS ↔ Mateo (60s)' },
+    { name: 'MATEO_WIDGET_JWT_SECRET', required: true, note: 'JWT HS256 widget (300s) — mismo valor que credential store n8n' },
+    { name: 'MATEO_WIDGET_JWT_ISSUER', required: false, note: 'default: bodega-frio-v2' },
+    { name: 'MATEO_WIDGET_JWT_AUDIENCE', required: false, note: 'default: mateo-support-widget' },
+    { name: 'MATEO_WIDGET_JWT_KID', required: false, note: 'default: local-dev-v1' },
+    { name: 'MATEO_ALLOWED_ORIGINS', required: false, note: 'CORS orígenes Mateo (comma-separated)' },
     { name: 'PORT', required: false, default: '3000' },
   ],
   web: [
-    { name: 'VITE_API_URL', required: true },
-    { name: 'VITE_SUPABASE_URL', required: true },
-    { name: 'VITE_SUPABASE_ANON_KEY', required: true },
+    { name: 'NEXT_PUBLIC_API_BASE_URL', required: true, note: 'URL del backend polaria-wms-api' },
+    { name: 'NEXT_PUBLIC_SUPABASE_URL', required: true },
+    { name: 'NEXT_PUBLIC_SUPABASE_ANON_KEY', required: true },
+    { name: 'NEXT_PUBLIC_MATEO_URL', required: false, note: 'SSO full-page (botón Mateo IA del topbar)' },
+    { name: 'NEXT_PUBLIC_MATEO_WIDGET_SCRIPT_URL', required: false, note: 'Bundle IIFE Widget-react (chat flotante)' },
   ],
-  optional: ['Cloudinary', 'n8n webhook pedido', 'Fridem Firebase read-only'],
+  widget: [
+    { name: 'VITE_N8N_WEBHOOK_URL', required: true, note: 'Webhook n8n del chatbot Mateo Support' },
+    { name: 'VITE_CLOUDINARY_CLOUD_NAME', required: true, note: 'Cloud Cloudinary para subida imágenes' },
+    { name: 'VITE_CLOUDINARY_UPLOAD_PRESET', required: true, note: 'Preset unsigned Cloudinary' },
+  ],
+  optional: ['Cloudinary evidencias transporte', 'n8n webhook pedido proveedor', 'Fridem Firebase read-only'],
 }
 
 /** Mapeo Prisma → id entidad (= nombre tabla Supabase) */

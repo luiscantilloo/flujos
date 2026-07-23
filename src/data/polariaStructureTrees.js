@@ -126,6 +126,16 @@ export const WEB_TREE = [
             ],
           },
           {
+            id: 'pw-comp-mateo',
+            name: 'mateo/',
+            hint: '✅ Widget Mateo embebido (POL-137)',
+            children: [
+              { id: 'pw-mateo-host', name: 'MateoWidgetHost.tsx', hint: 'Monta el bundle IIFE en shell' },
+              { id: 'pw-mateo-load', name: 'load-mateo-widget.ts', hint: 'Carga diferida del script' },
+              { id: 'pw-mateo-types', name: 'mateo-widget.types.ts' },
+            ],
+          },
+          {
             id: 'pw-comp-layouts',
             name: 'layouts/',
             children: [
@@ -471,6 +481,17 @@ export const API_TREE = [
               { id: 'pa-int-svc', name: 'services/solicitud-integracion.service.ts' },
             ],
           },
+          {
+            id: 'pa-mateo-widget',
+            name: 'mateo-widget/',
+            hint: '✅ JWT widget + CRUD conversaciones',
+            children: [
+              { id: 'pa-mw-ctrl', name: 'controllers/mateo-widget.controller.ts', hint: 'GET/POST /auth/mateo/widget-token' },
+              { id: 'pa-mw-conv', name: 'controllers/mateo-conversaciones.controller.ts', hint: 'CRUD /mateo/conversaciones' },
+              { id: 'pa-mw-svc', name: 'services/mateo-widget-token.service.ts' },
+              { id: 'pa-mw-repo', name: 'infrastructure/mateo-conversacion.repository.ts' },
+            ],
+          },
           { id: 'pa-audit', name: 'audit/', hint: '🟡 placeholder (clean architecture vacía)' },
           { id: 'pa-accounts', name: 'accounts/', hint: '🟡 placeholder' },
           { id: 'pa-companies', name: 'companies/', hint: '🟡 placeholder' },
@@ -521,6 +542,90 @@ export const API_TREE = [
       { id: 'pa-e2e-auth', name: 'auth.e2e-spec.ts' },
       { id: 'pa-e2e-cfg', name: 'configurador-usuarios.e2e-spec.ts' },
       { id: 'pa-e2e-adm', name: 'administracion-usuarios.e2e-spec.ts' },
+    ],
+  },
+]
+
+/** @type {ArchNode[]} */
+export const WIDGET_TREE = [
+  { id: 'wg-env', name: '.env.development / .env.example', hint: 'VITE_N8N_WEBHOOK_URL, VITE_CLOUDINARY_*' },
+  { id: 'wg-package', name: 'package.json', hint: 'React 19, Vite 8, TypeScript ~6, Tailwind v4' },
+  { id: 'wg-changelog', name: 'CHANGELOG.md', hint: 'Historial de versiones del widget' },
+  {
+    id: 'wg-docs',
+    name: 'docs/',
+    children: [
+      { id: 'wg-doc-arch', name: 'ARQUITECTURA.md', hint: 'Shadow DOM, capas del widget' },
+      { id: 'wg-doc-int', name: 'INTEGRACIONES.md', hint: 'Contrato n8n y Cloudinary' },
+      { id: 'wg-doc-seg', name: 'SEGURIDAD.md', hint: 'JWT widget (POL-71/72/73), checklist prod' },
+      { id: 'wg-doc-env', name: 'VARIABLES_DE_ENTORNO.md', hint: 'Cada VITE_* y su impacto' },
+      { id: 'wg-doc-embed', name: 'EMBED-POLARIA.md', hint: 'Guía de integración en polaria-wms-web' },
+      { id: 'wg-doc-test', name: 'TESTING.md', hint: '56 tests — lib pura (webhook, cloudinary, storage…)' },
+      { id: 'wg-doc-flujos', name: 'FLUJOS_DE_NEGOCIO.md', hint: 'Flujos end-to-end del widget' },
+      {
+        id: 'wg-adr',
+        name: 'adr/',
+        hint: 'Architecture Decision Records',
+        children: [
+          { id: 'wg-adr-shadow', name: 'ADR-0001 Shadow DOM' },
+          { id: 'wg-adr-i18n', name: 'ADR-0002 i18n (es/en)' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'wg-src',
+    name: 'src/',
+    children: [
+      { id: 'wg-main', name: 'main.tsx', hint: 'Punto de entrada — monta en shadow root' },
+      { id: 'wg-embed', name: 'embed.tsx', hint: 'API pública: init(), configureTokenFetcher()' },
+      { id: 'wg-app', name: 'App.tsx' },
+      { id: 'wg-config', name: 'config.ts', hint: 'Constantes + VITE_* env vars' },
+      { id: 'wg-types', name: 'types.ts', hint: 'Message, Conversation, SelectedImage' },
+      {
+        id: 'wg-components',
+        name: 'components/',
+        children: [
+          { id: 'wg-btn', name: 'ChatButton.tsx', hint: 'Burbuja flotante bottom-right' },
+          { id: 'wg-modal', name: 'ChatModal.tsx', hint: 'Ventana del chat' },
+          { id: 'wg-header', name: 'Header.tsx' },
+          { id: 'wg-msgs', name: 'MessagesArea.tsx' },
+          { id: 'wg-input', name: 'InputFooter.tsx', hint: 'Texto + adjuntar imagen' },
+          { id: 'wg-bubble', name: 'MessageBubble.tsx' },
+          { id: 'wg-history', name: 'HistoryPanel.tsx', hint: 'Lista de conversaciones' },
+          { id: 'wg-typing', name: 'TypingIndicator.tsx' },
+          { id: 'wg-error', name: 'ErrorBoundary.tsx' },
+        ],
+      },
+      {
+        id: 'wg-hooks',
+        name: 'hooks/',
+        children: [
+          { id: 'wg-hook-chat', name: 'useChat.ts', hint: 'Envío de mensajes → n8n' },
+          { id: 'wg-hook-conv', name: 'useConversations.ts', hint: 'Historial desde API WMS' },
+        ],
+      },
+      {
+        id: 'wg-lib',
+        name: 'lib/',
+        hint: 'Módulos puros — 56 tests',
+        children: [
+          { id: 'wg-lib-webhook', name: 'webhook.ts', hint: 'POST n8n con Authorization Bearer' },
+          { id: 'wg-lib-cloud', name: 'cloudinary.ts', hint: 'Subida imágenes unsigned' },
+          { id: 'wg-lib-auth', name: 'authToken.ts', hint: 'tokenFetcher + JWT (POL-72)' },
+          { id: 'wg-lib-storage', name: 'storage.ts', hint: 'localStorage + versionado esquema' },
+          { id: 'wg-lib-format', name: 'format.ts' },
+          { id: 'wg-lib-sig', name: 'fileSignature.ts', hint: 'Detectar tipo MIME de imágenes' },
+        ],
+      },
+      {
+        id: 'wg-i18n',
+        name: 'i18n/',
+        children: [
+          { id: 'wg-i18n-es', name: 'es.ts', hint: 'Diccionario en español' },
+          { id: 'wg-i18n-en', name: 'en.ts', hint: 'Diccionario en inglés' },
+        ],
+      },
     ],
   },
 ]

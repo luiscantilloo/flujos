@@ -4,7 +4,7 @@ import {
   appDevelopmentFlowDefinitions,
   appDevelopmentTopLevelFlowKeys,
 } from './appDevelopmentFlow.js'
-import { documentationItems } from '../docs/docRegistry.js'
+import { documentationItems, getManualItems } from '../docs/docRegistry.js'
 import { ENTITIES } from './bodegaDatabaseSchema.js'
 import { getEnabledHubProjects, getHubProject } from './hubProjects.js'
 import { getReferenceTopic } from './referenceTopics.js'
@@ -115,7 +115,7 @@ export const portalMainSections = [
     enabled: true,
     featured: true,
     badge: `${documentationItems.length} documentos`,
-    keywords: ['docs', 'guía', 'readme', 'markdown'],
+    keywords: ['docs', 'guía', 'readme', 'markdown', 'manual'],
     action: { type: 'phase', phase: 'docs' },
   },
   {
@@ -243,6 +243,20 @@ export const portalMainSections = [
     action: { type: 'reference', topic: 'testing' },
   },
   {
+    id: 'manual-de-usuario',
+    category: 'devtools',
+    title: 'Manual de Usuario',
+    description:
+      'Manuales por rol: configurador, administrador, operador, jefe de bodega, custodio, operario, procesador y transportista.',
+    icon: 'UserGroup',
+    accent: 'violet',
+    enabled: true,
+    featured: true,
+    badge: `${getManualItems().length} manuales`,
+    keywords: ['manual', 'rol', 'usuario', 'soporte', 'mateo', 'ayuda', 'guía operativa'],
+    action: { type: 'phase', phase: 'docs', filter: 'manual' },
+  },
+  {
     id: 'observability',
     category: 'soon',
     title: 'Observabilidad',
@@ -283,6 +297,7 @@ export const portalMainSections = [
 export const portalStats = {
   flows: 0,
   docs: documentationItems.length,
+  manuals: getManualItems().length,
   glossaryTerms: 20,
   schemaEntities: ENTITIES.length,
   projects: getEnabledHubProjects().length,

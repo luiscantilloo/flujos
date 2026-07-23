@@ -9,9 +9,9 @@ export const hubProjects = [
     name: 'Polaria WMS',
     legacyName: 'Bodega de frío',
     summary:
-      'WMS SaaS multi-rol: empresa → tenant → bodega. Producto en polaria-wms-web + polaria-wms-api + polaria-wms-db; este Dev Hub documenta diseño y estado real.',
+      'WMS SaaS multi-rol: empresa → tenant → bodega. Producto en polaria-wms-web + polaria-wms-api + polaria-wms-db + Widget-react; este Dev Hub documenta diseño y estado real.',
     accent: 'sky',
-    tags: ['Polaria WMS', 'Empresa · Tenant', 'Supabase'],
+    tags: ['Polaria WMS', 'Empresa · Tenant', 'Supabase', 'Widget Mateo'],
     repos: POLARIA_WMS.repos,
     enabled: true,
     /** Documento principal para secciones de referencia (v1.0 operacional). */

@@ -6,6 +6,7 @@
 export {
   WEB_TREE,
   API_TREE,
+  WIDGET_TREE,
   FRONTEND_TREE,
   BACKEND_TREE,
 } from './polariaStructureTrees.js'

@@ -4,12 +4,12 @@
 | --- | --- |
 | Producto | **Polaria WMS** (referencia histórica: Bodega de Frío V2) |
 | Subtítulo | Documentación Técnica · diseño + estado implementación |
-| Repos | [polaria-wms-web](https://github.com/PolariaTech/polaria-wms-web) · [polaria-wms-api](https://github.com/PolariaTech/polaria-wms-api) · [polaria-wms-db](https://github.com/PolariaTech/polaria-wms-db) |
+| Repos | [polaria-wms-web](https://github.com/PolariaTech/polaria-wms-web) · [polaria-wms-api](https://github.com/PolariaTech/polaria-wms-api) · [polaria-wms-db](https://github.com/PolariaTech/polaria-wms-db) · [Widget-react](https://github.com/PolariaTech/Widget-react) |
 | Dev Hub | [flujos](https://flujos-nine.vercel.app) — este portal (Vite + React) |
-| Stack | Next.js · React · TypeScript · NestJS 11 · Prisma · Supabase |
-| Fecha | Jun 2026 |
+| Stack | Next.js 16 · React 19 · TypeScript · NestJS 11 · Prisma 7 · Supabase · Widget Mateo |
+| Fecha | Jul 2026 |
 
-> **Estado Polaria WMS — Jun 2026**
+> **Estado Polaria WMS — Jul 2026**
 > ✅ Implementado en API/web · 🟡 Schema/BD listo, API operativa pendiente · 🔵 Diseño roadmap (Dev Hub)
 >
 > **Regla:** el Dev Hub documenta diseño objetivo **y** estado real. Lo no implementado se marca explícitamente.
@@ -121,52 +121,65 @@ El **administrador de cuenta** opera **dentro del tenant** que le asignó el con
 
 ## 3. Stack Tecnológico
 
-#### Frontend
+#### Frontend (`polaria-wms-web`)
 
 | Tecnología | Versión | Uso |
 | --- | --- | --- |
-| Next.js (App Router) | 16.1.6 | Framework principal SSR/CSR |
-| React | 19.2.3 | UI components y estado |
-| TypeScript | Latest | Tipado estático |
+| Next.js (App Router) | 16 | Framework principal SSR/CSR |
+| React | 19 | UI components y estado |
+| TypeScript | 5 | Tipado estático |
 | Tailwind CSS | 4 | Estilos utilitarios |
-| Recharts | Latest | Gráficas de reportes |
-| html2canvas + jsPDF | Latest | Exportación de reportes a PDF |
-| xlsx | Latest | Importación de catálogo |
+| Supabase JS (`@supabase/ssr`) | — | Lecturas con RLS + Realtime |
+| Zustand | — | Estado global (auth store) |
+| Vitest + Testing Library | — | 211+ tests unitarios |
+| Lucide React | — | Iconografía |
 
-#### Backend
+#### Widget Mateo (`Widget-react`) ✅ nuevo
+
+| Tecnología | Versión | Uso |
+| --- | --- | --- |
+| React + Vite | 19 / 8 | SPA embebible (Shadow DOM) |
+| TypeScript | ~6 (strict) | Tipado estricto completo |
+| Tailwind CSS | v4 | Estilos inyectados en shadow root |
+| Vitest + happy-dom | 4 / 20 | 56 tests (módulos lib/) |
+| SweetAlert2 | 11 | Diálogos de confirmación (carga diferida) |
+| i18n (es/en) | — | Diccionarios y función `t()` |
+| n8n (externo) | — | Backend conversacional Mateo |
+| Cloudinary (externo) | — | Subida de imágenes adjuntas |
+
+#### Backend (`polaria-wms-api`)
+
+| Tecnología | Versión | Uso |
+| --- | --- | --- |
+| NestJS | 11 | Framework modular (guards, pipes, interceptors) |
+| TypeScript | 5 | Tipado estricto |
+| SWC | — | Compilación rápida (dev + build) |
+| Prisma | 7 | ORM — acceso PostgreSQL directo (bypass RLS) |
+| Supabase Auth | — | JWT, creación/gestión usuarios Auth |
+| class-validator | — | Validación DTOs |
+| Swagger (OpenAPI) | — | `/api/docs` — endpoints agrupados por rol |
+| Jest + Supertest | — | 19 tests e2e (4 suites) + 7 suites unitarios |
+
+#### Base de datos (`polaria-wms-db`)
 
 | Tecnología | Uso |
 | --- | --- |
-| NestJS (Node.js) | Estructura modular para separar Ingresos, Mapa, Procesamiento y Despacho. |
-| TypeScript | Tipado estricto para que los pesos y fechas siempre tengan el formato correcto. |
-| Supabase Admin SDK | Permite a NestJS leer/escribir en PostgreSQL (Supabase) con privilegios de administrador (Server-side). |
-| Zod / Class-Validator | NestJS recibe el token del Front, lo valida y extrae el accountID y el rol. |
-| Swagger (OpenAPI) | Genera automáticamente una página para probar los endpoints (ej. /ingreso, /procesar). |
-| Axios / HttpModule | Conexión con los webhooks de n8n para disparar alertas y pedidos. |
+| PostgreSQL (Supabase) | 52+ migraciones, modelo operativo WMS completo |
+| RLS multi-tenant | Políticas por `codigo_cuenta` + `id_bodega` (asignación) |
+| Realtime | Canales acotados por bodega (`warehouse_state`) |
+| Storage | Firmas y adjuntos opcionales |
 
-#### Base de datos
-
-| Tecnología | Uso |
-| --- | --- |
-| Cloud PostgreSQL (Supabase) | Almacena el estado actual de los slots, cajas, lotes y viajes en tiempo real. |
-
-- **RLS (Row Level Security):** políticas por `codigo_cuenta` y, en bodega, por `id_bodega` vía asignación.
-- **Storage:** firmas y adjuntos de recepción (opcional si no van solo a Cloudinary).
-- **Realtime:** canales acotados por bodega; payload de `warehouse_state` acotado por diseño.
-- **FCM / push (propuesto):** alertas de temperatura a operarios.
-
-```text
-Cloudinary (API)
-```
-
-Almacenamiento y optimización de las evidencias fotográficas del transporte.
+- **52+ migraciones** (001–052): fundacional, layout, catálogos, compras, inventario, procesamiento, ventas, transporte, widget Mateo.
+- **Tablas solo-backend (sin acceso PostgREST):** `warehouse_state`, `movimiento_inventario`, `contador`, `auditoria_operacion (INSERT)`.
+- **Widget Mateo en BD:** `widget_conversacion`, `widget_mensaje` con RLS por `id_usuario` + `codigo_cuenta`.
 
 ### 3.1 Dev Hub (`flujo`) vs Polaria WMS
 
 | Artefacto | Repositorio | Stack en runtime | Rol |
 | --- | --- | --- | --- |
 | **Aplicación WMS** | `polaria-wms-web`, `polaria-wms-api`, `polaria-wms-db` | Next.js, NestJS 11, Prisma, Supabase | Operación en bodega (producción) |
-| **Dev Hub** | `flujo` (este portal de documentación) | Vite, React 19, React Flow, Mermaid | Diagramas, ER, doc — **no sustituye** al producto |
+| **Widget Mateo** | `Widget-react` | React, Vite, Shadow DOM | Chat soporte embebido en WMS |
+| **Dev Hub** | `flujo` (este portal de documentación) | Vite, React 19, React Flow, Mermaid | Diagramas, ER, doc, manuales de usuario |
 
 > **Nombres legacy:** `frio-frontend` → `polaria-wms-web` · `frio-backend` → `polaria-wms-api`
 
@@ -284,6 +297,121 @@ Cloudinary (Fotos)
 n8n Webhook (Alertas)
 WhatsApp/Email (SLA)
 ```
+
+### 4.3 Widget Mateo Support (✅ Implementado)
+
+El **Widget-react** es un chat de soporte embebido para que los usuarios del WMS puedan consultar a **Mateo**, el asistente IA de Polaria, directamente desde el dashboard, sin salir de la aplicación.
+
+#### Repos involucrados
+
+| Repo | Responsabilidad |
+| --- | --- |
+| [Widget-react](https://github.com/PolariaTech/Widget-react) | Bundle embebible (Shadow DOM, React 19, TypeScript strict) |
+| `polaria-wms-api` | `POST /auth/mateo/widget-token` · CRUD `/mateo/conversaciones` |
+| `polaria-wms-web` | `MateoWidgetHost` — monta el bundle dentro del shell autenticado |
+| `polaria-wms-db` | Tablas `widget_conversacion` / `widget_mensaje` (mig. 051-052) + RLS |
+
+#### Stack del widget
+
+| Tecnología | Versión | Rol |
+| --- | --- | --- |
+| React | 19.2.7 | UI montada en Shadow DOM |
+| TypeScript | ~6.0.2 (strict) | Tipado completo |
+| Vite / Vitest | 8.1.1 / 4.1.10 | Build + tests (56 tests) |
+| Tailwind CSS | v4.3.2 | Estilos inyectados en shadow root |
+| n8n (externo) | — | Backend conversacional — mismo workflow que canal WhatsApp |
+| Cloudinary (externo) | — | Subida de imágenes adjuntas |
+| i18n | es/en | Diccionarios y función `t()` |
+
+#### Variables de entorno (Widget-react)
+
+| Variable | Descripción |
+| --- | --- |
+| `VITE_N8N_WEBHOOK_URL` | Webhook n8n del chatbot Mateo Support |
+| `VITE_CLOUDINARY_CLOUD_NAME` | Cloud Cloudinary para imágenes |
+| `VITE_CLOUDINARY_UPLOAD_PRESET` | Preset *unsigned* (no es secreto real) |
+
+#### Variables de entorno (polaria-wms-web — widget host)
+
+| Variable | Descripción |
+| --- | --- |
+| `NEXT_PUBLIC_MATEO_WIDGET_SCRIPT_URL` | URL del bundle IIFE (`/assets/mateo-widget.js` en local, CDN en prod) |
+| `NEXT_PUBLIC_MATEO_URL` | Solo SSO full-page (botón **Mateo IA** del topbar) |
+
+#### Variables de entorno (polaria-wms-api — widget token)
+
+| Variable | Descripción |
+| --- | --- |
+| `MATEO_WIDGET_JWT_SECRET` | Secreto HS256 — **mismo** que el credential store de n8n (POL-71) |
+| `MATEO_WIDGET_JWT_ISSUER` | Default `bodega-frio-v2` |
+| `MATEO_WIDGET_JWT_AUDIENCE` | Default `mateo-support-widget` |
+| `MATEO_WIDGET_JWT_KID` | Default `local-dev-v1` |
+
+#### Flujo del widget
+
+```text
+Usuario logueado en WMS
+↓
+AppShellLayout monta MateoWidgetHost (solo con accessToken activo)
+↓
+configureTokenFetcher → POST /auth/mateo/widget-token (Bearer WMS)
+↓
+API genera JWT HS256 (300s) con sub, idUsuario, codigoEmpresa, codigoCuenta, idRol
+↓
+Widget envía mensajes a n8n con Authorization: Bearer <jwt>
+↓
+n8n valida JWT (MATEO_WIDGET_JWT_SECRET + iss/aud/kid)
+↓
+Historial persistido en Supabase: widget_conversacion / widget_mensaje (RLS por id_usuario)
+```
+
+#### Dos experiencias Mateo en el WMS
+
+| UI | Ruta | Descripción |
+| --- | --- | --- |
+| Burbuja flotante (bottom-right) | Cualquier página autenticada | Widget embebido — chat sin salir del WMS |
+| Botón **Mateo IA** (topbar) | `/auth/sso?code=` | SSO full-page — redirige a la app Mateo |
+
+#### Endpoints del widget (polaria-wms-api)
+
+| Método | Ruta | Descripción |
+| --- | --- | --- |
+| `POST` | `/auth/mateo/widget-token` | JWT 300s para n8n (Bearer WMS) |
+| `GET` | `/mateo/conversaciones` | Lista conversaciones del usuario |
+| `GET` | `/mateo/conversaciones/:id` | Detalle + mensajes |
+| `POST` | `/mateo/conversaciones` | Crear conversación |
+| `POST` | `/mateo/conversaciones/:id/mensajes` | Append mensaje (`:id` **debe ser UUID**) |
+| `DELETE` | `/mateo/conversaciones/:id` | Eliminar si pertenece al usuario |
+
+#### Migraciones BD (polaria-wms-db)
+
+| Migración | Contenido |
+| --- | --- |
+| `051_widget_mateo_conversaciones.sql` | Tablas `widget_conversacion`, `widget_mensaje` + RLS + función `resolve_web_user` |
+| `052_widget_conversacion_rls_cuenta.sql` | RLS por `id_usuario` + `codigo_cuenta` |
+
+#### Build y deploy del bundle
+
+```bash
+# En el repo Widget-react
+npm run build:lib
+# Genera: dist/assets/mateo-widget.js (IIFE embebible)
+
+# Copiar a polaria-wms-web (dev local)
+cp dist/assets/mateo-widget.js ../polaria-wms-web/public/assets/mateo-widget.js
+```
+
+En producción el bundle se sirve desde CDN y se configura en `NEXT_PUBLIC_MATEO_WIDGET_SCRIPT_URL`.
+
+#### Troubleshooting widget
+
+| Síntoma | Causa | Solución |
+| --- | --- | --- |
+| No aparece la burbuja | Script 404 o `.env` sin reiniciar | Verificar `NEXT_PUBLIC_MATEO_WIDGET_SCRIPT_URL` y reiniciar `next dev` |
+| Historial 500 | Migración 051 no aplicada | Aplicar `051_widget_mateo_conversaciones.sql` en Supabase |
+| Mensajes 400 / id local | Bundle viejo (`conv_*` en vez de UUID) | Actualizar bundle `Widget-react` |
+| n8n "sin permiso" / 401 | Secreto o `iss`/`aud`/`kid` distintos | Alinear `MATEO_WIDGET_JWT_SECRET` entre API y n8n |
+| Respuesta IA en otra conversación | Race condition create remoto | Bundle reciente de `Widget-react` corrige alias local→UUID |
 
 ## 5. Roles y Permisos
 
