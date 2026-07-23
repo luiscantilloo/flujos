@@ -68,9 +68,14 @@ export function DevResourcesPortal({ onBackToMain, onOpenDocSection }) {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-300/90">Herramientas</p>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">Stack y scripts</h2>
             <p className="mt-3 text-pretty text-base leading-relaxed text-slate-400">
-              Stack del <strong className="font-medium text-slate-300">producto WMS</strong> (Next + Nest +
-              Supabase). Este repositorio <strong className="font-medium text-slate-300">flujo</strong> es el Dev
-              Hub (Vite + React) para documentación y diagramas.
+              Stack del <strong className="font-medium text-slate-300">producto WMS</strong> (Next 16 + Nest 11 +
+              Supabase) repartido en 4 repos:{' '}
+              <code className="font-mono text-xs text-slate-300">polaria-wms-web</code>,{' '}
+              <code className="font-mono text-xs text-slate-300">polaria-wms-api</code>,{' '}
+              <code className="font-mono text-xs text-slate-300">polaria-wms-db</code> y{' '}
+              <code className="font-mono text-xs text-slate-300">Widget-react</code> (Mateo Support). Este
+              repositorio <strong className="font-medium text-slate-300">flujo</strong> es el Dev Hub (Vite +
+              React) para documentación y diagramas.
             </p>
           </div>
 

@@ -65,10 +65,12 @@ export const referenceTopics = {
   testing: {
     id: 'testing',
     title: 'Testing',
-    subtitle: 'Framework, convenciones y casos críticos a cubrir.',
+    subtitle: 'Frameworks por repo, convenciones y casos críticos a cubrir.',
     icon: 'Beaker',
     accent: 'emerald',
     view: 'markdown',
+    /** Generado desde polariaTestingDoc.js (sincronizado con los 4 repos). */
+    markdownSource: 'polaria-testing',
     sectionPattern: /documentación de testing/i,
   },
   glossary: {
