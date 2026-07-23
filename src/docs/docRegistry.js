@@ -15,7 +15,7 @@ export const documentationItems = [
     id: 'bodega-frio-documentacion-v20',
     title: 'Bodega de frío — Documentación técnica (V2.0)',
     summary:
-      'Empresa vs tenant, arquitectura lectura/escritura, modelo dual 3NF+jsonb, stack frio vs Dev Hub, flujos V2, Supabase, API, despliegue.',
+      'Empresa vs tenant, arquitectura lectura/escritura, 9 roles, stack Next 16 + Nest 11 + Prisma 7, 11 módulos API (~78 endpoints), 41 tablas, widget Mateo, integraciones y despliegue.',
     filePath: '/docs/bodega_de_frio_documentacion_v2_0.md',
     format: 'markdown',
     sourceNote: 'Generado desde BodegaDeFrio_DocumentacionV2.docx.',

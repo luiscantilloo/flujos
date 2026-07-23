@@ -137,9 +137,10 @@ El **administrador de cuenta** opera **dentro del tenant** que le asignó el con
 
 | Tecnología | Uso |
 | --- | --- |
-| NestJS (Node.js) | Estructura modular para separar Ingresos, Mapa, Procesamiento y Despacho. |
+| NestJS 11 (Node.js) | Estructura modular: auth, configuracion, purchases, inventory, operations, processing, sales, transport, integration, mateo-widget. |
+| Prisma 7 | ORM con 43 modelos; usa `DATABASE_URL` (Postgres directo) y hace bypass de RLS en escrituras, validando el tenant en código. |
 | TypeScript | Tipado estricto para que los pesos y fechas siempre tengan el formato correcto. |
-| Supabase Admin SDK | Permite a NestJS leer/escribir en PostgreSQL (Supabase) con privilegios de administrador (Server-side). |
+| Supabase Admin SDK | Permite a NestJS gestionar Auth (alta de usuarios, logout, sesión de Mateo) con privilegios de administrador (Server-side). |
 | Zod / Class-Validator | NestJS recibe el token del Front, lo valida y extrae el accountID y el rol. |
 | Swagger (OpenAPI) | Genera automáticamente una página para probar los endpoints (ej. /ingreso, /procesar). |
 | Axios / HttpModule | Conexión con los webhooks de n8n para disparar alertas y pedidos. |
@@ -287,15 +288,19 @@ WhatsApp/Email (SLA)
 
 ## 5. Roles y Permisos
 
+Los 9 roles operativos están definidos en el enum `WmsRol` (Prisma/Supabase). La API los aplica con `RolesGuard`; el frontend adapta la navegación y el home por rol. Para el detalle de "qué ve y qué puede hacer cada uno, paso a paso", ver la sección **Manual de usuario** del Dev Hub (`/manual-usuario`).
+
 | Rol | Acceso Principal | Acciones Permitidas |
 | --- | --- | --- |
-| *(legacy V1)* administrador, jefe, cliente | — | Sustituidos por roles WMS de cuenta/bodega; ver filas siguientes |
-| configurador | Plataforma SaaS (TI) | **Crear empresas** y **tenants** (`codeCuenta`), bodegas, primer admin; no opera mercancía |
-| administrador_cuenta | Tenant (`codeCuenta`) | Usuarios, catálogos, OC/OV de su tenant |
-| operador_cuenta | Tenant | SOL, OC, OV, solicitudes de procesamiento |
-| administrador_bodega / jefe_bodega / custodio / operario / procesador / transportista | Bodega del tenant | Operación física y `state/main` (asignación por bodega) |
-| operadorCuentas | *(legacy V1)* | Alias histórico de operador de cuenta — ver `operador_cuenta` |
-| transporte | Viajes | Registrar entregas, evidencia fotográfica, cierre de viaje |
+| configurador | Plataforma SaaS (TI) | **Crear empresas, cuentas (tenants) y bodegas**, armar layout y crear el primer admin; bandeja de integración. No opera mercancía |
+| administrador_cuenta | Tenant (`codigo_cuenta`) | Usuarios de su cuenta, catálogos, **aprobar SOL**, OC/OV, reportes |
+| operador_cuenta | Tenant | SOL, OC, OV y solicitudes de procesamiento (no aprueba) |
+| administrador_bodega | Bodega del tenant | Estado de bodega, cerrar recepciones, mapa, transporte, reportes |
+| jefe_bodega | Bodega del tenant | Crea OT, asigna tareas/alertas, orquesta procesamiento y salidas, despacho |
+| custodio | Bodega del tenant | Recepción (conteo ciego + temperatura), consulta OC/OV, bloqueo de mapa |
+| operario | Bodega del tenant | Ejecuta OT y tareas, bloquea slots, inicia procesamiento, llama al jefe |
+| procesador | Bodega del tenant | Toma y cierra procesamientos (kilos resultantes + merma) |
+| transportista | Bodega del tenant | Registra entregas con evidencia (foto, firma) y cierra viajes |
 
 ## 6. Flujo de Trabajo Completo V2.0
 
@@ -504,6 +509,8 @@ Las rutas operativas usan el **`codeCuenta` activo** (tenant). El configurador e
 
 ## 7. Modelo de Datos (PostgreSQL (Supabase))
 
+El esquema operativo (repo `polaria-wms-db`) tiene **41 tablas** y **24 enums**, con migraciones `001`–`052`. Las más recientes agregan la persistencia del widget de Mateo (`051`) y su endurecimiento de RLS por cuenta (`052`). Para el detalle tabla por tabla y los diagramas ER, ver **Modelo de datos** y **Arquitectura** en el Dev Hub.
+
 #### Jerarquía empresa → tenant → bodega → operación
 
 En el modelo 3NF del Dev Hub: **`empresa`** agrupa contratos; **`cuenta`** es el tenant operativo (`codigo_cuenta`); catálogos y órdenes referencian el tenant; las bodegas referencian `codigo_cuenta`.
@@ -561,58 +568,53 @@ Fuente: [github.com/PolariaTech/polaria-wms-api](https://github.com/PolariaTech/
 
 Swagger: `GET /api/docs` · OpenAPI: `GET /api/docs-json`
 
-Guards: `JwtAuthGuard`, `TenantGuard`, `RolesGuard` · Header opcional: `x-auth-client: wms | mateo`
+Guards: `JwtAuthGuard`, `TenantGuard`, `RolesGuard` y `SensitiveWriteGuard` (escrituras de inventario/OT) · Header opcional: `x-auth-client: wms | mateo`
 
-### ✅ Implementado
+> **Nota.** Esta sección resume el estado. El detalle endpoint por endpoint (con notas y estado) vive en la referencia viva **API y endpoints** del Dev Hub (`/referencia/api/bodega-frio`), generada desde el repo.
 
-| Método | Ruta | Notas |
+### Estado por módulo (Jul 2026)
+
+A julio de 2026 el backend expone **más de 80 endpoints** en **11 módulos NestJS** implementados. Prisma cuenta con **43 modelos** sobre **41 tablas** en Supabase/PostgreSQL.
+
+| Módulo | Prefijo | Estado |
 | --- | --- | --- |
-| GET | `/` | Health check |
-| POST | `/auth/prelogin` | platform \| tenant |
-| POST | `/auth/login` | JWT + contexto |
-| POST | `/auth/mateo-handoff` | Bearer · SSO → Mateo |
-| POST | `/auth/mateo-exchange` | Canje SSO |
-| GET | `/auth/me` | Perfil sesión |
-| POST | `/auth/logout` | 204 |
-| POST | `/configurador/usuarios` | Rol configurador |
-| POST | `/administracion/usuarios` | administrador_cuenta (tenant JWT) |
-| POST | `/configuracion/bodegas` | configurador \| admin cuenta |
-| POST | `/configuracion/bodegas/:idBodega/bootstrap-layout` | Layout bodega interna |
-| POST | `/compras/solicitudes` | Crear SOL |
-| GET | `/compras/solicitudes` | Listar SOL |
-| GET | `/compras/solicitudes/:id` | Detalle SOL |
-| PATCH | `/compras/solicitudes/:id` | Editar borrador |
-| POST | `/compras/solicitudes/:id/enviar-aprobacion` | |
-| POST | `/compras/solicitudes/:id/aprobar` | |
-| POST | `/compras/solicitudes/:id/rechazar` | |
-| POST | `/compras/solicitudes/:id/cancelar` | |
-| POST | `/compras/solicitudes/:id/convertir-oc` | SOL → OC |
-| POST | `/compras/ordenes` | Crear OC |
-| GET | `/compras/ordenes` | Listar OC |
-| GET | `/compras/ordenes/:id` | Detalle OC |
-| POST | `/compras/ordenes/:id/emitir` | borrador → emitida |
-| POST | `/compras/ordenes/:id/cancelar` | |
-| POST | `/integracion/solicitudes` | operador \| admin cuenta |
-| GET | `/integracion/solicitudes` | Tenant |
-| GET | `/configurador/integracion/solicitudes` | Bandeja configurador |
+| auth | `/auth` | ✅ Login, sesión, SSO Mateo + token de widget |
+| configurator | `/configurador`, `/administracion` | ✅ Alta de usuarios por rol |
+| configuracion | `/configuracion/{empresas,cuentas,bodegas}` | ✅ Empresa/cuenta/bodega + bootstrap de layout |
+| purchases | `/compras` | ✅ SOL + OC + recepción (conciliación ciega) |
+| inventory | `/inventario` | ✅ warehouse_state, locking, movimientos |
+| operations | `/operaciones` | ✅ OT, cola de tareas, alertas, llamadas, presencia |
+| processing | `/procesamiento` | ✅ Primario→secundario, merma, OT post-cierre |
+| sales | `/ventas` | ✅ OV: emitir, reservar stock, generar OT |
+| transport | `/transporte` | ✅ Paquete de despacho + entrega con evidencia |
+| integration | `/integracion`, `/configurador/integracion` | ✅ Solicitudes de bodega externa |
+| mateo-widget | `/mateo/conversaciones` | ✅ Persistencia del chat de Mateo (`widget_*`) |
 
-### Módulos NestJS
+### Endpoints destacados por dominio
 
-| Módulo | Estado |
-| --- | --- |
-| auth, configurator, configuracion, purchases, integration | ✅ |
-| inventory, processing, sales, transport, warehouses | 🟡 placeholder (schema BD listo) |
+- **Auth/SSO:** `POST /auth/prelogin`, `POST /auth/login`, `GET /auth/me`, `POST /auth/logout`, `POST /auth/mateo-handoff`, `POST /auth/mateo-exchange`, `POST /auth/mateo/widget-token`.
+- **Configuración:** `PATCH /configuracion/empresas/:codigoEmpresa`, `PATCH /configuracion/cuentas/:codigoCuenta`, `POST /configuracion/bodegas`, `POST /configuracion/bodegas/:idBodega/bootstrap-layout`.
+- **Compras:** SOL (`/compras/solicitudes/*`: enviar-aprobacion, aprobar, rechazar, cancelar, convertir-oc), OC (`/compras/ordenes/*`: emitir, destino, cancelar) y recepción (`/compras/recepciones/ordenes/:id/cerrar`).
+- **Inventario:** `GET /inventario/warehouse-state`, `POST /inventario/warehouse-state/:id/{lock,unlock}`, `GET /inventario/movimientos`.
+- **Operaciones:** OT (`/operaciones/ordenes-trabajo/*`), tareas (`/operaciones/tareas/*`), alertas, llamadas, `GET /operaciones/reportes/bodega`, `POST /operaciones/presencia/ping`.
+- **Procesamiento:** `/procesamiento/solicitudes/*` (iniciar, asignar-operario, asignar-procesador, cerrar, ordenes-post-cierre, terminar).
+- **Ventas:** `GET /ventas/ordenes`, `POST /ventas/ordenes/:id/emitir`.
+- **Transporte:** `POST /transporte/paquetes-despacho`, `POST /transporte/entregas`.
+- **Integración:** `/integracion/solicitudes`, `GET /configurador/integracion/solicitudes`.
+- **Mateo widget:** CRUD en `/mateo/conversaciones` (+ `/:id/mensajes`).
 
-### 🔵 Pendiente (diseño V2)
+### 🔵 Pendiente / roadmap
 
-Recepción compra (`parcialmente_recibida`, `recibida`, `cerrada`), inventario/locking, procesamiento, ventas OV, transporte TV, alertas, cola operativa.
+Módulos placeholder sin controllers (accounts, companies, files, health, notifications, settings, users, warehouses), cotización comparativa de proveedores, FEFO automático a nivel de base de datos y controles de seguridad (MFA, rate limiting, gobernanza de refresh token).
 
-### Web — route handlers legacy
+### Web — route handlers (polaria-wms-web)
 
 | Ruta | Estado |
 | --- | --- |
-| `POST /api/solicitud-compra` (n8n) | 🟡 parcial en polaria-wms-web |
-| `POST /api/evidencia-transporte` (Cloudinary) | 🔵 diseño |
+| `POST /api/solicitud-compra` (n8n) | ✅ aviso de SOL |
+| `POST /api/pedido-proveedor` (n8n) | ✅ notificación de OC al proveedor |
+| `POST /api/evidencia-transporte` (Cloudinary) | ✅ foto/firma de entrega |
+| `POST /api/operaciones/sync-demora-alertas` | ✅ sincronización de alertas por demora |
 
 ## 9. Integración con Servicios Externos
 
@@ -640,6 +642,21 @@ Almacena las fotografías y firmas de entrega de los viajes de transporte.
 Usar CLOUDINARY_URL completa (Opción A) para evitar errores de firma
 Definir CLOUDINARY_EVIDENCIA_FOLDER para organizar archivos por bodega o cuenta
 ```
+
+### 9.4 Mateo Support (Widget-react + n8n)
+
+**Mateo** es el asistente de IA de Polaria. Su canal web es un widget de chat embebible (repo `Widget-react`) que se monta dentro de `polaria-wms-web` con Shadow DOM.
+
+```text
+Widget-react (Shadow DOM + React) → embebido en polaria-wms-web (/assets/mateo-widget.js)
+El widget pide un JWT de widget a la API: POST /auth/mateo/widget-token (HS256, 300s)
+Con ese JWT llama al webhook de n8n (mismo workflow del canal WhatsApp) → respuestas RAG
+Persiste el historial en Supabase vía la API: /mateo/conversaciones (tablas widget_conversacion / widget_mensaje)
+Sube imágenes a Cloudinary (preset unsigned)
+```
+
+- **SSO Mateo ↔ WMS:** `POST /auth/mateo-handoff` (código de un solo uso, 60s) y `POST /auth/mateo-exchange` para navegación full-page entre WMS y el chatbot.
+- **Seguridad:** el JWT del widget lo firma la API con `MATEO_WIDGET_JWT_SECRET` (compartido con n8n). Las tablas `widget_*` tienen RLS por `codigo_cuenta` (migración 052 / POL-138).
 
 ## 10. Variables de Entorno
 

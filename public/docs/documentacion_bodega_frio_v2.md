@@ -591,44 +591,49 @@ Los ADRs documentan las decisiones técnicas importantes y —más valioso aún�
 
 *Cómo verificar que el sistema funciona correctamente*
 
+> **Nota.** Esta es una vista general. El detalle vivo (frameworks, conteos y casos críticos por repo) está en la referencia **Testing** del Dev Hub (`/referencia/testing/bodega-frio`), sincronizada con los cuatro repositorios.
 
-### Framework y configuración
+### Framework y comandos por repositorio
 
-El proyecto usa Vitest en entorno Node. La cobertura está configurada sobre las lógicas puras en app/lib/ y lib/ — los módulos sin dependencias de UI o Firebase que pueden testearse de forma aislada.
+Cada repositorio de Polaria WMS tiene su propio framework:
 
-| Comando | Descripción |
-| --- | --- |
-| npm run test | Ejecuta la suite de tests con Vitest. |
-| npm run test:all | Encadena lint + verificación de tipos TypeScript + cobertura completa. Usar antes de cada PR. |
-
+| Repositorio | Framework | Cobertura | Comandos |
+| --- | --- | --- | --- |
+| polaria-wms-api | Jest + ts-jest + Supertest (e2e) | 37 spec unit (~212 casos) + 11 suites e2e (47 casos) | `npm test`, `npm run test:e2e`, `npm run test:cov` |
+| polaria-wms-web | Vitest + Testing Library + jsdom | 124 archivos `*.test.tsx` co-localizados | `npm test`, `npm run test:watch` |
+| Widget-react | Vitest + happy-dom | 8 archivos, 62 casos (módulos `lib/` + embed) | `npm run test` |
+| polaria-wms-db | Scripts SQL de validación | validate-rls-*, validate-mapa-pol141, validate-widget-auth-pol137 | `supabase db push`, `psql < scripts/validate-*.sql` |
 
 ### Qué se testea
 
-| Módulo | Qué cubre |
+| Área | Qué cubre |
 | --- | --- |
-| app/lib/ | Helpers de cálculo, display y reglas de UI acopladas al dominio. |
-| lib/ | Funciones puras: bodegaCloudState, procesamientoInventarioBodega, ventaSalidaBodegaMatch, etc. |
-| app/services/ | Pendiente: tests de integración para los servicios de Firestore. |
-
+| Autenticación / SSO | auth.service.spec, auth.e2e, token de widget (POL-137) |
+| Aislamiento tenant | tenant-scope.util + tenant-isolation.e2e (cross-tenant rechazado) |
+| Compras | solicitud-compra.service, orden-compra.service |
+| Inventario / mapa | FEFO y locks de warehouse_state, warehouse-state-lock.e2e (POL-141) |
+| Operaciones y procesamiento | operaciones.e2e, operaciones-tareas.e2e, procesamiento-flujo.e2e |
+| Web — navegación por rol | navigation-role-gate.integration.test (nav ↔ RBAC) |
+| Widget Mateo | authToken, webhook, conversationApi, cloudinary, storage, embed |
 
 ### Convención para nuevos tests
 
-Ubicar el archivo de test junto al módulo que testea: lib/modulo.test.ts
-
-Nombre del test: describe('nombreFuncion', () => { it('debe hacer X cuando Y') })
-
-Un test por caso de uso o caso borde Los tests no deben depender de Firebase ni de Cloudinary. Mockear esas dependencias.
-
+- API (Jest): archivos `*.spec.ts` junto al código; e2e en `test/*.e2e-spec.ts` con Supertest.
+- Web (Vitest): archivos `*.test.tsx` co-localizados; mockear Supabase con `create-supabase-mock.ts`.
+- Nombrar los casos por comportamiento observable (dado/cuando/entonces), no por implementación.
+- Cada corrección de bug debe llegar con un test que reproduzca el fallo.
 
 ### Casos críticos a cubrir
 
-- `deductSlotsAfterProcesamientoTerminado(): descuento correcto de kg en slots`
-- `planSalidaVentaDesdeMapa(): candidatos correctos para una línea de venta`
-- `recordMermaProcesamientoKg(): acumulación correcta en historial`
-- `resolveProveedorPedidoIntegracion(): resolución correcta de datos del proveedor`
-- `filasInventarioInternoFromSlots(): conversión correcta de slots a filas de inventario`
+- RLS multi-tenant: ningún rol lee/escribe fuera de su empresa → cuenta → bodega.
+- Máquinas de estado (SOL, OC, OV, OT, procesamiento): transiciones válidas e inválidas.
+- Recepción por conciliación ciega: diferencias de cantidad y temperatura fuera de rango.
+- Concurrencia en el mapa: lock/unlock de posiciones y `warehouse_state.version` (POL-141).
+- SSO Mateo: código de un solo uso (60s) y JWT de widget (300s): expiración y reintento 401.
 
-> **Nota.** El proyecto no tiene cobertura de tests para los servicios de Firestore. Esta es deuda técnica de alta prioridad para una versión productiva.
+### Integración continua
+
+polaria-wms-api corre GitHub Actions (`.github/workflows/ci.yml`): Node 20 → `npm ci` → `build` → `test` → `test:e2e` en cada push/PR a `main`.
 
 
 ---
