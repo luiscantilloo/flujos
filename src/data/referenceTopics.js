@@ -15,7 +15,7 @@ export const referenceTopics = {
   api: {
     id: 'api',
     title: 'API y endpoints',
-    subtitle: 'Contratos HTTP de polaria-wms-api — auth, compras, bodegas, integración.',
+    subtitle: 'Contratos HTTP reales de polaria-wms-api: auth, compras, inventario, operaciones, procesamiento, ventas, transporte y Mateo widget.',
     icon: 'CodeBracket',
     accent: 'sky',
     view: 'markdown',
@@ -36,7 +36,7 @@ export const referenceTopics = {
   security: {
     id: 'security',
     title: 'Seguridad y RBAC',
-    subtitle: 'Supabase Auth, RLS multi-tenant, guards API y evaluación técnica.',
+    subtitle: 'Supabase Auth, RLS multi-tenant, guards API, widget Mateo y evaluación técnica.',
     icon: 'ShieldCheck',
     accent: 'rose',
     view: 'markdown',
@@ -56,7 +56,7 @@ export const referenceTopics = {
   runbooks: {
     id: 'runbooks',
     title: 'Runbooks',
-    subtitle: 'Deploy, rollback, bodegas nuevas y diagnóstico.',
+    subtitle: 'Deploy, rollback, migraciones DB, validaciones RLS y diagnóstico operativo.',
     icon: 'Wrench',
     accent: 'amber',
     view: 'markdown',
@@ -65,10 +65,11 @@ export const referenceTopics = {
   testing: {
     id: 'testing',
     title: 'Testing',
-    subtitle: 'Framework, convenciones y casos críticos a cubrir.',
+    subtitle: 'Cobertura actual, comandos por repo y checklist QA para soporte.',
     icon: 'Beaker',
     accent: 'emerald',
     view: 'markdown',
+    markdownSource: 'polaria-testing',
     sectionPattern: /documentación de testing/i,
   },
   glossary: {

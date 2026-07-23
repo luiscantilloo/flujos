@@ -1,28 +1,31 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { HiArrowLeft, HiOutlineCommandLine, HiOutlineDocumentDuplicate } from 'react-icons/hi2'
-import { paths } from '../router/paths.js'
 import { TechStackLayers } from './TechStackLayers.jsx'
 
 const SCRIPTS = [
-  { cmd: 'npm run dev', desc: 'Servidor de desarrollo local' },
-  { cmd: 'npm run build', desc: 'Build de producción' },
-  { cmd: 'npm run lint', desc: 'ESLint en todo el proyecto' },
-  { cmd: 'npm run docs:all', desc: 'Regenera MD de Bodega v1.0 y V2.0 desde .txt' },
+  { cmd: 'npm run dev', desc: 'Dev Hub (este repo): servidor local Vite' },
+  { cmd: 'npm run build', desc: 'Dev Hub: build de producción' },
+  { cmd: 'npm run lint', desc: 'Dev Hub: validación estática' },
+  { cmd: 'cd ../polaria-wms-web && npm test', desc: 'Frontend WMS: suite Vitest principal' },
+  { cmd: 'cd ../polaria-wms-api && npm run test:e2e', desc: 'Backend WMS: e2e NestJS' },
+  { cmd: 'cd ../polaria-wms-db && psql -f scripts/validate-mapa-pol141.sql', desc: 'DB: validación mapa/slots/stock' },
+  { cmd: 'cd ../Widget-react && npm run build:lib', desc: 'Widget Mateo: generar script embebible' },
 ]
 
 const INSTALL_STEPS = [
-  'Clonar el repositorio',
-  'npm install',
-  'Copiar .env.local con variables de Supabase y Cloudinary',
-  'npm run dev → http://localhost:5173 (Dev Hub Vite)',
+  'Clonar y mantener sincronizados los 5 repos del ecosistema (flujos + web + api + db + widget).',
+  'Instalar dependencias por repo (`npm install`) y verificar Node 18+.',
+  'Configurar variables de entorno de `polaria-wms-web`, `polaria-wms-api` y `Widget-react` (Supabase, Mateo, Cloudinary, n8n).',
+  'Validar BD con scripts de `polaria-wms-db` y luego levantar apps locales.',
+  'Levantar Dev Hub (`npm run dev`) para revisar documentación y flujos actualizados.',
 ]
 
 const QUICK_LINKS = [
-  { label: 'Guía de instalación', headingId: '5-guía-de-instalación-y-ejecución-local' },
-  { label: 'Variables de entorno', headingId: '4-variables-de-entorno-y-configuración' },
-  { label: 'CONTRIBUTING', headingId: '6-contributingmd' },
-  { label: 'Troubleshooting', headingId: 'troubleshooting-de-instalación' },
+  { label: 'Arquitectura técnica actualizada', docId: 'bodega-frio-documentacion-v20', headingId: '3-arquitectura-actual-del-ecosistema-polaria' },
+  { label: 'Variables de entorno (todos los repos)', docId: 'bodega-frio-v2', headingId: '4-variables-de-entorno-y-configuración' },
+  { label: 'Referencia de testing consolidada', docId: 'bodega-frio-v2', headingId: '10-documentación-de-testing' },
+  { label: 'Runbooks y operación', docId: 'bodega-frio-v2', headingId: '11-runbooks-de-operación-y-deployment' },
+  { label: 'Manual de usuario por roles', docId: 'manual-usuario-polaria-wms', headingId: '2-mapa-de-roles-y-responsabilidades' },
 ]
 
 function CopyButton({ text }) {
@@ -56,27 +59,28 @@ export function DevResourcesPortal({ onBackToMain, onOpenDocSection }) {
 
       <div className="relative flex min-h-0 flex-1 flex-col app-scroll-page">
         <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-8 sm:py-10">
-          <Link
-            to={paths.home}
+          <button
+            type="button"
+            onClick={() => onBackToMain?.()}
             className="mb-6 inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-sky-400 transition-colors hover:bg-slate-900/80 hover:text-sky-300"
           >
             <HiArrowLeft className="h-4 w-4" aria-hidden />
             Menú principal
-          </Link>
+          </button>
 
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-300/90">Herramientas</p>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">Stack y scripts</h2>
             <p className="mt-3 text-pretty text-base leading-relaxed text-slate-400">
               Stack del <strong className="font-medium text-slate-300">producto WMS</strong> (Next + Nest +
-              Supabase). Este repositorio <strong className="font-medium text-slate-300">flujo</strong> es el Dev
-              Hub (Vite + React) para documentación y diagramas.
+              Supabase). Este repositorio <strong className="font-medium text-slate-300">flujos</strong> centraliza
+              la documentación viva de los repos web, api, db y widget.
             </p>
           </div>
 
           <p className="mt-6 rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-100/90">
-            Comandos npm de abajo aplican al <strong>Dev Hub</strong> (<code className="font-mono text-amber-200">npm run dev</code>{' '}
-            → Vite, puerto por defecto 5173). La app operativa vive en los repos frio.
+            Esta sección mezcla comandos de <strong>Dev Hub</strong> y del ecosistema Polaria. Verifica siempre el
+            repo objetivo antes de ejecutar cada script (web/api/db/widget).
           </p>
 
           <TechStackLayers />
@@ -130,7 +134,7 @@ export function DevResourcesPortal({ onBackToMain, onOpenDocSection }) {
                   <li key={link.headingId}>
                     <button
                       type="button"
-                      onClick={() => onOpenDocSection?.('bodega-frio-v2', link.headingId)}
+                      onClick={() => onOpenDocSection?.(link.docId ?? 'bodega-frio-v2', link.headingId)}
                       className="portal-card-hover w-full rounded-xl border border-slate-700/55 bg-slate-900/40 px-4 py-3 text-left text-sm font-medium text-slate-200 transition-colors hover:text-sky-200"
                     >
                       {link.label} →

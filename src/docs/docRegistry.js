@@ -9,16 +9,25 @@ export const documentationItems = [
       'Visión de negocio, checklist maestra, README, arquitectura, API, variables, instalación, glosario, flujos end-to-end y runbooks.',
     filePath: '/docs/documentacion_bodega_frio_v2.md',
     format: 'markdown',
-    sourceNote: 'Generado desde documentacion_bodega_frio_v2.docx.',
+    sourceNote: 'Documento vivo consolidado desde repos web/api/db/widget.',
   },
   {
     id: 'bodega-frio-documentacion-v20',
     title: 'Bodega de frío — Documentación técnica (V2.0)',
     summary:
-      'Empresa vs tenant, arquitectura lectura/escritura, modelo dual 3NF+jsonb, stack frio vs Dev Hub, flujos V2, Supabase, API, despliegue.',
+      'Arquitectura actualizada Jul 2026: web/api/db/widget, mapa con locks+FEFO, RLS, módulos por rol y estado real de implementación.',
     filePath: '/docs/bodega_de_frio_documentacion_v2_0.md',
     format: 'markdown',
-    sourceNote: 'Generado desde BodegaDeFrio_DocumentacionV2.docx.',
+    sourceNote: 'Actualizado desde auditoría técnica de repos Polaria (web/api/db/widget).',
+  },
+  {
+    id: 'manual-usuario-polaria-wms',
+    title: 'Manual de usuario — Polaria WMS',
+    summary:
+      'Manual operativo por rol (configurador, admin cuenta, operador, jefe, custodio, operario, procesador, transportista) con procesos y funciones.',
+    filePath: '/docs/manual-de-usuario/manual_usuario_polaria_wms.md',
+    format: 'markdown',
+    sourceNote: 'Creado para soporte Mateo (guía de respuestas por rol y flujo).',
   },
   {
     id: 'guia-explicacion-er',

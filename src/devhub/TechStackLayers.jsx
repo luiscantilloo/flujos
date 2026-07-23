@@ -42,7 +42,7 @@ export const TECH_STACK_LAYERS = [
     items: [
       {
         name: 'Next.js',
-        version: '15+',
+        version: '16.2.x',
         role: 'App Router, shell dashboard, rutas por rol',
         icon: TbBrandNextjs,
         color: 'text-slate-100',
@@ -56,7 +56,7 @@ export const TECH_STACK_LAYERS = [
       },
       {
         name: 'TypeScript',
-        version: '5+',
+        version: '5',
         role: 'Tipado en componentes y servicios API',
         icon: SiTypescript,
         color: 'text-blue-400',
@@ -76,7 +76,7 @@ export const TECH_STACK_LAYERS = [
         color: 'text-emerald-400',
       },
       {
-        name: 'VITE_API_URL',
+        name: 'NEXT_PUBLIC_API_BASE_URL',
         version: '—',
         role: 'Cliente HTTP hacia polaria-wms-api',
         icon: TbBrandNextjs,
@@ -98,15 +98,15 @@ export const TECH_STACK_LAYERS = [
       },
       {
         name: 'Prisma',
-        version: '6',
-        role: '40 modelos, DATABASE_URL bypass RLS en escrituras',
+        version: '7',
+        role: '40 modelos, DATABASE_URL + adapter-pg, bypass RLS en escrituras',
         icon: SiPostgresql,
         color: 'text-sky-300',
       },
       {
         name: 'Guards tenant',
         version: '—',
-        role: 'JwtAuth, Tenant, Roles, SensitiveWrite',
+        role: 'JwtAuth, Tenant, Roles, SensitiveWrite (inventario/operaciones)',
         icon: SiZod,
         color: 'text-amber-300',
       },
@@ -120,7 +120,7 @@ export const TECH_STACK_LAYERS = [
       {
         name: 'Mateo SSO',
         version: '—',
-        role: '✅ mateo-handoff / mateo-exchange',
+        role: '✅ mateo-handoff / mateo-exchange + widget-token',
         icon: SiAxios,
         color: 'text-violet-300',
       },
@@ -147,15 +147,15 @@ export const TECH_STACK_LAYERS = [
       },
       {
         name: 'Migraciones',
-        version: '010–045+',
-        role: 'polaria-wms-db — políticas RLS documentadas',
+        version: '001–052',
+        role: 'RLS, compras, inventario, procesamiento, widget Mateo',
         icon: SiSupabase,
         color: 'text-emerald-300',
       },
       {
         name: 'Integraciones',
         version: '—',
-        role: 'Mateo ✅ · n8n 🟡 · Cloudinary 🔵 · Fridem 🔵',
+        role: 'Mateo ✅ · n8n ✅ · Cloudinary ✅ · Fridem 🔵',
         icon: SiSupabase,
         color: 'text-teal-300',
       },

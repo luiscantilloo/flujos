@@ -9,11 +9,10 @@ import { ENTITIES } from './bodegaDatabaseSchema.js'
 import { getEnabledHubProjects, getHubProject } from './hubProjects.js'
 import { getReferenceTopic } from './referenceTopics.js'
 import { BODEGA_STEP_COUNT } from './bodegaStepByStepData.js'
-import { POLARIA_WMS } from './polariaWmsMeta.js'
 
 /** Leyenda diagrama WMS — Polaria WMS (id URL bodega-frio se mantiene). */
 export const BODEGA_FRIO_LEGEND =
-  'Polaria WMS · DUEÑO (morado): configurador TI → empresa → admin → tenant → bodegas (vía API). INQUILINO: catálogos, integración externa, SOL/OC ✅; mapa/OV/TV 🟡/🔵. Auth: prelogin → login. ✅=implementado 🟡=parcial 🔵=diseño.'
+  'Polaria WMS · DUEÑO (morado): configurador TI → empresa → admin → tenant → bodegas (vía API). INQUILINO: catálogos, integración externa, SOL/OC/recepción, mapa con locks/FEFO, OV/TV y Mateo widget. ✅=implementado 🟡=parcial 🔵=diseño.'
 
 export const PORTAL_BRAND = {
   title: 'Dev Hub',
@@ -82,7 +81,7 @@ export const portalMainSections = [
     category: 'explore',
     title: 'Estructura del proyecto',
     description:
-      'Árbol polaria-wms-web y polaria-wms-api: módulos reales, ✅ implementado vs 🟡 pendiente.',
+      'Árbol polaria-wms-web y polaria-wms-api: módulos reales y estado actualizado por dominio.',
     icon: 'Folder',
     accent: 'sky',
     enabled: true,
@@ -235,7 +234,7 @@ export const portalMainSections = [
     id: 'testing',
     category: 'devtools',
     title: 'Testing',
-    description: 'Framework, convenciones y casos críticos a cubrir.',
+    description: 'Matriz de pruebas consolidada por repo y checklist QA para soporte.',
     icon: 'Beaker',
     accent: 'emerald',
     enabled: true,
