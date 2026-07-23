@@ -31,6 +31,10 @@ export function getRouteMeta(pathname, params = {}) {
     return getPortalPhaseMeta('dev-resources')
   }
 
+  if (pathname === paths.userManual || pathname.startsWith('/manual-usuario')) {
+    return getPortalPhaseMeta('user-manual')
+  }
+
   if (pathname === paths.projectStructure) {
     return getPortalPhaseMeta('project-structure')
   }
@@ -96,6 +100,14 @@ export function getBackNavigation(pathname, params = {}) {
   }
 
   if (pathname.startsWith('/paso-a-paso')) {
+    return { show: true, label: 'Menú principal', to: paths.home }
+  }
+
+  if (pathname.startsWith('/manual-usuario/') && params.manualId) {
+    return { show: true, label: 'Índice manual de usuario', to: paths.userManual }
+  }
+
+  if (pathname === paths.userManual || pathname.startsWith('/manual-usuario')) {
     return { show: true, label: 'Menú principal', to: paths.home }
   }
 

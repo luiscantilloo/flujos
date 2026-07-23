@@ -15,7 +15,7 @@ export const referenceTopics = {
   api: {
     id: 'api',
     title: 'API y endpoints',
-    subtitle: 'Contratos HTTP de polaria-wms-api — auth, compras, bodegas, integración.',
+    subtitle: 'Contratos HTTP completos — auth, compras, inventario, operaciones, procesamiento, ventas, transporte, Mateo.',
     icon: 'CodeBracket',
     accent: 'sky',
     view: 'markdown',
@@ -65,10 +65,11 @@ export const referenceTopics = {
   testing: {
     id: 'testing',
     title: 'Testing',
-    subtitle: 'Framework, convenciones y casos críticos a cubrir.',
+    subtitle: 'Jest e2e API, Vitest web/widget, scripts RLS y casos críticos QA.',
     icon: 'Beaker',
     accent: 'emerald',
     view: 'markdown',
+    markdownSource: 'polaria-testing',
     sectionPattern: /documentación de testing/i,
   },
   glossary: {

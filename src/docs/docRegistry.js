@@ -15,10 +15,10 @@ export const documentationItems = [
     id: 'bodega-frio-documentacion-v20',
     title: 'Bodega de frío — Documentación técnica (V2.0)',
     summary:
-      'Empresa vs tenant, arquitectura lectura/escritura, modelo dual 3NF+jsonb, stack frio vs Dev Hub, flujos V2, Supabase, API, despliegue.',
+      'Empresa vs tenant, arquitectura lectura/escritura, modelo dual 3NF+jsonb, stack, flujos, Supabase, API, despliegue. Actualizado Jul 2026.',
     filePath: '/docs/bodega_de_frio_documentacion_v2_0.md',
     format: 'markdown',
-    sourceNote: 'Generado desde BodegaDeFrio_DocumentacionV2.docx.',
+    sourceNote: 'Generado desde BodegaDeFrio_DocumentacionV2.docx + anexo Jul 2026.',
   },
   {
     id: 'guia-explicacion-er',

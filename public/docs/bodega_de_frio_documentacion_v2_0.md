@@ -7,10 +7,14 @@
 | Repos | [polaria-wms-web](https://github.com/PolariaTech/polaria-wms-web) · [polaria-wms-api](https://github.com/PolariaTech/polaria-wms-api) · [polaria-wms-db](https://github.com/PolariaTech/polaria-wms-db) |
 | Dev Hub | [flujos](https://flujos-nine.vercel.app) — este portal (Vite + React) |
 | Stack | Next.js · React · TypeScript · NestJS 11 · Prisma · Supabase |
-| Fecha | Jun 2026 |
+| Fecha | Jul 2026 |
 
-> **Estado Polaria WMS — Jun 2026**
-> ✅ Implementado en API/web · 🟡 Schema/BD listo, API operativa pendiente · 🔵 Diseño roadmap (Dev Hub)
+> **Estado Polaria WMS — Jul 2026**
+> ✅ Implementado: auth, configuración, compras+recepción, inventario+mapa Realtime, operaciones, procesamiento, ventas, transporte, Mateo widget
+> 🟡 Maduración: Fridem, FEFO completo, observabilidad, CDN widget prod
+> 🔵 Roadmap: API playground, Storybook
+>
+> **Repos:** [polaria-wms-web](https://github.com/PolariaTech/polaria-wms-web) · [polaria-wms-api](https://github.com/PolariaTech/polaria-wms-api) · [polaria-wms-db](https://github.com/PolariaTech/polaria-wms-db) · [Widget-react](https://github.com/PolariaTech/Widget-react)
 >
 > **Regla:** el Dev Hub documenta diseño objetivo **y** estado real. Lo no implementado se marca explícitamente.
 
@@ -869,4 +873,62 @@ Persona responsable de la recepción y despacho físico de mercancía en bodega.
 | CDN | Content Delivery Network — red global de servidores para servir archivos con baja latencia. |
 | KPI | Key Performance Indicator — métricas cuantificables que miden el desempeño de un proceso. |
 | MQTT | Protocolo de mensajería ligero para IoT con modelo publicador/suscriptor. |
-| Documentación V2.0  ·  Bodega de Frío  ·  Mayo 2026 | github.com/eldani13/frio  ·  frio-phi.vercel.app |
+| Documentación V2.0  ·  Polaria WMS  ·  Jul 2026 | [PolariaTech](https://github.com/PolariaTech) · Dev Hub [flujos](https://flujos-nine.vercel.app) |
+
+---
+
+## Anexo — Actualización Jul 2026 (sincronizado con repos)
+
+Este anexo resume lo implementado desde la redacción original (mayo 2026) según revisión de los cuatro repositorios del producto.
+
+### Repositorios del ecosistema
+
+| Repo | Stack | Rol |
+| --- | --- | --- |
+| polaria-wms-web | Next.js 16, React 19, TS 5 | UI multi-rol, lecturas Supabase + Realtime |
+| polaria-wms-api | NestJS 11, Prisma 7 | Escrituras, reglas de negocio, guards tenant |
+| polaria-wms-db | PostgreSQL / Supabase | 52 migraciones, RLS híbrido |
+| Widget-react | Vite, React 19 | Mateo Support embebido en WMS |
+
+### Módulos implementados (antes marcados pendientes)
+
+| Módulo | Estado | Notas |
+| --- | --- | --- |
+| Recepción compra | ✅ | `POST /compras/recepciones/ordenes/:id/cerrar` |
+| Inventario / mapa | ✅ | Realtime POL-141/182, lock/unlock POL-6 |
+| Operaciones bodega | ✅ | OT, tareas, alertas, llamada jefe, presencia |
+| Procesamiento frío | ✅ | Flujo E2E primario→secundario + merma |
+| Ventas OV | ✅ | Emitir + reserva stock + OT salida |
+| Transporte | ✅ | Paquete despacho + entregas + Cloudinary |
+| Mateo widget | ✅ | POL-137 embed, conversaciones 051–052 |
+| Módulos por rol web | ✅ | custodio, operario, procesador, jefe-bodega, admin-bodega |
+
+### Roles y pantallas home
+
+| Rol | Destino al login |
+| --- | --- |
+| configurador | `/configurador` |
+| administrador_cuenta | Panel administración |
+| operador_cuenta | Hub operador |
+| administrador_bodega | `/administrador-bodega/estado-bodega` |
+| jefe_bodega | `/jefe-bodega/estado-bodega` |
+| custodio | `/custodio/ingreso` |
+| operario | `/operario/operacion` |
+| procesador | `/procesador/operacion` |
+| transportista | `/transporte` |
+
+### Documentación de testing
+
+Ver referencia Dev Hub: `/referencia/testing/bodega-frio` — suites e2e API, scripts RLS y casos QA críticos.
+
+### Manual de usuario (Mateo Support)
+
+Nuevo en Dev Hub: `/manual-usuario` — 9 manuales por rol + 7 procesos + FAQ y glosario rápido.
+
+### Pendiente / roadmap
+
+- Integración Fridem producción
+- FEFO automático en todas las salidas
+- Validación JWT en n8n (POL-71)
+- CDN estable `mateo-widget.js`
+- Observabilidad centralizada

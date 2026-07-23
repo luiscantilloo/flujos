@@ -12,6 +12,7 @@ const DevResourcesPage = lazy(() => import('../pages/DevResourcesPage.jsx'))
 const StepByStepPage = lazy(() => import('../pages/StepByStepPage.jsx'))
 const StackArchitecturePage = lazy(() => import('../pages/StackArchitecturePage.jsx'))
 const ProjectStructurePage = lazy(() => import('../pages/ProjectStructurePage.jsx'))
+const UserManualPage = lazy(() => import('../pages/UserManualPage.jsx'))
 const router = createBrowserRouter([
   {
     path: '/',
@@ -26,6 +27,8 @@ const router = createBrowserRouter([
       { path: 'referencia/:topicId', element: <ReferencePage /> },
       { path: 'referencia/:topicId/:projectId', element: <ReferencePage /> },
       { path: 'recursos', element: <DevResourcesPage /> },
+      { path: 'manual-usuario', element: <UserManualPage /> },
+      { path: 'manual-usuario/:manualId', element: <UserManualPage /> },
       { path: 'estructura-proyecto', element: <ProjectStructurePage /> },
       { path: 'arquitectura', element: <StackArchitecturePage /> },
       { path: 'arquitectura-stack', element: <StackArchitecturePage /> },

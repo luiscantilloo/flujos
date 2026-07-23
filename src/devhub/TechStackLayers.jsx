@@ -42,8 +42,8 @@ export const TECH_STACK_LAYERS = [
     items: [
       {
         name: 'Next.js',
-        version: '15+',
-        role: 'App Router, shell dashboard, rutas por rol',
+        version: '16',
+        role: 'App Router, shell dashboard, rutas por rol, MateoWidgetHost',
         icon: TbBrandNextjs,
         color: 'text-slate-100',
       },
@@ -92,14 +92,14 @@ export const TECH_STACK_LAYERS = [
       {
         name: 'NestJS',
         version: '11',
-        role: '✅ auth, configuracion, purchases, integration; 🟡 inventory, sales…',
+        role: '✅ auth, compras, inventario, operaciones, procesamiento, ventas, transporte, mateo',
         icon: SiNestjs,
         color: 'text-rose-400',
       },
       {
         name: 'Prisma',
-        version: '6',
-        role: '40 modelos, DATABASE_URL bypass RLS en escrituras',
+        version: '7',
+        role: '42 modelos, DATABASE_URL bypass RLS en escrituras',
         icon: SiPostgresql,
         color: 'text-sky-300',
       },
@@ -120,7 +120,7 @@ export const TECH_STACK_LAYERS = [
       {
         name: 'Mateo SSO',
         version: '—',
-        role: '✅ mateo-handoff / mateo-exchange',
+        role: 'Mateo SSO + widget-token + conversaciones API',
         icon: SiAxios,
         color: 'text-violet-300',
       },
@@ -147,15 +147,15 @@ export const TECH_STACK_LAYERS = [
       },
       {
         name: 'Migraciones',
-        version: '010–045+',
-        role: 'polaria-wms-db — políticas RLS documentadas',
+        version: '010–052',
+        role: 'polaria-wms-db — RLS POL-2, POL-33, widget 051–052',
         icon: SiSupabase,
         color: 'text-emerald-300',
       },
       {
         name: 'Integraciones',
         version: '—',
-        role: 'Mateo ✅ · n8n 🟡 · Cloudinary 🔵 · Fridem 🔵',
+        role: 'Mateo ✅ · n8n ✅ · Cloudinary ✅ · Fridem 🟡',
         icon: SiSupabase,
         color: 'text-teal-300',
       },
