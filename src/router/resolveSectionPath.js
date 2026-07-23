@@ -19,6 +19,8 @@ export function getSectionPath(section) {
         return paths.docs
       case 'dev-resources':
         return paths.devResources
+      case 'user-manual':
+        return paths.userManual
       case 'project-structure':
         return paths.projectStructure
       case 'stack-architecture':

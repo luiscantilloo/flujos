@@ -5,6 +5,7 @@ import {
   appDevelopmentTopLevelFlowKeys,
 } from './appDevelopmentFlow.js'
 import { documentationItems } from '../docs/docRegistry.js'
+import { userManualItems } from '../data/userManualRegistry.js'
 import { ENTITIES } from './bodegaDatabaseSchema.js'
 import { getEnabledHubProjects, getHubProject } from './hubProjects.js'
 import { getReferenceTopic } from './referenceTopics.js'
@@ -13,7 +14,7 @@ import { POLARIA_WMS } from './polariaWmsMeta.js'
 
 /** Leyenda diagrama WMS — Polaria WMS (id URL bodega-frio se mantiene). */
 export const BODEGA_FRIO_LEGEND =
-  'Polaria WMS · DUEÑO (morado): configurador TI → empresa → admin → tenant → bodegas (vía API). INQUILINO: catálogos, integración externa, SOL/OC ✅; mapa/OV/TV 🟡/🔵. Auth: prelogin → login. ✅=implementado 🟡=parcial 🔵=diseño.'
+  'Polaria WMS · DUEÑO (morado): configurador TI → empresa → admin → tenant → bodegas. INQUILINO: catálogos, SOL/OC/OV, mapa, procesamiento, transporte ✅. Mateo widget ✅. Auth: prelogin → login.'
 
 export const PORTAL_BRAND = {
   title: 'Dev Hub',
@@ -117,6 +118,20 @@ export const portalMainSections = [
     badge: `${documentationItems.length} documentos`,
     keywords: ['docs', 'guía', 'readme', 'markdown'],
     action: { type: 'phase', phase: 'docs' },
+  },
+  {
+    id: 'user-manual',
+    category: 'explore',
+    title: 'Manual de usuario',
+    description:
+      'Manuales por rol, procesos WMS y FAQ para Mateo Support — configurador, operario, custodio, compras, transporte…',
+    icon: 'UserGroup',
+    accent: 'amber',
+    enabled: true,
+    featured: true,
+    badge: `${userManualItems.length} guías`,
+    keywords: ['manual', 'usuario', 'rol', 'soporte', 'mateo', 'faq', 'proceso'],
+    action: { type: 'phase', phase: 'user-manual' },
   },
   {
     id: 'database',
@@ -283,6 +298,7 @@ export const portalMainSections = [
 export const portalStats = {
   flows: 0,
   docs: documentationItems.length,
+  userManuals: userManualItems.length,
   glossaryTerms: 20,
   schemaEntities: ENTITIES.length,
   projects: getEnabledHubProjects().length,
@@ -358,6 +374,10 @@ export function getPortalPhaseMeta(phase, referenceCtx = null) {
     'step-by-step': {
       title: 'Paso a paso',
       subtitle: 'Elige el proyecto y recorre el flujo de forma interactiva.',
+    },
+    'user-manual': {
+      title: 'Manual de usuario',
+      subtitle: 'Guías por rol y proceso para operación y Mateo Support.',
     },
   }
   return map[phase] ?? { title: PORTAL_BRAND.title, subtitle: PORTAL_BRAND.tagline }

@@ -1,5 +1,6 @@
 import { getFlowApplicationById, getPortalPhaseMeta, PORTAL_BRAND } from '../data/portalConfig.js'
 import { getDocumentationItemById } from '../docs/docRegistry.js'
+import { getUserManualItemById } from '../data/userManualRegistry.js'
 import { getHubProject } from '../data/hubProjects.js'
 import { getReferenceTopic } from '../data/referenceTopics.js'
 import { paths } from '../router/paths.js'
@@ -99,6 +100,24 @@ export function getRouteSeo(pathname, params = {}) {
   if (pathname === paths.devResources) {
     const phase = getPortalPhaseMeta('dev-resources')
     return { ...meta, title: phase.title, description: phase.subtitle, canonicalPath: paths.devResources }
+  }
+
+  if (pathname.startsWith('/manual-usuario/') && params.manualId) {
+    const manual = getUserManualItemById(params.manualId)
+    if (manual) {
+      return {
+        ...meta,
+        title: `${manual.title} — Manual de usuario`,
+        description: manual.summary,
+        canonicalPath: paths.userManualItem(params.manualId),
+        markdownSource: manual.filePath,
+      }
+    }
+  }
+
+  if (pathname === paths.userManual) {
+    const phase = getPortalPhaseMeta('user-manual')
+    return { ...meta, title: phase.title, description: phase.subtitle, canonicalPath: paths.userManual }
   }
 
   return {

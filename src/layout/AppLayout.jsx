@@ -12,6 +12,7 @@ export function AppLayout() {
   const routeParams = {
     flowAppId: params.flowAppId,
     docId: params.docId,
+    manualId: params.manualId,
     topicId: params.topicId,
     projectId: isReference ? params.projectId : undefined,
     stepProjectId: isStepByStep ? params.projectId : undefined,

@@ -13,6 +13,8 @@ export const paths = {
     return projectId ? `${base}/${encodeURIComponent(projectId)}` : base
   },
   devResources: '/recursos',
+  userManual: '/manual-usuario',
+  userManualItem: (manualId) => `/manual-usuario/${encodeURIComponent(manualId)}`,
   projectStructure: '/estructura-proyecto',
   projectStructureTab: (tab) =>
     `/estructura-proyecto?tab=${encodeURIComponent(tab)}`,
