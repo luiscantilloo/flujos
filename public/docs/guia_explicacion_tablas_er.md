@@ -1451,6 +1451,7 @@ Ingreso, movimiento, despacho, procesamiento.
 - Se relaciona con **bodega**: bodega
 - Se relaciona con **usuario**: asignado
 - Se relaciona con **orden_trabajo**: orden_trabajo
+- Se relaciona con **solicitud_procesamiento**: solicitud_procesamiento
 
 **Datos importantes en la tabla:**
 
@@ -1459,6 +1460,7 @@ Ingreso, movimiento, despacho, procesamiento.
 - **bodega** (apunta a otra tabla: bodega.id_bodega)
 - **asignado** (apunta a otra tabla: usuario.id_usuario)
 - **orden_trabajo** (apunta a otra tabla: orden_trabajo.id_orden_trabajo)
+- **solicitud_procesamiento** (apunta a otra tabla: solicitud_procesamiento.id_solicitud_procesamiento)
 
 **Índices (para que el programa vaya rápido):**
 
@@ -1499,13 +1501,13 @@ Entra materia prima; sale otro producto con cantidades.
 - Se relaciona con **producto_primario**: producto_primario
 - Se relaciona con **producto_secundario**: producto_secundario
 - Se relaciona con **usuario**: solicitante
+- Se relaciona con **operario**: operario
 - Se relaciona con **procesador**: procesador
 
 **Datos importantes en la tabla:**
 
 - **id_solicitud_procesamiento** (es el código único de la fila)
 - **cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
-- **bodega** (apunta a otra tabla: bodega.id_bodega)
 
 **Índices (para que el programa vaya rápido):**
 
@@ -1940,4 +1942,4 @@ Para ver al instante dónde está cada caja, como un GPS del almacén.
 
 ---
 
-*40 piezas del rompecabezas · modelo 3NF · Dev Hub Bodega de Frío*
+*43 piezas del rompecabezas · modelo 3NF · Dev Hub Bodega de Frío*
