@@ -13,12 +13,21 @@ export const documentationItems = [
   },
   {
     id: 'bodega-frio-documentacion-v20',
-    title: 'Bodega de frío — Documentación técnica (V2.0)',
+    title: 'Polaria WMS — Documentación técnica y operacional (V2.0)',
     summary:
-      'Empresa vs tenant, arquitectura lectura/escritura, modelo dual 3NF+jsonb, stack frio vs Dev Hub, flujos V2, Supabase, API, despliegue.',
+      'Estado actualizado desde polaria-wms-web, polaria-wms-api, polaria-wms-db y Widget-react: arquitectura, módulos, API, datos, testing, recursos y soporte Mateo.',
     filePath: '/docs/bodega_de_frio_documentacion_v2_0.md',
     format: 'markdown',
-    sourceNote: 'Generado desde BodegaDeFrio_DocumentacionV2.docx.',
+    sourceNote: 'Actualizado desde auditoría de repos PolariaTech (jul 2026).',
+  },
+  {
+    id: 'manual-usuario-polaria-wms',
+    title: 'Polaria WMS — Manual de usuario por rol',
+    summary:
+      'Guía para soporte y operación: qué hace cada rol, rutas, procesos, funciones, permisos, preguntas frecuentes y criterios de escalamiento.',
+    filePath: '/docs/manual_usuario_polaria_wms.md',
+    format: 'markdown',
+    sourceNote: 'Creado para Mateo Support desde revisión web/API/db/widget.',
   },
   {
     id: 'guia-explicacion-er',

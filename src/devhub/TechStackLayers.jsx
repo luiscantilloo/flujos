@@ -29,11 +29,18 @@ const LAYER_STYLE = {
     border: 'border-emerald-500/25',
     glow: 'from-emerald-500/12',
   },
+  widget: {
+    icon: TbBrandReact,
+    headerBg: 'border-cyan-500/30 bg-cyan-500/10',
+    headerText: 'text-cyan-200',
+    border: 'border-cyan-500/25',
+    glow: 'from-cyan-500/12',
+  },
 }
 
 import { POLARIA_WMS } from '../data/polariaWmsMeta.js'
 
-/** Stack Polaria WMS (polaria-wms-web / polaria-wms-api). Dev Hub (flujo) usa Vite + React. */
+/** Stack Polaria WMS (web / api / db / widget). Dev Hub (flujo) usa Vite + React. */
 export const TECH_STACK_LAYERS = [
   {
     id: 'frontend',
@@ -42,15 +49,15 @@ export const TECH_STACK_LAYERS = [
     items: [
       {
         name: 'Next.js',
-        version: '15+',
-        role: 'App Router, shell dashboard, rutas por rol',
+        version: '16',
+        role: 'App Router, shell dashboard, rutas por rol y route handlers',
         icon: TbBrandNextjs,
         color: 'text-slate-100',
       },
       {
         name: 'React',
         version: '19',
-        role: 'UI, módulos por dominio (purchases, configurator…)',
+        role: 'UI, módulos por dominio y Widget Mateo host',
         icon: TbBrandReact,
         color: 'text-sky-300',
       },
@@ -71,12 +78,12 @@ export const TECH_STACK_LAYERS = [
       {
         name: 'Supabase JS',
         version: '2',
-        role: '✅ Lecturas + Realtime (RLS); escrituras sensibles vía API',
+        role: 'Lecturas + Realtime con RLS; escrituras sensibles vía API',
         icon: SiSupabase,
         color: 'text-emerald-400',
       },
       {
-        name: 'VITE_API_URL',
+        name: 'NEXT_PUBLIC_API_BASE_URL',
         version: '—',
         role: 'Cliente HTTP hacia polaria-wms-api',
         icon: TbBrandNextjs,
@@ -92,14 +99,14 @@ export const TECH_STACK_LAYERS = [
       {
         name: 'NestJS',
         version: '11',
-        role: '✅ auth, configuracion, purchases, integration; 🟡 inventory, sales…',
+        role: 'Auth, configuracion, compras, inventario, operaciones, ventas, transporte',
         icon: SiNestjs,
         color: 'text-rose-400',
       },
       {
         name: 'Prisma',
-        version: '6',
-        role: '40 modelos, DATABASE_URL bypass RLS en escrituras',
+        version: '7',
+        role: '43 modelos, DATABASE_URL bypass RLS en escrituras',
         icon: SiPostgresql,
         color: 'text-sky-300',
       },
@@ -120,7 +127,7 @@ export const TECH_STACK_LAYERS = [
       {
         name: 'Mateo SSO',
         version: '—',
-        role: '✅ mateo-handoff / mateo-exchange',
+        role: 'mateo-handoff, exchange, widget-token y conversaciones',
         icon: SiAxios,
         color: 'text-violet-300',
       },
@@ -141,23 +148,58 @@ export const TECH_STACK_LAYERS = [
       {
         name: 'PostgreSQL',
         version: '15+',
-        role: '40 tablas Prisma; RLS híbrido (lectura web / escritura API)',
+        role: '43 modelos Prisma; RLS híbrido (lectura web / escritura API)',
         icon: SiPostgresql,
         color: 'text-sky-300',
       },
       {
         name: 'Migraciones',
-        version: '010–045+',
-        role: 'polaria-wms-db — políticas RLS documentadas',
+        version: '001–052',
+        role: 'polaria-wms-db — políticas RLS, seeds y validadores SQL',
         icon: SiSupabase,
         color: 'text-emerald-300',
       },
       {
         name: 'Integraciones',
         version: '—',
-        role: 'Mateo ✅ · n8n 🟡 · Cloudinary 🔵 · Fridem 🔵',
+        role: 'Mateo widget · n8n · Cloudinary · Fridem read-only',
         icon: SiSupabase,
         color: 'text-teal-300',
+      },
+    ],
+  },
+  {
+    id: 'widget',
+    label: 'Mateo Support',
+    repo: `${POLARIA_WMS.repos.widget.name}/`,
+    items: [
+      {
+        name: 'React Widget',
+        version: '19',
+        role: 'Bundle embebible `mateo-widget.js` con Shadow DOM',
+        icon: TbBrandReact,
+        color: 'text-sky-300',
+      },
+      {
+        name: 'Vite',
+        version: '8',
+        role: 'Build standalone + build:lib para CDN/Vercel',
+        icon: TbBrandNextjs,
+        color: 'text-violet-300',
+      },
+      {
+        name: 'n8n webhook',
+        version: '—',
+        role: 'Canal conversacional Mateo; token JWT widget',
+        icon: SiAxios,
+        color: 'text-amber-300',
+      },
+      {
+        name: 'Conversaciones',
+        version: '—',
+        role: 'Historial vía /mateo/conversaciones y tablas widget_*',
+        icon: SiSupabase,
+        color: 'text-emerald-300',
       },
     ],
   },
@@ -208,7 +250,7 @@ export function TechStackLayers() {
         <CopyButton text={fullCopy} label="Copiar stack completo" />
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-3">
+      <div className="mt-4 grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
         {TECH_STACK_LAYERS.map((layer) => {
           const style = LAYER_STYLE[layer.id]
           const HeaderIcon = style.icon

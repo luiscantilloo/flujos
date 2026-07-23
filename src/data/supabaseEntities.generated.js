@@ -1,5 +1,5 @@
 /** Auto-generado desde polaria-wms-api + polaria-wms-db — node scripts/sync-prisma-entities.mjs */
-export const SUPABASE_ENTITY_COUNT = 40
+export const SUPABASE_ENTITY_COUNT = 43
 export const ENTITIES = [
   {
     "id": "rol",
@@ -1164,6 +1164,18 @@ export const ENTITIES = [
       },
       {
         "name": "merma_pct",
+        "type": "decimal",
+        "pk": false,
+        "nullable": true
+      },
+      {
+        "name": "rango_temperatura_min",
+        "type": "decimal",
+        "pk": false,
+        "nullable": true
+      },
+      {
+        "name": "rango_temperatura_max",
         "type": "decimal",
         "pk": false,
         "nullable": true
@@ -2876,6 +2888,12 @@ export const ENTITIES = [
         "nullable": true
       },
       {
+        "name": "id_orden_venta",
+        "type": "varchar",
+        "pk": false,
+        "nullable": true
+      },
+      {
         "name": "observaciones",
         "type": "varchar",
         "pk": false,
@@ -2948,6 +2966,13 @@ export const ENTITIES = [
         "pk": false,
         "nullable": true,
         "fk": "solicitud_procesamiento.id_solicitud_procesamiento"
+      },
+      {
+        "name": "orden_venta",
+        "type": "enum",
+        "pk": false,
+        "nullable": true,
+        "fk": "orden_venta.id_orden_venta"
       }
     ],
     "relations": [
@@ -3689,6 +3714,12 @@ export const ENTITIES = [
         "nullable": false
       },
       {
+        "name": "id_operario",
+        "type": "varchar",
+        "pk": false,
+        "nullable": true
+      },
+      {
         "name": "id_procesador",
         "type": "varchar",
         "pk": false,
@@ -3778,13 +3809,6 @@ export const ENTITIES = [
         "pk": false,
         "nullable": false,
         "fk": "cuenta.codigo_cuenta"
-      },
-      {
-        "name": "bodega",
-        "type": "enum",
-        "pk": false,
-        "nullable": false,
-        "fk": "bodega.id_bodega"
       }
     ],
     "relations": [
@@ -3817,6 +3841,11 @@ export const ENTITIES = [
         "card": "N",
         "entity": "usuario",
         "label": "solicitante"
+      },
+      {
+        "card": "N",
+        "entity": "operario",
+        "label": "operario"
       },
       {
         "card": "N",
@@ -4107,6 +4136,12 @@ export const ENTITIES = [
         "nullable": true
       },
       {
+        "name": "id_solicitud_procesamiento",
+        "type": "varchar",
+        "pk": false,
+        "nullable": true
+      },
+      {
         "name": "titulo",
         "type": "varchar",
         "pk": false,
@@ -4157,6 +4192,13 @@ export const ENTITIES = [
         "pk": false,
         "nullable": true,
         "fk": "orden_trabajo.id_orden_trabajo"
+      },
+      {
+        "name": "solicitud_procesamiento",
+        "type": "enum",
+        "pk": false,
+        "nullable": true,
+        "fk": "solicitud_procesamiento.id_solicitud_procesamiento"
       }
     ],
     "relations": [
@@ -4179,6 +4221,110 @@ export const ENTITIES = [
         "card": "N",
         "entity": "orden_trabajo",
         "label": "orden_trabajo"
+      },
+      {
+        "card": "N",
+        "entity": "solicitud_procesamiento",
+        "label": "solicitud_procesamiento"
+      }
+    ]
+  },
+  {
+    "id": "sesion_operativa",
+    "domain": "system",
+    "name": "SesionOperativa",
+    "table": "sesion_operativa",
+    "physical": "public.sesion_operativa",
+    "prismaModel": "SesionOperativa",
+    "scope": "C+B",
+    "implementationStatus": "partial",
+    "desc": "🟡 Tabla sesion_operativa · polaria-wms-db / Supabase.",
+    "fields": [
+      {
+        "name": "id_sesion",
+        "type": "varchar",
+        "pk": true,
+        "nullable": false
+      },
+      {
+        "name": "id_usuario",
+        "type": "varchar",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "codigo_cuenta",
+        "type": "varchar",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "id_bodega",
+        "type": "varchar",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "ultimo_ping",
+        "type": "timestamptz",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "expira_en",
+        "type": "timestamptz",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "created_at",
+        "type": "timestamptz",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamptz",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "usuario",
+        "type": "enum",
+        "pk": false,
+        "nullable": false,
+        "fk": "usuario.id_usuario"
+      },
+      {
+        "name": "cuenta",
+        "type": "enum",
+        "pk": false,
+        "nullable": false,
+        "fk": "cuenta.codigo_cuenta"
+      },
+      {
+        "name": "bodega",
+        "type": "enum",
+        "pk": false,
+        "nullable": false,
+        "fk": "bodega.id_bodega"
+      }
+    ],
+    "relations": [
+      {
+        "card": "N",
+        "entity": "usuario",
+        "label": "usuario"
+      },
+      {
+        "card": "N",
+        "entity": "cuenta",
+        "label": "cuenta"
+      },
+      {
+        "card": "N",
+        "entity": "bodega",
+        "label": "bodega"
       }
     ]
   },
@@ -4395,6 +4541,150 @@ export const ENTITIES = [
         "card": "N",
         "entity": "usuario",
         "label": "creador"
+      }
+    ]
+  },
+  {
+    "id": "widget_conversacion",
+    "domain": "system",
+    "name": "WidgetConversacion",
+    "table": "widget_conversacion",
+    "physical": "public.widget_conversacion",
+    "prismaModel": "WidgetConversacion",
+    "scope": "C+B",
+    "implementationStatus": "partial",
+    "desc": "🟡 Tabla widget_conversacion · polaria-wms-db / Supabase.",
+    "fields": [
+      {
+        "name": "id_conversacion",
+        "type": "varchar",
+        "pk": true,
+        "nullable": false
+      },
+      {
+        "name": "id_usuario",
+        "type": "varchar",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "codigo_cuenta",
+        "type": "varchar",
+        "pk": false,
+        "nullable": true
+      },
+      {
+        "name": "titulo",
+        "type": "varchar",
+        "pk": false,
+        "nullable": true
+      },
+      {
+        "name": "created_at",
+        "type": "timestamptz",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamptz",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "usuario",
+        "type": "enum",
+        "pk": false,
+        "nullable": false,
+        "fk": "usuario.id_usuario"
+      },
+      {
+        "name": "cuenta",
+        "type": "enum",
+        "pk": false,
+        "nullable": true,
+        "fk": "cuenta.codigo_cuenta"
+      }
+    ],
+    "relations": [
+      {
+        "card": "N",
+        "entity": "usuario",
+        "label": "usuario"
+      },
+      {
+        "card": "N",
+        "entity": "cuenta",
+        "label": "cuenta"
+      }
+    ]
+  },
+  {
+    "id": "widget_mensaje",
+    "domain": "system",
+    "name": "WidgetMensaje",
+    "table": "widget_mensaje",
+    "physical": "public.widget_mensaje",
+    "prismaModel": "WidgetMensaje",
+    "scope": "C+B",
+    "implementationStatus": "partial",
+    "desc": "🟡 Tabla widget_mensaje · polaria-wms-db / Supabase.",
+    "fields": [
+      {
+        "name": "id_mensaje",
+        "type": "varchar",
+        "pk": true,
+        "nullable": false
+      },
+      {
+        "name": "id_conversacion",
+        "type": "varchar",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "rol",
+        "type": "varchar",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "tipo",
+        "type": "varchar",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "contenido",
+        "type": "varchar",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "es_error",
+        "type": "boolean",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "created_at",
+        "type": "timestamptz",
+        "pk": false,
+        "nullable": false
+      },
+      {
+        "name": "conversacion",
+        "type": "enum",
+        "pk": false,
+        "nullable": false,
+        "fk": "conversacion.id_conversacion"
+      }
+    ],
+    "relations": [
+      {
+        "card": "N",
+        "entity": "conversacion",
+        "label": "conversacion"
       }
     ]
   }

@@ -10,6 +10,9 @@ import { bodegaStepByStepSteps, BODEGA_STEP_COUNT } from '../../src/data/bodegaS
 import { WEB_TREE, API_TREE } from '../../src/data/polariaStructureTrees.js'
 import { ENTITIES, SCHEMA_META } from '../../src/data/bodegaDatabaseSchema.js'
 import { formatFieldType } from '../../src/data/schemaFieldTypes.js'
+import { formatPolariaApiMarkdown } from '../../src/data/polariaWmsMeta.js'
+import { formatPolariaSecurityMarkdown } from '../../src/data/polariaSecurityDoc.js'
+import { formatPolariaTestingMarkdown } from '../../src/data/polariaTestingDoc.js'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 
@@ -193,6 +196,18 @@ export function serializeReferenceTopic(topicId, projectId) {
 
   if (topic.view === 'database') {
     return [`# ${topic.title} · ${project.name}`, '', topic.subtitle, '', serializeDatabaseSchema()].join('\n\n')
+  }
+
+  if (project.id === 'bodega-frio' && topic.markdownSource === 'polaria-api') {
+    return [`# ${topic.title} · ${project.name}`, '', topic.subtitle, '', formatPolariaApiMarkdown()].join('\n\n')
+  }
+
+  if (project.id === 'bodega-frio' && topic.markdownSource === 'polaria-security') {
+    return [`# ${topic.title} · ${project.name}`, '', topic.subtitle, '', formatPolariaSecurityMarkdown()].join('\n\n')
+  }
+
+  if (project.id === 'bodega-frio' && topic.markdownSource === 'polaria-testing') {
+    return [`# ${topic.title} · ${project.name}`, '', topic.subtitle, '', formatPolariaTestingMarkdown()].join('\n\n')
   }
 
   const doc = documentationItems.find((d) => d.id === project.documentationDocId)

@@ -1,6 +1,6 @@
 /**
  * Recorrido interactivo «Paso a paso» — Polaria WMS (id URL bodega-frio).
- * Roles alineados con wmsRoles.js y modelo ER 3NF (40 modelos Prisma).
+ * Roles alineados con wmsRoles.js y modelo ER 3NF (43 modelos Prisma).
  */
 
 import { formatRoleLabel } from './wmsRoles.js'

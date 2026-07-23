@@ -5,24 +5,28 @@ import { paths } from '../router/paths.js'
 import { TechStackLayers } from './TechStackLayers.jsx'
 
 const SCRIPTS = [
-  { cmd: 'npm run dev', desc: 'Servidor de desarrollo local' },
-  { cmd: 'npm run build', desc: 'Build de producción' },
-  { cmd: 'npm run lint', desc: 'ESLint en todo el proyecto' },
-  { cmd: 'npm run docs:all', desc: 'Regenera MD de Bodega v1.0 y V2.0 desde .txt' },
+  { repo: 'flujo', cmd: 'npm run dev', desc: 'Dev Hub local (Vite, documentación y diagramas)' },
+  { repo: 'flujo', cmd: 'npm run build', desc: 'Sincroniza schema, genera ER, compila Vite y HTML legible' },
+  { repo: 'polaria-wms-web', cmd: 'npm run dev', desc: 'Next.js WMS en puerto 3001' },
+  { repo: 'polaria-wms-web', cmd: 'npm test', desc: 'Vitest UI, guards, servicios y route handlers' },
+  { repo: 'polaria-wms-api', cmd: 'npm run start:dev', desc: 'NestJS API con Swagger en /api/docs' },
+  { repo: 'polaria-wms-api', cmd: 'npm test && npm run test:e2e', desc: 'Unitarios + e2e API' },
+  { repo: 'polaria-wms-db', cmd: 'psql -f scripts/validate-rls-multitenant.sql', desc: 'Validación RLS multi-tenant' },
+  { repo: 'Widget-react', cmd: 'npm run build:lib', desc: 'Genera dist/assets/mateo-widget.js embebible' },
 ]
 
 const INSTALL_STEPS = [
-  'Clonar el repositorio',
-  'npm install',
-  'Copiar .env.local con variables de Supabase y Cloudinary',
-  'npm run dev → http://localhost:5173 (Dev Hub Vite)',
+  'Clonar los repos: flujo, polaria-wms-web, polaria-wms-api, polaria-wms-db y Widget-react',
+  'Instalar dependencias en cada app Node con npm install',
+  'Configurar env: NEXT_PUBLIC_* en web, SUPABASE_*/DATABASE_URL/MATEO_* en api, VITE_* en widget',
+  'Levantar API Nest, luego web Next; usar flujo como Dev Hub/documentación',
 ]
 
 const QUICK_LINKS = [
-  { label: 'Guía de instalación', headingId: '5-guía-de-instalación-y-ejecución-local' },
-  { label: 'Variables de entorno', headingId: '4-variables-de-entorno-y-configuración' },
-  { label: 'CONTRIBUTING', headingId: '6-contributingmd' },
-  { label: 'Troubleshooting', headingId: 'troubleshooting-de-instalación' },
+  { label: 'Documentación V2.0 actualizada', docId: 'bodega-frio-documentacion-v20' },
+  { label: 'Manual de usuario por rol', docId: 'manual-usuario-polaria-wms' },
+  { label: 'Referencia API viva', reference: 'api' },
+  { label: 'Testing por repo', reference: 'testing' },
 ]
 
 function CopyButton({ text }) {
@@ -93,6 +97,7 @@ export function DevResourcesPortal({ onBackToMain, onOpenDocSection }) {
                   className="flex flex-col gap-2 rounded-xl border border-slate-700/55 bg-slate-900/40 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div>
+                    <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">{s.repo}</p>
                     <code className="font-mono text-sm text-emerald-200/95">{s.cmd}</code>
                     <p className="mt-0.5 text-xs text-slate-500">{s.desc}</p>
                   </div>
@@ -127,10 +132,13 @@ export function DevResourcesPortal({ onBackToMain, onOpenDocSection }) {
               </h3>
               <ul className="mt-4 space-y-2" role="list">
                 {QUICK_LINKS.map((link) => (
-                  <li key={link.headingId}>
+                  <li key={link.label}>
                     <button
                       type="button"
-                      onClick={() => onOpenDocSection?.('bodega-frio-v2', link.headingId)}
+                      onClick={() => {
+                        if (link.docId) onOpenDocSection?.(link.docId)
+                        if (link.reference) window.location.href = paths.reference(link.reference, 'bodega-frio')
+                      }}
                       className="portal-card-hover w-full rounded-xl border border-slate-700/55 bg-slate-900/40 px-4 py-3 text-left text-sm font-medium text-slate-200 transition-colors hover:text-sky-200"
                     >
                       {link.label} →

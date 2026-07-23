@@ -100,7 +100,7 @@ export const SCHEMA_ENUMS = {
   },
 }
 
-/** Longitudes habituales para varchar (IDs Firestore / códigos) */
+/** Longitudes habituales para varchar (UUIDs, IDs externos y códigos WMS) */
 export const VARCHAR = {
   codigo: 32,
   id: 64,

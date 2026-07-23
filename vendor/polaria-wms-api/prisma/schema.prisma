@@ -320,8 +320,10 @@ model Cuenta {
   registrosMerma          RegistroMerma[]
   alertasOperativas       AlertaOperativa[]
   tareasCola              TareaCola[]
+  sesionesOperativas      SesionOperativa[]
   solicitudesIntegracion  SolicitudIntegracion[]
   tareasCuenta            TareaCuenta[]
+  widgetConversaciones    WidgetConversacion[]
 
   @@map("cuenta")
 }
@@ -360,6 +362,7 @@ model Bodega {
   registrosMerma            RegistroMerma[]
   alertasOperativas         AlertaOperativa[]
   tareasCola                TareaCola[]
+  sesionesOperativas        SesionOperativa[]
   ordenesVentaDestino       OrdenVenta[]             @relation("OrdenVentaBodegaDestino")
   solicitudesAltaAtendidas  SolicitudAltaBodega[]    @relation("SolicitudBodegaCreada")
 
@@ -439,10 +442,13 @@ model Usuario {
   recepcionesCerradas      RecepcionCompra[]      @relation("RecepcionCerradaPor")
   solicitudesProcesamientoSolicitadas SolicitudProcesamiento[] @relation("SolicitudProcSolicitante")
   solicitudesProcesamientoAsignadas   SolicitudProcesamiento[] @relation("SolicitudProcProcesador")
+  solicitudesProcesamientoOperario    SolicitudProcesamiento[] @relation("SolicitudProcOperario")
   alertasResponsable       AlertaOperativa[]      @relation("AlertaResponsable")
   tareasAsignadas          TareaCola[]            @relation("TareaColaAsignado")
+  sesionesOperativas       SesionOperativa[]
   solicitudesIntegracion   SolicitudIntegracion[] @relation("SolicitudIntegracionSolicitante")
   tareasCuentaCreadas      TareaCuenta[]          @relation("TareaCuentaCreador")
+  widgetConversaciones     WidgetConversacion[]
 
   @@map("usuario")
 }
@@ -566,6 +572,8 @@ model Producto {
   reglaConversionCantidadPrimario   Decimal?               @map("regla_conversion_cantidad_primario") @db.Decimal(18, 4)
   reglaConversionUnidadesSecundario Decimal?               @map("regla_conversion_unidades_secundario") @db.Decimal(18, 4)
   mermaPct                          Decimal?               @map("merma_pct") @db.Decimal(5, 2)
+  rangoTemperaturaMin               Decimal?               @map("rango_temperatura_min") @db.Decimal(8, 2)
+  rangoTemperaturaMax               Decimal?               @map("rango_temperatura_max") @db.Decimal(8, 2)
   unidadVisualizacion               String                 @default("peso") @map("unidad_visualizacion") @db.VarChar(32)
   requiereLote                      Boolean                @default(false) @map("requiere_lote")
   metadatosCatalogo                 Json?                  @map("metadatos_catalogo")
@@ -881,6 +889,7 @@ model OrdenTrabajo {
   idUbicacionOrigen         String?                 @map("id_ubicacion_origen") @db.Uuid
   idUbicacionDestino        String?                 @map("id_ubicacion_destino") @db.Uuid
   idSolicitudProcesamiento  String?                 @map("id_solicitud_procesamiento") @db.Uuid
+  idOrdenVenta              String?                 @map("id_orden_venta") @db.Uuid
   observaciones             String?
   createdAt                 DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                 DateTime                @updatedAt @map("updated_at") @db.Timestamptz(6)
@@ -892,6 +901,7 @@ model OrdenTrabajo {
   ubicacionOrigen           Ubicacion?              @relation("OrdenTrabajoUbicacionOrigen", fields: [idUbicacionOrigen], references: [idUbicacion])
   ubicacionDestino          Ubicacion?              @relation("OrdenTrabajoUbicacionDestino", fields: [idUbicacionDestino], references: [idUbicacion])
   solicitudProcesamiento    SolicitudProcesamiento? @relation(fields: [idSolicitudProcesamiento], references: [idSolicitudProcesamiento], onDelete: SetNull)
+  ordenVenta                OrdenVenta?             @relation(fields: [idOrdenVenta], references: [idOrdenVenta], onDelete: SetNull)
   lineas                    OrdenTrabajoLinea[]
   alertas                   AlertaOperativa[]
   tareasCola                TareaCola[]
@@ -938,6 +948,7 @@ model OrdenVenta {
   bodegaDestino    Bodega?          @relation("OrdenVentaBodegaDestino", fields: [idBodegaDestino], references: [idBodega])
   lineas           OrdenVentaLinea[]
   guiasEnvio       GuiaEnvio[]
+  ordenesTrabajo   OrdenTrabajo[]
 
   @@unique([codigoCuenta, codigo], map: "uq_orden_venta_cuenta_codigo")
   @@map("orden_venta")
@@ -1023,6 +1034,7 @@ model SolicitudProcesamiento {
   idProductoPrimario                String              @map("id_producto_primario") @db.Uuid
   idProductoSecundario              String              @map("id_producto_secundario") @db.Uuid
   idSolicitante                     String              @map("id_solicitante") @db.Uuid
+  idOperario                        String?             @map("id_operario") @db.Uuid
   idProcesador                      String?             @map("id_procesador") @db.Uuid
   estado                            EstadoProcesamiento @default(borrador)
   kilosPrimario                     Decimal             @map("kilos_primario") @db.Decimal(18, 4)
@@ -1044,9 +1056,11 @@ model SolicitudProcesamiento {
   productoPrimario                  Producto            @relation("SolicitudProcPrimario", fields: [idProductoPrimario], references: [idProducto])
   productoSecundario                Producto            @relation("SolicitudProcSecundario", fields: [idProductoSecundario], references: [idProducto])
   solicitante                       Usuario             @relation("SolicitudProcSolicitante", fields: [idSolicitante], references: [idUsuario])
+  operario                          Usuario?            @relation("SolicitudProcOperario", fields: [idOperario], references: [idUsuario])
   procesador                        Usuario?            @relation("SolicitudProcProcesador", fields: [idProcesador], references: [idUsuario])
   registrosMerma                    RegistroMerma[]
   ordenesTrabajo                    OrdenTrabajo[]
+  tareasCola                        TareaCola[]
 
   @@unique([codigoCuenta, codigo], map: "uq_solicitud_procesamiento_cuenta_codigo")
   @@map("solicitud_procesamiento")
@@ -1097,18 +1111,38 @@ model TareaCola {
   idBodega       String        @map("id_bodega") @db.Uuid
   tipo           TipoTarea     @default(otro)
   estado         EstadoTarea   @default(pendiente)
-  idAsignado     String?       @map("id_asignado") @db.Uuid
-  idOrdenTrabajo String?       @map("id_orden_trabajo") @db.Uuid
-  titulo         String?       @db.VarChar(255)
-  descripcion    String?
-  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
-  cuenta         Cuenta        @relation(fields: [codigoCuenta], references: [codigoCuenta])
-  bodega         Bodega        @relation(fields: [idBodega], references: [idBodega])
-  asignado       Usuario?      @relation("TareaColaAsignado", fields: [idAsignado], references: [idUsuario])
-  ordenTrabajo   OrdenTrabajo? @relation(fields: [idOrdenTrabajo], references: [idOrdenTrabajo], onDelete: SetNull)
+  idAsignado               String?                 @map("id_asignado") @db.Uuid
+  idOrdenTrabajo           String?                 @map("id_orden_trabajo") @db.Uuid
+  idSolicitudProcesamiento String?                 @map("id_solicitud_procesamiento") @db.Uuid
+  titulo                   String?                 @db.VarChar(255)
+  descripcion              String?
+  createdAt                DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                DateTime                @updatedAt @map("updated_at") @db.Timestamptz(6)
+  cuenta                   Cuenta                  @relation(fields: [codigoCuenta], references: [codigoCuenta])
+  bodega                   Bodega                  @relation(fields: [idBodega], references: [idBodega])
+  asignado                 Usuario?                @relation("TareaColaAsignado", fields: [idAsignado], references: [idUsuario])
+  ordenTrabajo             OrdenTrabajo?           @relation(fields: [idOrdenTrabajo], references: [idOrdenTrabajo], onDelete: SetNull)
+  solicitudProcesamiento   SolicitudProcesamiento? @relation(fields: [idSolicitudProcesamiento], references: [idSolicitudProcesamiento], onDelete: SetNull)
 
   @@map("tarea_cola")
+}
+
+model SesionOperativa {
+  idSesion     String   @id @default(dbgenerated("gen_random_uuid()")) @map("id_sesion") @db.Uuid
+  idUsuario    String   @map("id_usuario") @db.Uuid
+  codigoCuenta String   @map("codigo_cuenta") @db.VarChar(32)
+  idBodega     String   @map("id_bodega") @db.Uuid
+  ultimoPing   DateTime @map("ultimo_ping") @db.Timestamptz(6)
+  expiraEn     DateTime @map("expira_en") @db.Timestamptz(6)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  usuario Usuario @relation(fields: [idUsuario], references: [idUsuario], onDelete: Cascade)
+  cuenta  Cuenta  @relation(fields: [codigoCuenta], references: [codigoCuenta])
+  bodega  Bodega  @relation(fields: [idBodega], references: [idBodega], onDelete: Cascade)
+
+  @@unique([idUsuario, codigoCuenta, idBodega], map: "uq_sesion_operativa_usuario_bodega")
+  @@map("sesion_operativa")
 }
 
 model SolicitudIntegracion {
@@ -1146,4 +1180,33 @@ model TareaCuenta {
   creador       Usuario           @relation("TareaCuentaCreador", fields: [idCreador], references: [idUsuario])
 
   @@map("tarea_cuenta")
+}
+
+model WidgetConversacion {
+  idConversacion String          @id @default(dbgenerated("gen_random_uuid()")) @map("id_conversacion") @db.Uuid
+  idUsuario      String          @map("id_usuario") @db.Uuid
+  codigoCuenta   String?         @map("codigo_cuenta") @db.VarChar(32)
+  titulo         String?         @db.VarChar(255)
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  usuario        Usuario         @relation(fields: [idUsuario], references: [idUsuario], onDelete: Cascade)
+  cuenta         Cuenta?         @relation(fields: [codigoCuenta], references: [codigoCuenta])
+  mensajes       WidgetMensaje[]
+
+  @@index([idUsuario, updatedAt(sort: Desc)], map: "idx_widget_conversacion_usuario_updated")
+  @@map("widget_conversacion")
+}
+
+model WidgetMensaje {
+  idMensaje      String             @id @default(dbgenerated("gen_random_uuid()")) @map("id_mensaje") @db.Uuid
+  idConversacion String             @map("id_conversacion") @db.Uuid
+  rol            String             @db.VarChar(10)
+  tipo           String             @default("text") @db.VarChar(10)
+  contenido      String
+  esError        Boolean            @default(false) @map("es_error")
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  conversacion   WidgetConversacion @relation(fields: [idConversacion], references: [idConversacion], onDelete: Cascade)
+
+  @@index([idConversacion, createdAt], map: "idx_widget_mensaje_conversacion_created")
+  @@map("widget_mensaje")
 }

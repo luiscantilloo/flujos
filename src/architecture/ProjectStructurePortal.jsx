@@ -104,7 +104,7 @@ export function ProjectStructurePortal({ initialTab = 'frontend' }) {
               </h2>
               <p className="mt-3 text-pretty text-base leading-relaxed text-slate-400">
                 Árbol de <strong className="font-medium text-slate-300">polaria-wms-web</strong> y{' '}
-                <strong className="font-medium text-slate-300">polaria-wms-api</strong> (estado Jun 2026). El modelo de
+                <strong className="font-medium text-slate-300">polaria-wms-api</strong> (estado Jul 2026). El modelo de
                 datos vive en{' '}
                 <Link to={paths.stackArchitecture} className="text-sky-400 hover:text-sky-300">
                   Arquitectura

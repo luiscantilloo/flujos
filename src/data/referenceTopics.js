@@ -69,6 +69,8 @@ export const referenceTopics = {
     icon: 'Beaker',
     accent: 'emerald',
     view: 'markdown',
+    /** Generado desde polariaTestingDoc.js (web + api + db + Widget-react). */
+    markdownSource: 'polaria-testing',
     sectionPattern: /documentación de testing/i,
   },
   glossary: {

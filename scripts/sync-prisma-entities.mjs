@@ -1,5 +1,5 @@
 /**
- * Genera ENTITIES alineadas a Supabase/Prisma (40 tablas).
+ * Genera ENTITIES alineadas a Supabase/Prisma.
  * Uso: node scripts/sync-prisma-entities.mjs
  */
 import fs from 'node:fs'

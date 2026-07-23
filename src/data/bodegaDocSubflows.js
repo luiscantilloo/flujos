@@ -395,7 +395,7 @@ const sub_doc_cola_mapa = {
       type: 'process',
       data: { label: 'Mejora V2: mapa interactivo — clic en slot destino para confirmar' },
     },
-    { id: 'cm_ok', type: 'success', data: { label: 'Movimiento reflejado en Supabase (PostgreSQL) state/main' } },
+    { id: 'cm_ok', type: 'success', data: { label: 'Movimiento reflejado en Supabase PostgreSQL (`warehouse_state`)' } },
   ],
   edges: [
     e('cm_0', 'cm_hdr', 'cm_jefe'),

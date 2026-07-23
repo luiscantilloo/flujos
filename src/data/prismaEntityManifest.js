@@ -1,5 +1,5 @@
 /** Auto-generado — node scripts/sync-prisma-entities.mjs */
-export const PRISMA_MODEL_COUNT = 40
+export const PRISMA_MODEL_COUNT = 43
 export const PRISMA_TO_ENTITY = {
   "Rol": "rol",
   "Empresa": "empresa",
@@ -39,8 +39,11 @@ export const PRISMA_TO_ENTITY = {
   "RegistroMerma": "registro_merma",
   "AlertaOperativa": "alerta_operativa",
   "TareaCola": "tarea_cola",
+  "SesionOperativa": "sesion_operativa",
   "SolicitudIntegracion": "solicitud_integracion",
-  "TareaCuenta": "tarea_cuenta"
+  "TareaCuenta": "tarea_cuenta",
+  "WidgetConversacion": "widget_conversacion",
+  "WidgetMensaje": "widget_mensaje"
 }
 
 export const PRISMA_ENTITY_MANIFEST = [
@@ -387,6 +390,15 @@ export const PRISMA_ENTITY_MANIFEST = [
     "scope": "C+B"
   },
   {
+    "id": "sesion_operativa",
+    "prismaModel": "SesionOperativa",
+    "table": "sesion_operativa",
+    "domain": "system",
+    "physical": "public.sesion_operativa",
+    "implementationStatus": "partial",
+    "scope": "C+B"
+  },
+  {
     "id": "solicitud_integracion",
     "prismaModel": "SolicitudIntegracion",
     "table": "solicitud_integracion",
@@ -403,5 +415,23 @@ export const PRISMA_ENTITY_MANIFEST = [
     "physical": "public.tarea_cuenta",
     "implementationStatus": "partial",
     "scope": "C"
+  },
+  {
+    "id": "widget_conversacion",
+    "prismaModel": "WidgetConversacion",
+    "table": "widget_conversacion",
+    "domain": "system",
+    "physical": "public.widget_conversacion",
+    "implementationStatus": "partial",
+    "scope": "C+B"
+  },
+  {
+    "id": "widget_mensaje",
+    "prismaModel": "WidgetMensaje",
+    "table": "widget_mensaje",
+    "domain": "system",
+    "physical": "public.widget_mensaje",
+    "implementationStatus": "partial",
+    "scope": "C+B"
   }
 ]

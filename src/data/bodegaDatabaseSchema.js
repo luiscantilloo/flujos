@@ -38,23 +38,23 @@ export const V20_DOC_SECTION = '§7. Modelo de Datos'
 export const V20_STORAGE_TREE = `plataforma/configurador → equipo TI (Auth, sin empresa cliente)
 empresas/{codigoEmpresa}/ → creada por el configurador
 tenants/{codeCuenta}/ → bajo la empresa
-warehouses/{warehouseId}/state/main → inventario en vivo
+warehouse_state → inventario en vivo por ubicación+producto+lote
 usuarios/ → admin cuenta y roles (pertenencia por codigo_empresa en login V2)`
 
 export const SCHEMA_META = {
   title: 'Modelo de datos — Polaria WMS',
-  subtitle: '40 modelos Prisma · scope C / C+B · RLS híbrido',
+  subtitle: '43 modelos Prisma · scope C / C+B · RLS híbrido',
   version: '5.1-supabase',
   legacySubtitle: 'Bodega de Frío (referencia diseño V2)',
   rootEntity: 'rol',
   docId: V20_DOC_ID,
   product: POLARIA_WMS.productName,
-  prismaModelCount: 40,
+  prismaModelCount: 43,
   repos: POLARIA_WMS.repos,
   engine: 'Supabase PostgreSQL + Realtime + Prisma (API)',
   normalization: '3NF + warehouse_state',
   notes: [
-    'Alineado a polaria-wms-api/prisma/schema.prisma (40 modelos). Dev Hub distingue ✅ implementado vs 🔵 diseño.',
+    'Alineado a polaria-wms-api/prisma/schema.prisma (43 modelos). Dev Hub distingue ✅ implementado vs 🔵 diseño.',
     'Scope C = codigo_cuenta; C+B = codigo_cuenta + id_bodega.',
     'Escrituras sensibles vía polaria-wms-api (Prisma bypass RLS); lecturas web con supabase-js + JWT.',
     'Fuente: polaria-wms-db migrations + prisma/schema.prisma. Auth en auth.users (Supabase).',

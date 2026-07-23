@@ -7,6 +7,7 @@ import { fetchDocMarkdown } from '../../docs/utils/fetchDocMarkdown.js'
 import { extractSectionByTitle } from '../../docs/utils/extractMarkdownSection.js'
 import { formatPolariaApiMarkdown } from '../../data/polariaWmsMeta.js'
 import { formatPolariaSecurityMarkdown } from '../../data/polariaSecurityDoc.js'
+import { formatPolariaTestingMarkdown } from '../../data/polariaTestingDoc.js'
 
 function resolveReferenceMarkdown(project, topic) {
   if (topic.markdownSource === 'polaria-api' && project.id === 'bodega-frio') {
@@ -21,6 +22,14 @@ function resolveReferenceMarkdown(project, topic) {
     return Promise.resolve({
       markdown: formatPolariaSecurityMarkdown(),
       sourceLabel: 'polariaSecurityDoc.js — Supabase + evaluación técnica',
+      sourcePath: null,
+    })
+  }
+
+  if (topic.markdownSource === 'polaria-testing' && project.id === 'bodega-frio') {
+    return Promise.resolve({
+      markdown: formatPolariaTestingMarkdown(),
+      sourceLabel: 'polariaTestingDoc.js — web/API/db/widget',
       sourcePath: null,
     })
   }
