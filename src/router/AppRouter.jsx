@@ -8,6 +8,7 @@ import { NotFoundPage } from '../pages/NotFoundPage.jsx'
 const FlowDiagramPage = lazy(() => import('../pages/FlowDiagramPage.jsx'))
 const DocumentationPage = lazy(() => import('../pages/DocumentationPage.jsx'))
 const ReferencePage = lazy(() => import('../pages/ReferencePage.jsx'))
+const ManualUsuarioPage = lazy(() => import('../pages/ManualUsuarioPage.jsx'))
 const DevResourcesPage = lazy(() => import('../pages/DevResourcesPage.jsx'))
 const StepByStepPage = lazy(() => import('../pages/StepByStepPage.jsx'))
 const StackArchitecturePage = lazy(() => import('../pages/StackArchitecturePage.jsx'))
@@ -25,6 +26,8 @@ const router = createBrowserRouter([
       { path: 'documentacion/:docId/:headingId', element: <DocumentationPage /> },
       { path: 'referencia/:topicId', element: <ReferencePage /> },
       { path: 'referencia/:topicId/:projectId', element: <ReferencePage /> },
+      { path: 'manual-usuario', element: <ManualUsuarioPage /> },
+      { path: 'manual-usuario/:entryId', element: <ManualUsuarioPage /> },
       { path: 'recursos', element: <DevResourcesPage /> },
       { path: 'estructura-proyecto', element: <ProjectStructurePage /> },
       { path: 'arquitectura', element: <StackArchitecturePage /> },

@@ -17,6 +17,8 @@ export function getSectionPath(section) {
         return paths.flows
       case 'docs':
         return paths.docs
+      case 'manual':
+        return paths.manual()
       case 'dev-resources':
         return paths.devResources
       case 'project-structure':

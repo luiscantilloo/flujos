@@ -9,7 +9,7 @@ import { ENTITIES } from './bodegaDatabaseSchema.js'
 import { getEnabledHubProjects, getHubProject } from './hubProjects.js'
 import { getReferenceTopic } from './referenceTopics.js'
 import { BODEGA_STEP_COUNT } from './bodegaStepByStepData.js'
-import { POLARIA_WMS } from './polariaWmsMeta.js'
+import { WMS_ROLES } from './wmsRoles.js'
 
 /** Leyenda diagrama WMS — Polaria WMS (id URL bodega-frio se mantiene). */
 export const BODEGA_FRIO_LEGEND =
@@ -117,6 +117,20 @@ export const portalMainSections = [
     badge: `${documentationItems.length} documentos`,
     keywords: ['docs', 'guía', 'readme', 'markdown'],
     action: { type: 'phase', phase: 'docs' },
+  },
+  {
+    id: 'manual-usuario',
+    category: 'explore',
+    title: 'Manual de usuario',
+    description:
+      'Manuales por rol, proceso y función: qué ve y qué puede hacer cada usuario. Base de conocimiento para Mateo Support.',
+    icon: 'UserGroup',
+    accent: 'violet',
+    enabled: true,
+    featured: true,
+    badge: `${WMS_ROLES.length} roles`,
+    keywords: ['manual', 'usuario', 'rol', 'roles', 'soporte', 'mateo', 'proceso', 'funciones', 'permisos'],
+    action: { type: 'phase', phase: 'manual' },
   },
   {
     id: 'database',
@@ -346,6 +360,7 @@ export function getPortalPhaseMeta(phase, referenceCtx = null) {
     main: { title: PORTAL_BRAND.title, subtitle: PORTAL_BRAND.tagline },
     flows: { title: 'Flujos interactivos', subtitle: 'Elige un diagrama para explorar el proceso.' },
     docs: { title: 'Documentación', subtitle: 'Referencias del producto y guía general.' },
+    manual: { title: 'Manual de usuario', subtitle: 'Manuales por rol, proceso y función del WMS.' },
     'dev-resources': { title: 'Stack y scripts', subtitle: 'Comandos, tecnologías y enlaces de desarrollo.' },
     'project-structure': {
       title: 'Estructura del proyecto',

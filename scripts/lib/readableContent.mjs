@@ -10,6 +10,7 @@ import { bodegaStepByStepSteps, BODEGA_STEP_COUNT } from '../../src/data/bodegaS
 import { WEB_TREE, API_TREE } from '../../src/data/polariaStructureTrees.js'
 import { ENTITIES, SCHEMA_META } from '../../src/data/bodegaDatabaseSchema.js'
 import { formatFieldType } from '../../src/data/schemaFieldTypes.js'
+import { MANUAL_ENTRIES, MANUAL_INDEX_GROUPS, getManualMarkdown } from '../../src/data/userManuals.js'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 
@@ -313,6 +314,31 @@ export function collectReadableRoutes() {
       description: doc.summary,
       markdown: md,
       markdownSource: doc.filePath,
+    })
+  }
+
+  routes.push({
+    path: '/manual-usuario',
+    title: 'Manual de usuario',
+    description: 'Manuales por rol, proceso y función del WMS. Base de conocimiento para Mateo Support.',
+    markdown: [
+      '# Manual de usuario',
+      '',
+      'Guía por rol, proceso y función del WMS Bodega de Frío.',
+      '',
+      ...MANUAL_INDEX_GROUPS.map((g) => {
+        const entries = MANUAL_ENTRIES.filter((e) => e.category === g.id)
+        return [`## ${g.label}`, '', g.description, '', ...entries.map((e) => `- **${e.title}**: ${e.summary} (Ruta: /manual-usuario/${e.id})`)].join('\n')
+      }),
+    ].join('\n\n'),
+  })
+
+  for (const entry of MANUAL_ENTRIES) {
+    routes.push({
+      path: `/manual-usuario/${entry.id}`,
+      title: `Manual · ${entry.title}`,
+      description: entry.summary,
+      markdown: getManualMarkdown(entry.id),
     })
   }
 

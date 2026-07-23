@@ -1,5 +1,6 @@
 import {
   HiOutlineArchiveBox,
+  HiOutlineArrowPath,
   HiOutlineBeaker,
   HiOutlineBookOpen,
   HiOutlineChartBar,
@@ -19,6 +20,8 @@ import {
   HiOutlineShieldCheck,
   HiOutlineSparkles,
   HiOutlineSquares2X2,
+  HiOutlineUserCircle,
+  HiOutlineUserGroup,
   HiOutlineWrenchScrewdriver,
 } from 'react-icons/hi2'
 import { TbGitBranch, TbSnowflake } from 'react-icons/tb'
@@ -47,6 +50,9 @@ const ICON_MAP = {
   Sparkles: HiOutlineSparkles,
   Snowflake: TbSnowflake,
   Squares2X2: HiOutlineSquares2X2,
+  UserCircle: HiOutlineUserCircle,
+  UserGroup: HiOutlineUserGroup,
+  ArrowPath: HiOutlineArrowPath,
 }
 
 export function PortalIcon({ name, className }) {

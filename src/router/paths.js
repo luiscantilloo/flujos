@@ -12,6 +12,8 @@ export const paths = {
     const base = `/referencia/${encodeURIComponent(topicId)}`
     return projectId ? `${base}/${encodeURIComponent(projectId)}` : base
   },
+  manual: (entryId) =>
+    entryId ? `/manual-usuario/${encodeURIComponent(entryId)}` : '/manual-usuario',
   devResources: '/recursos',
   projectStructure: '/estructura-proyecto',
   projectStructureTab: (tab) =>

@@ -15,6 +15,7 @@ export function AppLayout() {
     topicId: params.topicId,
     projectId: isReference ? params.projectId : undefined,
     stepProjectId: isStepByStep ? params.projectId : undefined,
+    manualEntryId: params.entryId,
   }
   const meta = getRouteMeta(pathname, routeParams)
   const back = getBackNavigation(pathname, routeParams)

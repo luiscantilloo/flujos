@@ -1,6 +1,7 @@
 import { getFlowApplicationById, getPortalPhaseMeta, PORTAL_BRAND } from '../data/portalConfig.js'
 import { getHubProject } from '../data/hubProjects.js'
 import { getReferenceTopic } from '../data/referenceTopics.js'
+import { getManualEntry, isValidManualEntry } from '../data/userManuals.js'
 import { paths } from './paths.js'
 
 /**
@@ -25,6 +26,15 @@ export function getRouteMeta(pathname, params = {}) {
 
   if (pathname === paths.docs || pathname.startsWith('/documentacion')) {
     return getPortalPhaseMeta('docs')
+  }
+
+  if (pathname === paths.manual() || pathname.startsWith('/manual-usuario')) {
+    const base = getPortalPhaseMeta('manual')
+    if (params.manualEntryId) {
+      const entry = getManualEntry(params.manualEntryId)
+      if (entry) return { title: `Manual · ${entry.title}`, subtitle: entry.summary }
+    }
+    return base
   }
 
   if (pathname === paths.devResources) {
@@ -99,6 +109,14 @@ export function getBackNavigation(pathname, params = {}) {
     return { show: true, label: 'Menú principal', to: paths.home }
   }
 
+  if (pathname.startsWith('/manual-usuario/') && params.manualEntryId) {
+    return { show: true, label: 'Todos los manuales', to: paths.manual() }
+  }
+
+  if (pathname.startsWith('/manual-usuario')) {
+    return { show: true, label: 'Menú principal', to: paths.home }
+  }
+
   if (pathname === paths.devResources) {
     return { show: true, label: 'Menú principal', to: paths.home }
   }
@@ -117,4 +135,8 @@ export function isValidReferenceTopic(topicId) {
 
 export function isValidHubProject(projectId) {
   return Boolean(getHubProject(projectId))
+}
+
+export function isValidManual(entryId) {
+  return isValidManualEntry(entryId)
 }
