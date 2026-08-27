@@ -1,3 +1,7 @@
+Roles admitidos: administrador_bodega, jefe_bodega, custodio, operario
+Seccionar: False
+
+
 # Inventario y mapa
 
 El **mapa** es el plano de la bodega: cada casillero muestra qué hay, cuánto y de qué lote. Se actualiza **en vivo** cuando alguien recibe, mueve o saca.

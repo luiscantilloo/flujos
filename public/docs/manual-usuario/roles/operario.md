@@ -1,3 +1,7 @@
+Roles admitidos: operario
+Seccionar: False
+
+
 # Operario
 
 Tu trabajo es **mover cajas** según las tarjetas que te aparecen. El jefe dispara el trabajo; vos lo ejecutás. No inventes movimientos por fuera de las tareas.

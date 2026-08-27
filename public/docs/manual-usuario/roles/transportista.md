@@ -1,3 +1,7 @@
+Roles admitidos: transportista
+Seccionar: False
+
+
 # Transportista
 
 Sos quien **lleva el pedido** y deja constancia: foto y firma de quien recibe. No armás el paquete en muelle (eso es el custodio) ni la venta en oficina.
