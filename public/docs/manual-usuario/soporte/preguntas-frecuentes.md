@@ -1,3 +1,7 @@
+Roles admitidos: configurador, administrador_cuenta, operador_cuenta, administrador_bodega, jefe_bodega, custodio, operario, procesador, transportista
+Seccionar: False
+
+
 # No me deja… (preguntas frecuentes)
 
 Empezá por acá si algo “no anda”. Casi siempre es rol, estado del documento o bodega no elegida.

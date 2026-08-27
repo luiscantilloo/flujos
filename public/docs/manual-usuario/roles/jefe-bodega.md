@@ -1,3 +1,7 @@
+Roles admitidos: jefe_bodega
+Seccionar: False
+
+
 # Jefe de bodega
 
 Sos el **jefe de piso**. Coordinás ingresos, movés entre ubicaciones, armás salidas y atendés al equipo. El operario ejecuta las tareas; vos las disparás y destrabás.

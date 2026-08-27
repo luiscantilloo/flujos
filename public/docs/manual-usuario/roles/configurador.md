@@ -1,3 +1,7 @@
+Roles admitidos: configurador
+Seccionar: False
+
+
 # Configurador (equipo TI)
 
 Tú armás el sistema **antes** de que el cliente opere. Creás la empresa, la cuenta, las bodegas y el primer administrador. No movés cajas ni hacés compras.

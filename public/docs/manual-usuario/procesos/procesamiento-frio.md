@@ -1,3 +1,7 @@
+Roles admitidos: operador_cuenta, jefe_bodega, operario, procesador
+Seccionar: False
+
+
 # Procesamiento en frío
 
 Es transformar **producto primario** en **secundario** (corte, filete, porción) y anotar la **merma**.

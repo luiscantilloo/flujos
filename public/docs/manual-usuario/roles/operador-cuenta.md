@@ -1,3 +1,7 @@
+Roles admitidos: operador_cuenta
+Seccionar: False
+
+
 # Operador de cuenta
 
 Trabajás en **oficina**: pedís compras, emitís la orden al proveedor y armás las ventas. El piso (custodio, operario, jefe) hace el resto.
