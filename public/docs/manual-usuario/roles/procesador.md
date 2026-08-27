@@ -1,3 +1,6 @@
+Roles admitidos: configurador, procesador
+Seccionar: False
+
 # Procesador
 
 Estás en la **línea de frío**. Transformás producto (por ejemplo entero → filete) y **declarás la merma** (lo que se pierde en kilos). El operario te acerca la materia prima y después guarda el resultado.

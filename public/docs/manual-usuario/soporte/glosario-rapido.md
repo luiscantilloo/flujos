@@ -1,3 +1,6 @@
+Roles admitidos: configurador, administrador_cuenta, operador_cuenta, administrador_bodega, jefe_bodega, custodio, operario, procesador, transportista
+Seccionar: False
+
 # Glosario rápido
 
 Palabras que vas a oír en Polaria WMS, en una línea.

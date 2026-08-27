@@ -1,3 +1,6 @@
+Roles admitidos: configurador, custodio, transportista, administrador_cuenta
+Seccionar: False
+
 # Transporte y entregas
 
 El viaje empieza **después** de que el custodio arma el paquete de despacho. Ahí nacen el viaje y las **guías**.

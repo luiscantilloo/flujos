@@ -1,3 +1,6 @@
+Roles admitidos: configurador, operador_cuenta, administrador_cuenta, jefe_bodega, operario, custodio, transportista
+Seccionar: False
+
 # Ventas y despacho
 
 Así sale mercancía hacia un cliente: oficina arma y emite, piso prepara, muelle despacha, chofer entrega.

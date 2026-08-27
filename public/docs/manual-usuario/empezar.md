@@ -1,3 +1,6 @@
+Roles admitidos: configurador, administrador_cuenta, operador_cuenta, administrador_bodega, jefe_bodega, custodio, operario, procesador, transportista
+Seccionar: False
+
 # Cómo usar Polaria WMS (empieza aquí)
 
 Este manual es para **quien trabaja con el producto todos los días**. No hace falta saber de informática: cada guía te dice qué pulsar, en qué orden y qué hacer si algo no sale.

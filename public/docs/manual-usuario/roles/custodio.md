@@ -1,3 +1,6 @@
+Roles admitidos: configurador, custodio
+Seccionar: False
+
 # Custodio
 
 Trabajás en **muelle**: recibís lo que llega y armás lo que se va. Validás kilos, temperatura y documentos. No armás la venta en oficina ni manejás el camión en la calle.

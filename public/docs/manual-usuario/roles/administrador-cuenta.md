@@ -1,3 +1,6 @@
+Roles admitidos: configurador, administrador_cuenta
+Seccionar: False
+
 # Administrador de cuenta
 
 Sos el responsable de **tu empresa en el sistema**: catálogo, proveedores, clientes, usuarios y aprobar las compras. No recibís camiones ni movés cajas.

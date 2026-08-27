@@ -1,3 +1,6 @@
+Roles admitidos: configurador, operador_cuenta, administrador_cuenta, custodio, jefe_bodega, administrador_bodega
+Seccionar: False
+
 # Compras: de la solicitud al ingreso
 
 Así entra mercancía a la bodega. Nadie lo hace solo: oficina pide, el jefe de cuenta aprueba, oficina emite, muelle recibe.
