@@ -107,7 +107,7 @@ export function formatPolariaSecurityMarkdown() {
     '',
     '## Seguridad y autenticación — Polaria WMS',
     '',
-    `Stack actual: **Supabase Auth** + **PostgreSQL (RLS)** + **polaria-wms-api** (NestJS, JWT, guards). **No se usa Firebase** en el producto V2.`,
+    `Stack actual: **Supabase Auth** + **PostgreSQL (RLS)** + **polaria-wms-api** (NestJS, JWT, guards).`,
     '',
     'Repos: [polaria-wms-api](' + POLARIA_WMS.repos.api.url + ') · [polaria-wms-web](' + POLARIA_WMS.repos.web.url + ') · [polaria-wms-db](' + POLARIA_WMS.repos.db.url + ')',
     '',

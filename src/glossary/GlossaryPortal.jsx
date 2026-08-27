@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { FiSearch } from 'react-icons/fi'
 import { HiArrowLeft, HiOutlineBookOpen } from 'react-icons/hi2'
 import { DocDownloadMenu } from '../docs/components/DocDownloadMenu.jsx'
-import { getDocumentationItemById } from '../docs/docRegistry.js'
-import { fetchDocMarkdown } from '../docs/utils/fetchDocMarkdown.js'
-import { extractSectionByTitle, parseMarkdownTableFromText } from '../docs/utils/extractMarkdownSection.js'
+import { parseMarkdownTableFromText } from '../docs/utils/extractMarkdownSection.js'
+import { formatPolariaGlossaryMarkdown } from '../data/polariaGlossaryDoc.js'
 
 function GlossaryTermCard({ term, definition, system }) {
   return (
@@ -28,49 +27,22 @@ function GlossaryTermCard({ term, definition, system }) {
 }
 
 export function GlossaryPortal({ project, onBackToMain, onBackToProjects }) {
-  const [terms, setTerms] = useState([])
-  const [sectionMarkdown, setSectionMarkdown] = useState('')
-  const [status, setStatus] = useState('loading')
-  const [error, setError] = useState(null)
   const [query, setQuery] = useState('')
   const [letter, setLetter] = useState('')
-
-  const docId = project?.documentationDocId ?? 'bodega-frio-v2'
-  const doc = getDocumentationItemById(docId)
   const handleBack = onBackToProjects ?? onBackToMain
 
-  useEffect(() => {
-    if (!doc?.filePath) return
-
-    let cancelled = false
-    fetchDocMarkdown(doc.filePath)
-      .then((md) => {
-        if (cancelled) return
-        const section = extractSectionByTitle(md, /glosario/i)
-        setSectionMarkdown(section)
-        const { headers, rows } = parseMarkdownTableFromText(section)
-        const termIdx = headers.findIndex((h) => /término/i.test(h))
-        const defIdx = headers.findIndex((h) => /definición/i.test(h))
-        const sysIdx = headers.findIndex((h) => /sistema|representación/i.test(h))
-
-        const parsed = rows.map((row) => ({
-          term: row[termIdx] ?? row[0] ?? '',
-          definition: row[defIdx] ?? row[1] ?? '',
-          system: row[sysIdx] ?? row[2] ?? '',
-        }))
-        setTerms(parsed)
-        setStatus('idle')
-      })
-      .catch((err) => {
-        if (cancelled) return
-        setError(err.message)
-        setStatus('error')
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [doc?.filePath])
+  const sectionMarkdown = useMemo(() => formatPolariaGlossaryMarkdown(), [])
+  const terms = useMemo(() => {
+    const { headers, rows } = parseMarkdownTableFromText(sectionMarkdown)
+    const termIdx = headers.findIndex((h) => /término/i.test(h))
+    const defIdx = headers.findIndex((h) => /definición/i.test(h))
+    const sysIdx = headers.findIndex((h) => /sistema|representación/i.test(h))
+    return rows.map((row) => ({
+      term: row[termIdx] ?? row[0] ?? '',
+      definition: row[defIdx] ?? row[1] ?? '',
+      system: row[sysIdx] ?? row[2] ?? '',
+    }))
+  }, [sectionMarkdown])
 
   const letters = useMemo(() => {
     const set = new Set(terms.map((t) => t.term.charAt(0).toUpperCase()).filter(Boolean))
@@ -89,14 +61,6 @@ export function GlossaryPortal({ project, onBackToMain, onBackToProjects }) {
       return matchLetter && matchQuery
     })
   }, [terms, query, letter])
-
-  if (!doc) {
-    return (
-      <div className="flex flex-1 items-center justify-center bg-slate-950 px-4 text-sm text-red-300">
-        No se encontró el documento de Bodega de frío.
-      </div>
-    )
-  }
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-slate-950">
@@ -123,12 +87,11 @@ export function GlossaryPortal({ project, onBackToMain, onBackToProjects }) {
                 Puente entre negocio y código. Busca por término, definición o representación en el sistema.
               </p>
             </div>
-            {status === 'idle' ? (
-              <div className="flex shrink-0 flex-wrap items-center gap-3">
+            <div className="flex shrink-0 flex-wrap items-center gap-3">
                 <DocDownloadMenu
                   title={`${project?.name ?? 'Polaria WMS'} — Glosario`}
                   markdown={sectionMarkdown}
-                  sourcePath={doc.filePath}
+                  sourcePath={null}
                 />
                 <div className="flex gap-3">
                   <div className="rounded-xl border border-slate-700/60 bg-slate-900/50 px-4 py-3 text-center">
@@ -141,7 +104,6 @@ export function GlossaryPortal({ project, onBackToMain, onBackToProjects }) {
                   </div>
                 </div>
               </div>
-            ) : null}
           </div>
 
           <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -188,31 +150,19 @@ export function GlossaryPortal({ project, onBackToMain, onBackToProjects }) {
             ) : null}
           </div>
 
-          {status === 'loading' ? (
-            <div className="mt-10 grid gap-4 sm:grid-cols-2">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-36 animate-pulse rounded-2xl bg-slate-800/50" />
-              ))}
-            </div>
-          ) : null}
-
-          {status === 'error' ? <p className="mt-10 text-sm text-red-300">{error}</p> : null}
-
-          {status === 'idle' && filtered.length === 0 ? (
+          {filtered.length === 0 ? (
             <p className="mt-10 text-center text-sm text-slate-500">No hay términos que coincidan con tu búsqueda.</p>
-          ) : null}
-
-          {status === 'idle' && filtered.length > 0 ? (
+          ) : (
             <div className="mt-10 grid gap-4 sm:grid-cols-2">
               {filtered.map((item) => (
                 <GlossaryTermCard key={item.term} {...item} />
               ))}
             </div>
-          ) : null}
+          )}
 
           <p className="mt-10 flex items-center gap-2 text-xs text-slate-500">
             <HiOutlineBookOpen className="h-4 w-4" aria-hidden />
-            Fuente: documentación técnica de Bodega de frío — sección 7.
+            Fuente: polariaGlossaryDoc.js — Polaria WMS ago 2026 (Supabase + Nest).
           </p>
         </div>
       </div>

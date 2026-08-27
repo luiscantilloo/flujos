@@ -2,7 +2,7 @@ BODEGA DE FRÍO
 Documentación Técnica  ·  V2.0
 Sistema de Operación Multi-Rol · Multi-Cuenta · Multi-Bodega
 Stack Tecnológico
-Next.js  ·  React  ·  TypeScript  ·  Firebase  ·  Cloudinary  ·  n8n
+Next.js  ·  React  ·  TypeScript  ·  Supabase  ·  Cloudinary  ·  n8n
 Mayo 2026
 github.com/eldani13/frio  ·  frio-phi.vercel.app
 Tabla de Contenidos
@@ -29,7 +29,7 @@ Flujo de Datos PAGEREF _Toc229553470 \h 6
 6.9 Alertas Operativas PAGEREF _Toc229553481 \h 9
 6.10 Reportería y Estadísticas PAGEREF _Toc229553482 \h 10
 6.11 Configuración Operativa PAGEREF _Toc229553483 \h 10
-7. Modelo de Datos (Firestore) PAGEREF _Toc229553484 \h 11
+7. Modelo de Datos (PostgreSQL) PAGEREF _Toc229553484 \h 11
 Colecciones Principales PAGEREF _Toc229553485 \h 11
 Estructura del Estado Principal (state/main) PAGEREF _Toc229553486 \h 11
 8. API Routes Internas PAGEREF _Toc229553487 \h 11
@@ -40,7 +40,7 @@ POST /api/evidencia-transporte PAGEREF _Toc229553489 \h 12
 9.2 n8n (Automatización de Pedidos) PAGEREF _Toc229553492 \h 12
 9.3 Cloudinary (Evidencia Fotográfica) PAGEREF _Toc229553493 \h 12
 10. Variables de Entorno PAGEREF _Toc229553494 \h 13
-Firebase Principal PAGEREF _Toc229553495 \h 13
+Supabase PAGEREF _Toc229553495 \h 13
 Fridem (Bodega Externa) PAGEREF _Toc229553496 \h 13
 Cloudinary PAGEREF _Toc229553497 \h 13
 n8n / Integración Proveedores PAGEREF _Toc229553498 \h 13
@@ -72,7 +72,7 @@ Multi-rol: Cada usuario tiene un rol específico que define qué ve y qué puede
 Multi-cuenta: Un mismo sistema puede servir a múltiples cuentas operativas independientes.
 Multi-bodega: Soporta bodegas internas propias y bodegas externas (como Fridem) con integración en tiempo real.
 Trazabilidad completa: Cada caja/lote tiene historial desde su ingreso hasta su despacho o procesamiento.
-Tiempo real: Estado operativo sincronizado en Firestore, visible simultáneamente por todos los usuarios activos.
+Tiempo real: Estado operativo sincronizado en PostgreSQL, visible simultáneamente por todos los usuarios activos.
 2. Qué Cambia de V1.0 a V2.0
 Característica
 V1.0
@@ -125,8 +125,8 @@ NestJS (Node.js)
 Estructura modular para separar Ingresos, Mapa, Procesamiento y Despacho.
 TypeScript
 Tipado estricto para que los pesos y fechas siempre tengan el formato correcto.
-Firebase Admin SDK
-Permite a NestJS leer/escribir en Firestore con privilegios de administrador (Server-side).
+Prisma + DATABASE_URL
+Permite a NestJS leer/escribir en PostgreSQL con privilegios de administrador (Server-side).
 Zod / Class-Validator
 NestJS recibe el token del Front, lo valida y extrae el accountID y el rol.
 Swagger (OpenAPI)
@@ -136,13 +136,13 @@ Conexión con los webhooks de n8n para disparar alertas y pedidos.
 Base de datos
 Tecnología
 Uso
-Cloud Firestore
+PostgreSQL (Supabase)
 Almacena el estado actual de los slots, cajas, lotes y viajes en tiempo real.
-Firestore Security Rules
+RLS (Row Level Security)
 Configuración para que solo el UID del servidor NestJS pueda escribir.
-Firebase Storage
+Supabase Storage
 Respaldo de firmas digitales y documentos adjuntos de la recepción.
-Firebase Cloud Messaging
+notificaciones push (no implementado)
 Envío de alertas push a los operarios cuando el sensor de temperatura falla.
 Cloudinary (API)
 Almacenamiento y optimización de las evidencias fotográficas del transporte.
@@ -168,16 +168,15 @@ frio-backend/
 │   ├── app.module.ts           # Módulo raíz
 │   ├── common/                 # Elementos transversales
 │   │   ├── decorators/         # @Roles, @CurrentUser
-│   │   ├── guards/             # AuthGuard (Valida Firebase Token) [cite: 232]
+│   │   ├── guards/             # AuthGuard (Valida JWT de Supabase) [cite: 232]
 │   │   ├── interceptors/       # StripInterceptor (Limpia undefined)
 │   │   └── pipes/              # Validación de datos
-│   ├── firebase/               # Configuración Firebase Admin SDK [cite: 52]
-│   │   ├── firebase.module.ts
-│   │   └── firebase.service.ts # Métodos saveWarehouseState, etc. [cite: 53]
+│   ├── prisma/               # Configuración Prisma + DATABASE_URL [cite: 52]
+│   │   ├── prisma/
 │   └── modules/                # Módulos de dominio modularizados [cite: 39]
 │       ├── ingreso/            # Lógica de recepción y OC [cite: 350]
 │       ├── inventario/         # Gestión de slots y Locking
-Firestore (NoSQL Structure) /
+PostgreSQL (Supabase) /
 ├── tenants/                    # Configuración por cuenta [cite: 402]
 │   └── {codeCuenta}/           # Namespace de la organización
 │       ├── config              # Reglas, capacidad y bodegas [cite: 332]
@@ -192,7 +191,7 @@ Firestore (NoSQL Structure) /
 └── systemCounters/             # Contadores globales (ej. Viajes TV-####) [cite: 402]
 Flujo de Datos
 LECTURA (Tiempo Real)
-Usuario ← Next.js SDK ← Firestore / Realtime DB
+Usuario ← Next.js SDK ← PostgreSQL + Realtime
 ESCRITURA (Validación Atómica)
 Usuario → Next.js Dashboard → NestJS Backend
 ↘
@@ -201,7 +200,7 @@ Usuario → Next.js Dashboard → NestJS Backend
 3. Locking (Bloqueo de Slots)
 4. Auth & Roles
 ↓
-Firestore (Admin SDK)
+Prisma (Postgres)
 INTEGRACIONES (Salidas)
 NestJS Server ↘
 Cloudinary (Fotos)
@@ -244,7 +243,7 @@ Responsable: Configurador / Administrador
 Antes de cualquier operación, el sistema debe estar configurado con:
 Configuración de bodegas: Se definen las bodegas del sistema (nombre, tipo: interna/externa, capacidad de slots).
 Configuración de cuentas: Se crean las cuentas operativas (codeCuenta) que agrupan clientes y bodegas.
-Alta de usuarios: Se crean los usuarios con sus roles en Firebase Auth y se registra su perfil en Firestore.
+Alta de usuarios: Se crean los usuarios con sus roles en Supabase Auth y se registra su perfil en PostgreSQL.
 Catálogo de productos: Se importa o crea manualmente el catálogo de productos.
 Proveedores y compradores: Se registran con sus datos de contacto.
 Flota de camiones y plantas: Se registran los vehículos disponibles y las plantas de destino.
@@ -255,14 +254,14 @@ Responsable: Todos los usuarios
 Abrir app
 ↓
 ¿Sesión activa?
-├── NO → Pantalla de login (Firebase Auth) → Ingresar credenciales
+├── NO → Pantalla de login (Supabase Auth) → Ingresar credenciales
 │         → ¿Válidas? → NO → Error / reintento
 │                    → SÍ → Cargar perfil
 └── SÍ → Cargar perfil
 ↓
-Leer rol, nombre, cuenta, permisos desde Firestore
+Leer rol, nombre, cuenta, permisos desde PostgreSQL
 ↓
-¿Bodega interna? → SÍ → Suscribir estado principal (Firestore)
+¿Bodega interna? → SÍ → Suscribir estado principal (PostgreSQL)
 → NO → Consultar inventario Fridem (Realtime DB)
 ↓
 Renderizar Dashboard según rol
@@ -335,7 +334,7 @@ Reasignación o escalación
 Orden reportada
 Usuario reporta problema con una orden
 Revisión y resolución
-💡 Mejora Propuesta V2.0: Integrar alertas automáticas mediante sensores de temperatura IoT conectados a Firebase Realtime Database, con notificaciones push (PWA / FCM).
+💡 Mejora Propuesta V2.0: Integrar alertas automáticas mediante sensores de temperatura IoT conectados a Supabase Realtime, con notificaciones push (PWA / FCM).
 6.10 Reportería y Estadísticas
 Módulo
 Datos Incluidos
@@ -367,7 +366,7 @@ CRUD compradores
 CRUD flota de vehículos
 /plantas
 CRUD plantas de destino
-7. Modelo de Datos (Firestore)
+7. Modelo de Datos (PostgreSQL)
 Colecciones Principales
 warehouses/
 {warehouseId}/
@@ -396,7 +395,7 @@ alerts: Alert[],                         // Alertas activas
 tasks: Task[],                           // Tareas de cola operativa
 updatedAt: Timestamp
 }
-💡 Mejora Propuesta V2.0: Separar el historial en subcolecciones paginadas por mes para evitar documentos con payload excesivo. Implementar reglas de seguridad Firestore granulares por rol y por codeCuenta.
+💡 Mejora Propuesta V2.0: Separar el historial en tablas hijas paginadas por mes para evitar documentos con payload excesivo. Implementar políticas RLS granulares por rol y por codeCuenta.
 8. API Routes Internas
 POST /api/pedido-proveedor
 Proxy que recibe un pedido consolidado desde el frontend y lo reenvía al webhook n8n del proveedor.
@@ -414,30 +413,27 @@ Recibe un archivo (FormData) y lo sube a Cloudinary, devolviendo la URL segura.
 Recibe FormData con campo file
 Si hay CLOUDINARY_URL configurada: firma la subida (signed upload)
 Si no: usa preset sin firma (CLOUDINARY_UNSIGNED_UPLOAD_PRESET)
-Devuelve URL segura para guardar en Firestore
+Devuelve URL segura para guardar en PostgreSQL
 💡 Mejora Propuesta V2.0: Agregar validación de tipo MIME y tamaño máximo de archivo. Implementar compresión de imagen antes de subir para reducir costos de almacenamiento.
 9. Integración con Servicios Externos
 9.1 Fridem (Bodega Externa)
-Bodega externa cuyo inventario se consume en modo solo lectura mediante una instancia de Firebase diferente (proyecto separado).
-lib/fridemClient.ts — ensureFridemAuth(): inicializa la app Firebase secundaria
+Bodega externa cuyo inventario se consume en modo solo lectura mediante una integración de bodega externa (proyecto separado).
+lib/fridemClient.ts — ensureFridemAuth(): inicializa la cliente de bodega externa
 lib/fridemInventory.ts — fetchFridemSlots(), fetchFridemInventoryRows()
 9.2 n8n (Automatización de Pedidos)
 Plataforma open-source de automatización de flujos de trabajo que recibe el webhook de pedidos y orquesta la notificación al proveedor.
 PEDIDO_PROVEEDOR_WEBHOOK_URL — URL del workflow n8n
-PEDIDO_PROVEEDOR_DOCUMENT_ID — ID del documento de configuración en Firestore
+PEDIDO_PROVEEDOR_DOCUMENT_ID — ID del documento de configuración en PostgreSQL
 9.3 Cloudinary (Evidencia Fotográfica)
 Almacena las fotografías y firmas de entrega de los viajes de transporte.
 Usar CLOUDINARY_URL completa (Opción A) para evitar errores de firma
 Definir CLOUDINARY_EVIDENCIA_FOLDER para organizar archivos por bodega o cuenta
 10. Variables de Entorno
 Crear .env.local en la raíz del proyecto:
-Firebase Principal
-NEXT_PUBLIC_FIREBASE_API_KEY=
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
-NEXT_PUBLIC_FIREBASE_APP_ID=
+Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_API_URL=http://localhost:3000
 NEXT_PUBLIC_WAREHOUSE_ID=default
 Fridem (Bodega Externa)
 NEXT_PUBLIC_FRIDEM_API_KEY=
@@ -455,17 +451,17 @@ PEDIDO_PROVEEDOR_DOCUMENT_ID=
 PEDIDO_PROVEEDOR_WEBHOOK_URL=
 11. Mejoras Propuestas para V2.0
 11.1 Seguridad y Autenticación
-Reglas Firestore granulares por rol y codeCuenta
+Políticas RLS granulares por rol y codeCuenta
 Sesiones con refresh token automático y expiración configurable
 Auditoría de acciones críticas (quién, qué, cuándo) en colección auditLog
 Soporte SSO / Google Workspace para organizaciones
 11.2 Operación
 Mapa visual interactivo de slots en bodega (arrastrar/soltar)
 Lectura de códigos de barras / QR para ingreso y despacho rápido
-Notificaciones push en tiempo real (Firebase Cloud Messaging)
+Notificaciones push en tiempo real (notificaciones push (no implementado))
 Geolocalización de camiones durante viajes activos
 11.3 IoT y Temperatura
-Integración con sensores de temperatura vía MQTT → Firebase Realtime DB
+Integración con sensores de temperatura vía MQTT → Supabase Realtime
 Alertas automáticas por temperatura fuera de rango con historial de lecturas por slot
 Dashboard de temperatura en tiempo real por zona de bodega
 11.4 Datos y Reportería
@@ -487,7 +483,7 @@ Documentación de API con OpenAPI/Swagger para las rutas internas
 Prerrequisitos
 Node.js 18+
 npm 9+
-Proyecto Firebase configurado (Auth, Firestore, Realtime DB, Storage)
+Proyecto Supabase configurado (Auth, PostgreSQL, Realtime DB, Storage)
 Cuenta Cloudinary
 Instancia n8n (opcional, para integración de pedidos)
 Instalación Local
@@ -540,9 +536,9 @@ Error Cloudinary: Invalid Signature
 Causa: Mezcla de credenciales de diferentes entornos de Cloudinary.
 Solución: Usar una sola variable CLOUDINARY_URL completa y eliminar las variables individuales para evitar conflictos.
 Estado de Bodega Desincronizado
-Causa: Colisión de escrituras concurrentes en Firestore sin control de concurrencia.
+Causa: Colisión de escrituras concurrentes en Postgres sin control de concurrencia.
 Solución inmediata: Verificar que todos los guardados usen merge: true (implementado en saveWarehouseState).
-Solución V2.0: Implementar transacciones Firestore para operaciones críticas como movimiento de slots.
+Solución V2.0: Implementar transacciones Postgres para operaciones críticas como movimiento de slots.
 14. Glosario de Términos
 Términos de Dominio
 Término
@@ -580,16 +576,16 @@ Bootstrap
 Proceso de inicialización de la app: sesión, perfil, suscripción a bodega y montaje de UI.
 Webhook
 Mecanismo donde un sistema notifica a otro mediante una petición HTTP en tiempo real.
-Firestore
-Base de datos NoSQL en la nube de Firebase con sincronización en tiempo real.
-Merge (Firestore)
+PostgreSQL
+Base de datos NoSQL en la plataforma Supabase con sincronización en tiempo real.
+Merge (Postgres)
 Operación que actualiza solo los campos especificados sin sobreescribir el resto.
 RBAC
 Control de acceso basado en roles que determina qué recursos puede ver y usar cada usuario.
 IoT
 Red de dispositivos físicos conectados a internet que transmiten datos automáticamente.
 FCM
-Firebase Cloud Messaging — servicio para enviar notificaciones push a dispositivos.
+notificaciones push (no implementado) — servicio para enviar notificaciones push a dispositivos.
 PWA
 Progressive Web App — aplicación web instalable con capacidades offline y notificaciones push.
 SSR

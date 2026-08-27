@@ -1,52 +1,37 @@
 # Transportista
 
-| Campo | Valor |
+Sos quien **lleva el pedido** y deja constancia: foto y firma de quien recibe. No armás el paquete en muelle (eso es el custodio) ni la venta en oficina.
+
+## Cómo entrar
+
+1. Correo → empresa → contraseña.
+2. Vas a **Transporte**: las **guías** de tus viajes.
+
+Si la lista está vacía, todavía no hay un **paquete de despacho** creado. El custodio tiene que despachar primero.
+
+## Cómo entregar
+
+1. En destino, abrí la guía.
+2. Registrá la entrega:
+   - Kilos / cantidades entregadas (podés entregar menos: queda parcial).
+   - **Foto** de evidencia (JPG, PNG o WebP).
+   - **Firma** de quien recibe (en la pantalla; es obligatorio).
+   - Si recibió conforme o no.
+3. Confirmá.
+
+No confirmes cantidades mayores a lo despachado.
+
+## Qué no te toca
+
+- Crear la orden de venta.
+- Armar el paquete ni elegir el camión (custodio / oficina).
+- Entrar al mapa de la bodega.
+
+## Si algo no funciona
+
+| Qué pasa | Qué hacer |
 | --- | --- |
-| Rol | `transportista` |
-| Nivel | Bodega |
-| Pantalla principal | `/dashboard/transporte` |
-| Creado por | Administrador de cuenta |
-
-## ¿Quién es?
-
-Conductor que ejecuta **viajes de entrega**. Registra entregas con evidencias fotográficas y firma del receptor.
-
-## Pantalla principal
-
-`/dashboard/transporte` — guías de envío asignadas y registro de entregas.
-
-## Proceso de entrega
-
-```
-1. Custodio crea paquete de despacho → genera viaje + guías
-2. Transportista ve guías en /dashboard/transporte
-3. En destino: registrar entrega
-   - Cantidades entregadas
-   - Foto evidencia (Cloudinary)
-   - Firma digital
-   - Conformidad S/N
-4. Sistema guarda evidencia_transporte
-```
-
-## Permisos
-
-| Acción | ¿Puede? |
-| --- | --- |
-| Registrar entrega | ✅ |
-| Crear paquete despacho | ❌ |
-| Ver mapa / inventario | ❌ |
-| Crear OV | ❌ |
-
-## Evidencias
-
-- Las fotos se suben vía `POST /api/evidencia-transporte` (Next.js → Cloudinary)
-- Formatos: JPG, PNG, WebP
-- La firma se captura en pantalla táctil
-
-## Errores frecuentes (soporte)
-
-| Síntoma | Causa | Respuesta |
-| --- | --- | --- |
-| No ve guías | Viaje no creado o no asignado | Custodio debe crear paquete despacho primero |
-| Error subiendo foto | Cloudinary mal configurado | Revisar env CLOUDINARY en servidor web |
-| Cantidad entregada > despachada | Error de captura | Corregir cantidades antes de confirmar |
+| No veo guías | No hay viaje. Pedile al custodio que arme el despacho. |
+| La foto no sube | Probá otra foto más liviana o avisá a TI (servicio de imágenes). |
+| Pide firma | Dibujá en el recuadro **Firma de quien recibe**. |
+| Me traba la cantidad | No puede ser más de lo que salió de bodega. |

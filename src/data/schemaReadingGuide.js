@@ -1,5 +1,5 @@
 /**
- * Orden de lectura — 40 tablas Supabase (polaria-wms-db).
+ * Orden de lectura — 40 tablas núcleo + extras (polaria-wms-db).
  * Auth externo: auth.users (Supabase), no tabla public.
  */
 
@@ -66,6 +66,12 @@ export const SCHEMA_READING_PHASES = [
     actor: 'operador · transportista',
     summary: 'orden_venta, viaje_transporte, guia_envio, evidencia_transporte, contador, auditoria_operacion.',
   },
+  {
+    id: '10',
+    label: 'FASE 10 — Precios, Mateo y tenant schema',
+    actor: 'sistema · soporte',
+    summary: 'precio_producto, widget Mateo (mateo_support), sesion_operativa, wms_tenant_tables / emp_*, cuenta_reporte_embed, security_event.',
+  },
 ]
 
 export const TABLE_READING_SEQUENCE = [
@@ -89,7 +95,7 @@ export const TABLE_READING_SEQUENCE = [
   { order: 17, phaseId: '6', phaseLabel: 'FASE 6', entityId: 'solicitud_compra_linea', table: 'solicitud_compra_linea', title: 'Línea SOL', readFirst: 'Detalle SOL.', thenRead: 'orden_compra.', createdBy: 'operador_cuenta', indexes: ['PK (id_linea_solicitud_compra)'] },
   { order: 18, phaseId: '6', phaseLabel: 'FASE 6', entityId: 'orden_compra', table: 'orden_compra', title: 'OC', readFirst: 'emitida / recepción.', thenRead: 'orden_compra_linea.', createdBy: 'operador_cuenta', indexes: ['PK (id_orden_compra)'] },
   { order: 19, phaseId: '6', phaseLabel: 'FASE 6', entityId: 'orden_compra_linea', table: 'orden_compra_linea', title: 'Línea OC', readFirst: 'cantidad_recibida.', thenRead: 'recepcion_compra.', createdBy: 'operador_cuenta', indexes: ['PK (id_linea_orden_compra)'] },
-  { order: 20, phaseId: '6', phaseLabel: 'FASE 6', entityId: 'recepcion_compra', table: 'recepcion_compra', title: 'Recepción compra', readFirst: '🟡 Schema listo.', thenRead: 'recepcion_compra_linea.', createdBy: 'bodega', indexes: ['PK (id_recepcion)'] },
+    { order: 20, phaseId: '6', phaseLabel: 'FASE 6', entityId: 'recepcion_compra', table: 'recepcion_compra', title: 'Recepción compra', readFirst: '✅ API + web (custodio/jefe).', thenRead: 'recepcion_compra_linea.', createdBy: 'bodega', indexes: ['PK (id_recepcion)'] },
   { order: 21, phaseId: '6', phaseLabel: 'FASE 6', entityId: 'recepcion_compra_linea', table: 'recepcion_compra_linea', title: 'Línea recepción', readFirst: 'Conciliación OC.', thenRead: 'layout bodega.', createdBy: 'bodega', indexes: ['PK (id_linea_recepcion)'] },
   { order: 22, phaseId: '7', phaseLabel: 'FASE 7', entityId: 'tipo_ubicacion', table: 'tipo_ubicacion', title: 'Tipo ubicación', readFirst: 'bootstrap-layout.', thenRead: 'zona.', createdBy: 'configurador', indexes: ['PK (id_tipo_ubicacion)'] },
   { order: 23, phaseId: '7', phaseLabel: 'FASE 7', entityId: 'zona', table: 'zona', title: 'Zona', readFirst: 'Agrupa ubicaciones.', thenRead: 'ubicacion.', createdBy: 'configurador', indexes: ['PK (id_zona)'] },
@@ -109,7 +115,14 @@ export const TABLE_READING_SEQUENCE = [
   { order: 37, phaseId: '9', phaseLabel: 'FASE 9', entityId: 'guia_envio', table: 'guia_envio', title: 'Guía envío', readFirst: 'Agrupa OV.', thenRead: 'evidencia_transporte.', createdBy: 'bodega', indexes: ['PK (id_guia)'] },
   { order: 38, phaseId: '9', phaseLabel: 'FASE 9', entityId: 'evidencia_transporte', table: 'evidencia_transporte', title: 'Evidencia', readFirst: 'Foto / firma Cloudinary.', thenRead: 'contador.', createdBy: 'transportista', indexes: ['PK (id_evidencia)'] },
   { order: 39, phaseId: '9', phaseLabel: 'FASE 9', entityId: 'contador', table: 'contador', title: 'Contador', readFirst: 'Solo API.', thenRead: 'auditoria_operacion.', createdBy: 'sistema', indexes: ['PK (id_contador)'] },
-  { order: 40, phaseId: '9', phaseLabel: 'FASE 9', entityId: 'auditoria_operacion', table: 'auditoria_operacion', title: 'Auditoría', readFirst: 'INSERT solo backend.', thenRead: 'Fin secuencia 40 tablas.', createdBy: 'sistema', indexes: ['PK (id_auditoria)'] },
+    { order: 40, phaseId: '9', phaseLabel: 'FASE 9', entityId: 'auditoria_operacion', table: 'auditoria_operacion', title: 'Auditoría', readFirst: 'INSERT solo backend.', thenRead: 'precio_producto y Mateo.', createdBy: 'sistema', indexes: ['PK (id_auditoria)'] },
+  { order: 41, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'precio_producto', table: 'precio_producto', title: 'Precio de venta', readFirst: 'Vigente = fecha_aplicacion más reciente. Sin Prisma.', thenRead: 'widget_conversacion.', createdBy: 'admin_cuenta', indexes: ['PK (id_precio)'] },
+  { order: 42, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'widget_conversacion', table: 'widget_conversacion', title: 'Conversación Mateo', readFirst: 'Schema mateo_support + vista public (064).', thenRead: 'widget_mensaje.', createdBy: 'sistema', indexes: ['PK (id_conversacion)'] },
+  { order: 43, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'widget_mensaje', table: 'widget_mensaje', title: 'Mensaje Mateo', readFirst: 'Append idempotente.', thenRead: 'sesion_operativa.', createdBy: 'sistema', indexes: ['PK (id_mensaje)'] },
+  { order: 44, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'sesion_operativa', table: 'sesion_operativa', title: 'Presencia operario', readFirst: 'POST /operaciones/presencia/ping.', thenRead: 'wms_tenant_tables / emp_*.', createdBy: 'sistema', indexes: ['PK (id_sesion)'] },
+  { order: 45, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'wms_tenant_tables', table: 'wms_tenant_tables', title: 'Catálogo clone emp_*', readFirst: 'Migración 062.', thenRead: 'cuenta_reporte_embed.', createdBy: 'sistema', indexes: ['PK (table_name)'] },
+  { order: 46, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'cuenta_reporte_embed', table: 'cuenta_reporte_embed', title: 'Embed reportería', readFirst: 'MIT / Looker por cuenta. Service role.', thenRead: 'security_event.', createdBy: 'sistema', indexes: ['PK (codigo_cuenta)'] },
+  { order: 47, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'security_event', table: 'security_event', title: 'Evento de seguridad', readFirst: 'Append-only. Sin PostgREST authenticated.', thenRead: 'Fin extras 2026.', createdBy: 'sistema', indexes: ['PK (id_security_event)'] },
 ]
 
 const READING_BY_ENTITY_ID_ACCUM = {}
@@ -141,7 +154,7 @@ export const ONBOARDING_FLOW_ASCII = `
 `
 
 export function formatReadingGuideMarkdown() {
-  const lines = ['## Orden de lectura — 40 tablas Supabase', '']
+  const lines = ['## Orden de lectura — 40 tablas núcleo + extras (precio, Mateo, emp_*)', '']
   for (const step of TABLE_READING_SEQUENCE) {
     if (step.entityId.startsWith('_')) {
       lines.push(`### ${step.order}. ${step.title} (\`${step.table}\`)`, '', step.readFirst, '')

@@ -1,57 +1,37 @@
-# Inventario y mapa en vivo
+# Inventario y mapa
 
-El inventario en Polaria WMS se representa en `warehouse_state`: stock por ubicación × producto × lote.
+El **mapa** es el plano de la bodega: cada casillero muestra qué hay, cuánto y de qué lote. Se actualiza **en vivo** cuando alguien recibe, mueve o saca.
 
-## Canales de lectura
+## Quién lo usa
 
-| Canal | Tecnología | Uso |
-| --- | --- | --- |
-| Web mapa | Supabase Realtime + RLS | Vista «En vivo» en `/dashboard/mapa` |
-| API | `GET /inventario/warehouse-state` | Consultas con guards |
+Administrador de bodega, jefe de bodega, custodio y operario. Oficina (admin/operador de cuenta) no opera el mapa.
 
-## Pantalla mapa (`/dashboard/mapa`)
+## Cómo usarlo
 
-- Tabla de posiciones con badge **En vivo**
-- Muestra: producto, lote, cantidad, temperatura, estado slot
-- Roles con acceso: admin_bodega, jefe_bodega, custodio, operario
+1. Elegí la **bodega** arriba.
+2. Abrí **Mapa** en el menú.
+3. Buscá el casillero: producto, lote, kilos, temperatura, si está libre u ocupado.
 
-## Lock / unlock (POL-6, POL-141)
+Si no se actualiza: recargá, confirmá la bodega y que tengas internet.
 
-Evita que dos usuarios operen la misma posición simultáneamente.
+## Bloquear un casillero (lock)
 
-| Acción | Endpoint | Roles |
-| --- | --- | --- |
-| Bloquear | `POST .../lock` | admin/jefe bodega, custodio, operario |
-| Liberar | `POST .../unlock` | mismos |
-| Force unlock | unlock con flag | admin/jefe bodega |
+Para que dos personas no pisen el mismo lugar:
 
-- TTL stale: 5 minutos (lock expira si el usuario abandona)
-- Optimistic locking: campo `version` en `warehouse_state`
+1. Bloqueá el casillero **antes** de trabajarlo.
+2. Hacé el movimiento.
+3. Liberá cuando termines.
 
-## FEFO (First Expired, First Out)
+Si se te olvida, a los **~5 minutos** se suelta solo. Si quedó trabado, el **jefe** o el **admin de bodega** pueden liberarlo.
 
-Al crear OT de salida, el sistema selecciona lotes por `fecha_vencimiento ASC`.
+## Qué pasa por detrás (en simple)
 
-## Movimientos
+Cada movimiento deja un rastro: recepción, traslado, reserva al emitir una venta, despacho, merma. No tenés que cargar un “historial” a mano.
 
-Ledger append-only en `movimiento_inventario`:
+Al armar una salida, el sistema tiende a usar primero lo que **vence antes** (FEFO). Si eso no cubre el pedido, oficina o jefe tienen que revisar stock.
 
-| Tipo | Cuándo |
-| --- | --- |
-| `recepcion` | Cerrar recepción compra |
-| `transferencia` | Completar tarea / ejecutar OT |
-| `reserva` | Emitir OV |
-| `despacho` | Paquete despacho |
-| `merma` | Cerrar procesamiento |
+## Si se traba
 
-## Realtime (POL-182)
-
-Tras eventos Realtime, el frontend refetch `ubicacion` para alinear `estado_slot` con `warehouse_state`.
-
-## Preguntas frecuentes (Mateo)
-
-**¿Por qué el mapa no actualiza?** Verificar conexión Realtime, bodega seleccionada y permisos RLS.
-
-**¿No puedo bloquear posición?** Otro usuario la tiene bloqueada; esperar o pedir force unlock al jefe.
-
-**¿Dónde veo historial?** `GET /inventario/movimientos` (API) o reportería según rol.
+- Mapa congelado: recargar + bodega correcta.
+- “No puedo bloquear”: otro lo tiene. Esperá o pedí desbloqueo.
+- Casillero vacío pero “sabés” que hay caja: no completes la tarea a medias; avisá al jefe.

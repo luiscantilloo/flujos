@@ -1,66 +1,49 @@
-# Compras: SOL → OC → Recepción
+# Compras: de la solicitud al ingreso
 
-Flujo end-to-end desde la necesidad de compra hasta stock en bodega.
+Así entra mercancía a la bodega. Nadie lo hace solo: oficina pide, el jefe de cuenta aprueba, oficina emite, muelle recibe.
 
-## Diagrama
+## Quién hace qué
 
-```
-SOL (borrador)
-  → enviar aprobación → pendiente_aprobacion
-  → aprobar → aprobada
-  → convertir → OC (borrador)
-  → emitir → emitida
-  → recepción física → parcialmente_recibida / recibida
-  → stock en warehouse_state
-```
+| Paso | Quién | En la pantalla |
+| --- | --- | --- |
+| 1. Pedir | Operador de cuenta | **Proveedor** → **Nueva solicitud** |
+| 2. Aprobar | Administrador de cuenta | **Aprobar** (cuando está pendiente) |
+| 3. Emitir al proveedor | Operador de cuenta | **Emitir orden** (con bodega destino) |
+| 4. Recibir el camión | Custodio (o jefe / admin bodega) | **Ingreso** / **Orden de compra** — kilos y temperatura |
 
-## Roles por etapa
+## Paso a paso
 
-| Etapa | Roles |
-| --- | --- |
-| Crear SOL | operador_cuenta, admin_cuenta, jefe/admin bodega |
-| Aprobar SOL | administrador_cuenta, configurador |
-| Convertir a OC | mismos que crean SOL |
-| Emitir OC | operador_cuenta, admin_cuenta |
-| Cerrar recepción | custodio, jefe_bodega, admin_bodega, admin_cuenta, configurador |
+### 1. Solicitud (SOL)
 
-## Estados SOL
+Es un pedido interno: “necesitamos comprar esto”. Todavía no es el documento al proveedor.
 
-| Estado | Significado |
-| --- | --- |
-| `borrador` | Editable |
-| `pendiente_aprobacion` | Esperando admin |
-| `aprobada` | Lista para convertir a OC |
-| `rechazada` / `cancelada` | Fin del flujo |
+1. Operador: **Nueva solicitud**, proveedor, productos, kilos.
+2. Enviarla a aprobación.
+3. Admin de cuenta: **Aprobar** o rechazar.
 
-## Estados OC
+Estados: **borrador** → **pendiente de aprobación** → **aprobada** (o rechazada).
 
-| Estado | Significado |
-| --- | --- |
-| `borrador` | Editable |
-| `emitida` | Enviada a proveedor, esperando mercancía |
-| `parcialmente_recibida` | Recepción parcial |
-| `recibida` | Completamente recibida |
-| `cancelada` | Anulada |
+### 2. Orden de compra (OC)
 
-## Recepción física
+1. Con la SOL aprobada, se convierte en OC.
+2. Hay que elegir **bodega destino**.
+3. **Emitir orden**: el proveedor queda notificado.
 
-1. Custodio/jefe abre OC pendiente en `/dashboard/ingreso` o `/dashboard/custodio/orden-compra`
-2. Modal recepción: cantidades + temperatura por línea
-3. `POST /compras/recepciones/ordenes/:id/cerrar`
-4. Backend crea: `lote`, `warehouse_state`, `movimiento_inventario` tipo `recepcion`
+Estados: **borrador** → **emitida** → **parcialmente recibida** / **recibida**.
 
-## Integraciones automáticas
+### 3. Recepción en muelle
 
-| Evento | Integración |
-| --- | --- |
-| Crear SOL | Webhook n8n (`POST /api/solicitud-compra`) |
-| Emitir OC | Webhook pedido proveedor (`POST /api/pedido-proveedor`) |
+1. El custodio busca la OC **emitida**.
+2. Carga lo que realmente llegó y la temperatura.
+3. Al cerrar, el producto queda en **ingreso** y aparece en el inventario.
 
-## Preguntas frecuentes (Mateo)
+Si llegó de menos, la OC queda parcial y se puede recibir el resto después.
 
-**¿Puedo recibir sin OC?** No en el flujo estándar. La recepción siempre concilia contra una OC emitida.
+**¿Se puede recibir sin OC?** En el flujo normal, no. Siempre se concilia contra una orden emitida.
 
-**¿Qué pasa si llega menos de lo pedido?** La OC queda `parcialmente_recibida`; se puede hacer otra recepción.
+## Si se traba
 
-**¿Quién ve las compras?** Operadores y admins de cuenta ven SOL/OC. Roles de bodega ven ingreso/recepción.
+- No sale **Aprobar**: no es administrador de cuenta, o la SOL sigue en borrador.
+- No sale **Emitir orden**: falta bodega destino (el admin debe vincular la bodega).
+- El custodio no ve la OC: todavía no está emitida.
+- Error al cerrar recepción: kilos de más o falta temperatura.

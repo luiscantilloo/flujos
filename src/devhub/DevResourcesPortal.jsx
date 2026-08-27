@@ -8,9 +8,17 @@ import { TechStackLayers } from './TechStackLayers.jsx'
 const SCRIPTS = [
   { cmd: 'npm run dev', desc: 'Dev Hub local (Vite, puerto 5173)' },
   { cmd: 'npm run build', desc: 'Build producción Dev Hub' },
-  { cmd: 'npm run docs:all', desc: 'Regenera MD Bodega v1.0 y V2.0 desde .txt' },
   { cmd: 'npm run docs:sync-schema', desc: 'Sincroniza entidades Prisma → Dev Hub' },
-  { cmd: 'npm run lint', desc: 'ESLint en todo el proyecto flujos' },
+  { cmd: 'npm run lint', desc: 'ESLint en el repo flujo' },
+]
+
+const PRODUCT_SCRIPTS = [
+  { repo: 'polaria-wms-web', cmd: 'npm run dev', desc: 'Next.js en http://localhost:3001' },
+  { repo: 'polaria-wms-web', cmd: 'npm test', desc: 'Vitest (hooks, servicios, precio_producto)' },
+  { repo: 'polaria-wms-api', cmd: 'npm run start:dev', desc: 'Nest watch · http://localhost:3000 · /api/docs' },
+  { repo: 'polaria-wms-api', cmd: 'npm run test:e2e', desc: 'Jest + Supertest (BD de prueba, nunca prod)' },
+  { repo: 'Widget-react', cmd: 'npm run dev -- --port 5174', desc: 'Vite demo (no uses 5173: lo ocupa el hub)' },
+  { repo: 'Widget-react', cmd: 'npm run build:lib', desc: 'IIFE mateo-widget.js para embeber en web' },
 ]
 
 const PRODUCT_REPOS = [
@@ -29,29 +37,31 @@ const PRODUCT_REPOS = [
   {
     name: POLARIA_WMS.repos.db.name,
     url: POLARIA_WMS.repos.db.url,
-    dev: 'supabase db push / scripts SQL',
+    dev: 'supabase db push / scripts SQL (001–066)',
     role: POLARIA_WMS.repos.db.role,
   },
   {
     name: POLARIA_WMS.repos.widget.name,
     url: POLARIA_WMS.repos.widget.url,
-    dev: 'npm run dev → http://localhost:5173 · build:lib → mateo-widget.js',
+    dev: 'npm run dev -- --port 5174 · build:lib → mateo-widget.js',
     role: POLARIA_WMS.repos.widget.role,
   },
 ]
 
 const INSTALL_STEPS = [
   'Clonar polaria-wms-api, polaria-wms-web, polaria-wms-db y Widget-react',
-  'Configurar Supabase (migraciones 001–052 desde polaria-wms-db)',
-  'API: copiar .env con DATABASE_URL, SUPABASE_*, MATEO_*',
-  'Web: .env con NEXT_PUBLIC_API_URL y NEXT_PUBLIC_SUPABASE_*',
-  'Widget: VITE_N8N_WEBHOOK_URL y Cloudinary para imágenes',
+  'Aplicar migraciones 001–066 desde polaria-wms-db (incluye emp_*, precio_producto, widget)',
+  'API: .env con DATABASE_URL, SUPABASE_*, MATEO_HANDOFF_SECRET, MATEO_WIDGET_JWT_SECRET',
+  'Web: .env.local con NEXT_PUBLIC_API_URL (http://localhost:3000) y NEXT_PUBLIC_SUPABASE_*',
+  'Widget: VITE_N8N_WEBHOOK_URL y Cloudinary; demo en puerto 5174',
   'Dev Hub (este repo): npm install && npm run dev → http://localhost:5173',
 ]
 
 const QUICK_LINKS = [
   { label: 'Manual de usuario', to: paths.userManual },
   { label: 'API y endpoints', to: paths.reference('api', 'bodega-frio') },
+  { label: 'Onboarding dev', to: paths.reference('onboarding', 'bodega-frio') },
+  { label: 'Runbooks', to: paths.reference('runbooks', 'bodega-frio') },
   { label: 'Testing', to: paths.reference('testing', 'bodega-frio') },
   { label: 'Documentación V2.0', to: paths.doc('bodega-frio-documentacion-v20') },
 ]
@@ -103,7 +113,7 @@ export function DevResourcesPortal({ onBackToMain, onOpenDocSection }) {
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">Stack y scripts</h2>
             <p className="mt-3 text-pretty text-base leading-relaxed text-slate-400">
               Ecosistema <strong className="font-medium text-slate-300">Polaria WMS</strong> (4 repos producto + este Dev
-              Hub). Estado sincronizado Jul 2026.
+              Hub). Estado sincronizado Ago 2026 · Prisma 43 · migraciones 001–066.
             </p>
           </div>
 
@@ -135,7 +145,29 @@ export function DevResourcesPortal({ onBackToMain, onOpenDocSection }) {
           <section className="mt-10">
             <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-slate-500">
               <HiOutlineCommandLine className="h-4 w-4" aria-hidden />
-              Comandos npm (Dev Hub — repo flujos)
+              Comandos npm (producto)
+            </h3>
+            <ul className="mt-4 space-y-2" role="list">
+              {PRODUCT_SCRIPTS.map((s) => (
+                <li
+                  key={`${s.repo}-${s.cmd}`}
+                  className="flex flex-col gap-2 rounded-xl border border-slate-700/55 bg-slate-900/40 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <p className="text-[11px] font-medium text-slate-500">{s.repo}</p>
+                    <code className="font-mono text-sm text-emerald-200/95">{s.cmd}</code>
+                    <p className="mt-0.5 text-xs text-slate-500">{s.desc}</p>
+                  </div>
+                  <CopyButton text={s.cmd} />
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="mt-10">
+            <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-slate-500">
+              <HiOutlineCommandLine className="h-4 w-4" aria-hidden />
+              Comandos npm (Dev Hub — repo flujo)
             </h3>
             <ul className="mt-4 space-y-2" role="list">
               {SCRIPTS.map((s) => (

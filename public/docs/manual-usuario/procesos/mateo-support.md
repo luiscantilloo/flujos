@@ -1,60 +1,27 @@
-# Mateo Support (widget de chat)
+# Mateo (chat de ayuda)
 
-Asistente de IA embebido en Polaria WMS para soporte operativo.
+Mateo es el **chat** de Polaria WMS: una burbuja abajo a la derecha cuando ya entraste al sistema.
 
-## Repositorios
+## Cómo usarlo
 
-| Repo | Rol |
-| --- | --- |
-| [Widget-react](https://github.com/PolariaTech/Widget-react) | UI chat (IIFE `mateo-widget.js`) |
-| polaria-wms-api | Tokens + persistencia conversaciones |
-| polaria-wms-web | Host `MateoWidgetHost` en shell autenticado |
-| n8n | Workflow conversacional (Mateo IA) |
+1. Entrá con tu usuario (si no hay sesión, el chat no abre).
+2. Pulsá la burbuja.
+3. Escribí en español, como le hablarías a un compañero:
+   - “No me deja emitir la venta”
+   - “Soy custodio y no veo la orden de compra”
+   - “¿Quién aprueba la solicitud?”
+4. Podés adjuntar una imagen (foto de la pantalla), no muy pesada.
 
-## Cómo lo ve el usuario
+Podés abrir el chat chico o más grande. El historial de **tus** conversaciones se guarda; otro usuario no ve las tuyas.
 
-1. Botón flotante en esquina inferior derecha (solo usuarios logueados en WMS)
-2. Abre chat compacto (320×420) o fullscreen
-3. Escribe texto o adjunta imagen (JPG/PNG/WebP, máx 5 MB)
-4. Mateo responde vía n8n
+## Si no responde o se cierra
 
-## Dos tokens (importante para soporte)
+1. Recargá la página y volvé a abrir el chat.
+2. Si te pide entrar de nuevo, tu sesión se venció: login otra vez.
+3. Si sigue mudo, avisá a TI o al administrador de cuenta. A veces el asistente está caído: no es que vos hayas hecho algo mal.
 
-| Uso | Token | Endpoint |
-| --- | --- | --- |
-| Enviar mensaje a Mateo (n8n) | JWT widget (~300s) | `POST /auth/mateo/widget-token` |
-| Guardar historial conversaciones | Bearer sesión WMS | `/mateo/conversaciones` |
+## Qué no es Mateo
 
-## Historial
+No reemplaza un botón del sistema. Si tu rol no puede **Aprobar** o **Emitir**, el chat no te va a dar ese permiso. Te dice **quién** sí puede.
 
-- Persistido en Supabase: `widget_conversacion`, `widget_mensaje`
-- Sincronizado por usuario (RLS: solo ve las suyas)
-- En embed WMS: fuente de verdad es API; localStorage es cache
-
-## Errores comunes
-
-| Síntoma | Causa | Respuesta |
-| --- | --- | --- |
-| Chat cierra solo | Token widget expirado (401) | Refrescar página o reabrir chat |
-| «Error de autenticación» | Sesión WMS expirada | Volver a login |
-| Historial vacío tras login | Falló sync remoto | Normal en primer uso; crear nueva conversación |
-| Imagen no envía | Cloudinary o tamaño > 5 MB | Reducir imagen o verificar env |
-| Mateo no responde | n8n caído o POL-71 pendiente | Escalar a TI; verificar workflow n8n |
-
-## SSO WMS ↔ Mateo (app externa)
-
-- `POST /auth/mateo-handoff` → código 60s
-- `POST /auth/mateo-exchange` → tokens
-- Para usuarios que abren Mateo en ventana separada
-
-## Qué puede responder Mateo Support
-
-Usar los manuales de este Dev Hub como base de conocimiento:
-- Roles y permisos
-- Flujos SOL/OC/recepción, OV, procesamiento
-- Errores de login y bodega no seleccionada
-- Glosario de términos WMS
-
-## Escalamiento a humano
-
-Si Mateo no resuelve: derivar al administrador de cuenta del tenant o a soporte Polaria (configurador).
+Si Mateo no alcanza, hablá con tu administrador de cuenta o con soporte Polaria.

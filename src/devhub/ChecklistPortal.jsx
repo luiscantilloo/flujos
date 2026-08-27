@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { HiArrowLeft, HiOutlineClipboardDocumentCheck } from 'react-icons/hi2'
 import { DocDownloadMenu } from '../docs/components/DocDownloadMenu.jsx'
-import { getDocumentationItemById } from '../docs/docRegistry.js'
-import { fetchDocMarkdown } from '../docs/utils/fetchDocMarkdown.js'
-import { extractSectionByTitle, parseMarkdownTableFromText } from '../docs/utils/extractMarkdownSection.js'
+import { parseMarkdownTableFromText } from '../docs/utils/extractMarkdownSection.js'
+import { formatPolariaChecklistMarkdown } from '../data/polariaChecklistDoc.js'
 
 function StatusBadge({ status }) {
   const normalized = status.toLowerCase()
   const isComplete = normalized.includes('completo')
+  const isPartial = normalized.includes('parcial')
   const isPending = normalized.includes('pendiente')
 
   return (
@@ -16,9 +16,11 @@ function StatusBadge({ status }) {
         'inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide',
         isComplete
           ? 'border-emerald-400/30 bg-emerald-500/15 text-emerald-200'
-          : isPending
-            ? 'border-amber-400/30 bg-amber-500/15 text-amber-200'
-            : 'border-slate-600/40 bg-slate-800/60 text-slate-300',
+          : isPartial
+            ? 'border-sky-400/30 bg-sky-500/15 text-sky-200'
+            : isPending
+              ? 'border-amber-400/30 bg-amber-500/15 text-amber-200'
+              : 'border-slate-600/40 bg-slate-800/60 text-slate-300',
       ].join(' ')}
     >
       {status}
@@ -33,73 +35,43 @@ function PriorityDot({ priority }) {
   return <span className={`inline-block h-2 w-2 shrink-0 rounded-full ${color}`} title={priority} />
 }
 
-export function ChecklistPortal({ project, onBackToMain, onBackToProjects }) {
-  const [items, setItems] = useState([])
-  const [sectionMarkdown, setSectionMarkdown] = useState('')
-  const [status, setStatus] = useState('loading')
-  const [error, setError] = useState(null)
-  const [filter, setFilter] = useState('all')
+function parseChecklistItems(markdown) {
+  const { headers, rows } = parseMarkdownTableFromText(markdown)
+  const numIdx = headers.findIndex((h) => /^#$/.test(h) || h === '#')
+  const nameIdx = headers.findIndex((h) => /elemento/i.test(h))
+  const prioIdx = headers.findIndex((h) => /prioridad/i.test(h))
+  const statIdx = headers.findIndex((h) => /estado/i.test(h))
 
-  const docId = project?.documentationDocId ?? 'bodega-frio-v2'
-  const doc = getDocumentationItemById(docId)
+  return rows.map((row, i) => ({
+    num: row[numIdx >= 0 ? numIdx : 0] || String(i + 1),
+    name: row[nameIdx >= 0 ? nameIdx : 1] ?? '',
+    priority: row[prioIdx >= 0 ? prioIdx : 2] ?? '',
+    status: row[statIdx >= 0 ? statIdx : 3] ?? '',
+  }))
+}
+
+export function ChecklistPortal({ project, onBackToMain, onBackToProjects }) {
+  const [filter, setFilter] = useState('all')
   const handleBack = onBackToProjects ?? onBackToMain
 
-  useEffect(() => {
-    if (!doc?.filePath) return
-
-    let cancelled = false
-    fetchDocMarkdown(doc.filePath)
-      .then((md) => {
-        if (cancelled) return
-        const section = extractSectionByTitle(md, /estado de la documentación/i)
-        setSectionMarkdown(section)
-        const { headers, rows } = parseMarkdownTableFromText(section)
-        const numIdx = headers.findIndex((h) => /^#$/.test(h) || h === '#')
-        const nameIdx = headers.findIndex((h) => /elemento/i.test(h))
-        const prioIdx = headers.findIndex((h) => /prioridad/i.test(h))
-        const statIdx = headers.findIndex((h) => /estado/i.test(h))
-
-        const parsed = rows.map((row, i) => ({
-          num: row[numIdx >= 0 ? numIdx : 0] || String(i + 1),
-          name: row[nameIdx >= 0 ? nameIdx : 1] ?? '',
-          priority: row[prioIdx >= 0 ? prioIdx : 2] ?? '',
-          status: row[statIdx >= 0 ? statIdx : 3] ?? '',
-        }))
-        setItems(parsed)
-        setStatus('idle')
-      })
-      .catch((err) => {
-        if (cancelled) return
-        setError(err.message)
-        setStatus('error')
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [doc?.filePath])
+  const sectionMarkdown = useMemo(() => formatPolariaChecklistMarkdown(), [])
+  const items = useMemo(() => parseChecklistItems(sectionMarkdown), [sectionMarkdown])
 
   const stats = useMemo(() => {
     const complete = items.filter((i) => /completo/i.test(i.status)).length
+    const partial = items.filter((i) => /parcial/i.test(i.status)).length
     const pending = items.filter((i) => /pendiente/i.test(i.status)).length
-    return { complete, pending, total: items.length }
+    return { complete, partial, pending, total: items.length }
   }, [items])
 
   const filtered = useMemo(() => {
     if (filter === 'complete') return items.filter((i) => /completo/i.test(i.status))
+    if (filter === 'partial') return items.filter((i) => /parcial/i.test(i.status))
     if (filter === 'pending') return items.filter((i) => /pendiente/i.test(i.status))
     return items
   }, [items, filter])
 
   const progress = stats.total > 0 ? Math.round((stats.complete / stats.total) * 100) : 0
-
-  if (!doc) {
-    return (
-      <div className="flex flex-1 items-center justify-center bg-slate-950 px-4 text-sm text-red-300">
-        No se encontró el documento de Bodega de frío.
-      </div>
-    )
-  }
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-slate-950">
@@ -123,17 +95,17 @@ export function ChecklistPortal({ project, onBackToMain, onBackToProjects }) {
               </p>
               <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">Checklist del proyecto</h2>
               <p className="mt-3 text-pretty text-base leading-relaxed text-slate-400">
-                Estado de entregables de documentación: README, API, tests, runbooks y más.
+                Estado vivo ago 2026: docs, Swagger, emp_*, Mateo, migraciones 001–066 y huecos reales
+                (Prisma de precio, Playwright del producto, Fridem).
               </p>
             </div>
-            {status === 'idle' ? (
-              <div className="flex shrink-0 flex-col items-end gap-3 sm:flex-row sm:items-center">
-                <DocDownloadMenu
-                  title={`${project?.name ?? 'Polaria WMS'} — Checklist`}
-                  markdown={sectionMarkdown}
-                  sourcePath={doc.filePath}
-                />
-                <div className="flex items-center gap-4 rounded-2xl border border-slate-700/60 bg-slate-900/50 px-5 py-4">
+            <div className="flex shrink-0 flex-col items-end gap-3 sm:flex-row sm:items-center">
+              <DocDownloadMenu
+                title={`${project?.name ?? 'Polaria WMS'} — Checklist`}
+                markdown={sectionMarkdown}
+                sourcePath={null}
+              />
+              <div className="flex items-center gap-4 rounded-2xl border border-slate-700/60 bg-slate-900/50 px-5 py-4">
                 <div className="relative h-16 w-16">
                   <svg className="h-16 w-16 -rotate-90" viewBox="0 0 36 36">
                     <circle cx="18" cy="18" r="15.5" fill="none" className="stroke-slate-800" strokeWidth="3" />
@@ -154,73 +126,60 @@ export function ChecklistPortal({ project, onBackToMain, onBackToProjects }) {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-slate-100">{stats.complete} completos</p>
+                  <p className="text-xs text-sky-300">{stats.partial} parciales</p>
                   <p className="text-xs text-amber-300">{stats.pending} pendientes</p>
                 </div>
-                </div>
               </div>
-            ) : null}
+            </div>
           </div>
 
-          {status === 'idle' ? (
-            <div className="mt-8 flex flex-wrap gap-2">
-              {[
-                { id: 'all', label: `Todos (${stats.total})` },
-                { id: 'complete', label: `Completos (${stats.complete})` },
-                { id: 'pending', label: `Pendientes (${stats.pending})` },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setFilter(tab.id)}
-                  className={[
-                    'rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
-                    filter === tab.id
-                      ? 'bg-violet-500/20 text-violet-100 ring-1 ring-violet-400/30'
-                      : 'bg-slate-800/80 text-slate-400 hover:text-slate-200',
-                  ].join(' ')}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          ) : null}
+          <div className="mt-8 flex flex-wrap gap-2">
+            {[
+              { id: 'all', label: `Todos (${stats.total})` },
+              { id: 'complete', label: `Completos (${stats.complete})` },
+              { id: 'partial', label: `Parciales (${stats.partial})` },
+              { id: 'pending', label: `Pendientes (${stats.pending})` },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setFilter(tab.id)}
+                className={[
+                  'rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
+                  filter === tab.id
+                    ? 'bg-violet-500/20 text-violet-100 ring-1 ring-violet-400/30'
+                    : 'bg-slate-800/80 text-slate-400 hover:text-slate-200',
+                ].join(' ')}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
 
-          {status === 'loading' ? (
-            <div className="mt-10 space-y-3">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="h-14 animate-pulse rounded-xl bg-slate-800/50" />
-              ))}
-            </div>
-          ) : null}
-
-          {status === 'error' ? <p className="mt-10 text-sm text-red-300">{error}</p> : null}
-
-          {status === 'idle' ? (
-            <ul className="mt-8 space-y-2" role="list">
-              {filtered.map((item) => (
-                <li
-                  key={item.num}
-                  className="portal-card-hover flex items-center gap-4 rounded-xl border border-slate-700/55 bg-slate-900/40 px-4 py-3.5"
-                >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-800/80 text-xs font-bold text-slate-400">
-                    {item.num}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-slate-100">{item.name}</p>
-                    <div className="mt-1 flex items-center gap-2">
-                      <PriorityDot priority={item.priority} />
-                      <span className="text-xs text-slate-500">{item.priority}</span>
-                    </div>
+          <ul className="mt-8 space-y-2" role="list">
+            {filtered.map((item) => (
+              <li
+                key={item.num}
+                className="portal-card-hover flex items-center gap-4 rounded-xl border border-slate-700/55 bg-slate-900/40 px-4 py-3.5"
+              >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-800/80 text-xs font-bold text-slate-400">
+                  {item.num}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-slate-100">{item.name}</p>
+                  <div className="mt-1 flex items-center gap-2">
+                    <PriorityDot priority={item.priority} />
+                    <span className="text-xs text-slate-500">{item.priority}</span>
                   </div>
-                  <StatusBadge status={item.status} />
-                </li>
-              ))}
-            </ul>
-          ) : null}
+                </div>
+                <StatusBadge status={item.status} />
+              </li>
+            ))}
+          </ul>
 
           <p className="mt-10 flex items-center gap-2 text-xs text-slate-500">
             <HiOutlineClipboardDocumentCheck className="h-4 w-4" aria-hidden />
-            Fuente: checklist maestra — documentación Bodega de frío.
+            Fuente: polariaChecklistDoc.js — Polaria WMS ago 2026 (no el Word v1.0).
           </p>
         </div>
       </div>

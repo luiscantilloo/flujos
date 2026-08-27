@@ -1,12 +1,12 @@
 /**
- * Metadatos Polaria WMS — fuente de verdad para el Dev Hub (jul 2026).
+ * Metadatos Polaria WMS — fuente de verdad para el Dev Hub (ago 2026).
  * Repos: polaria-wms-api, polaria-wms-web, polaria-wms-db, Widget-react
  */
 
 export const POLARIA_WMS = {
   productName: 'Polaria WMS',
   legacySubtitle: 'Bodega de Frío (referencia de diseño V2)',
-  statusDate: 'Jul 2026',
+  statusDate: 'Ago 2026',
   repos: {
     api: {
       name: 'polaria-wms-api',
@@ -21,7 +21,7 @@ export const POLARIA_WMS = {
     db: {
       name: 'polaria-wms-db',
       url: 'https://github.com/PolariaTech/polaria-wms-db',
-      role: 'Migraciones Supabase 001–052, RLS, modelo operativo',
+      role: 'Migraciones Supabase 001–066, RLS, schema por empresa emp_*, precio_producto',
     },
     widget: {
       name: 'Widget-react',
@@ -33,13 +33,18 @@ export const POLARIA_WMS = {
       url: 'https://flujos-nine.vercel.app',
       role: 'Dev Hub — documentación, diagramas y manuales de usuario',
     },
+    runner: {
+      name: 'polaria-ui-runner',
+      url: '',
+      role: 'Simulaciones Playwright (no es producto). Limpia solo cuentas demo.',
+    },
   },
   /** Nombres legacy → actuales */
   legacyRepoNames: {
     'frio-frontend': 'polaria-wms-web',
     'frio-backend': 'polaria-wms-api',
   },
-  prismaModelCount: 42,
+  prismaModelCount: 43,
   swaggerPath: '/api/docs',
 }
 
@@ -49,9 +54,11 @@ export const IMPLEMENTATION_STATUS = {
   design: { icon: '🔵', label: 'Diseño / roadmap', key: 'design' },
 }
 
-export const POLARIA_STATUS_CALLOUT = `> **Estado Polaria WMS — Jul 2026**
+export const POLARIA_STATUS_CALLOUT = `> **Estado Polaria WMS — Ago 2026**
 > ✅ Implementado en API + web + BD (compras, recepción, inventario, operaciones, procesamiento, ventas, transporte, Mateo widget)
-> 🟡 Maduración: observabilidad, FEFO automático completo, Fridem, staging widget CDN
+> ✅ Precio de venta operativo: tabla \`precio_producto\` (no el precio de \`metadatos_catalogo\`)
+> ✅ Schema por empresa \`emp_*\` (migración 062); cuentas legacy siguen en \`public\`
+> 🟡 Maduración: observabilidad, FEFO automático completo, Fridem, CDN widget, Prisma de \`precio_producto\`
 > 🔵 Roadmap: API playground, Storybook, métricas centralizadas
 >
 > Repos: [polaria-wms-api](${POLARIA_WMS.repos.api.url}) · [polaria-wms-web](${POLARIA_WMS.repos.web.url}) · [polaria-wms-db](${POLARIA_WMS.repos.db.url}) · [Widget-react](${POLARIA_WMS.repos.widget.url})`
@@ -62,7 +69,7 @@ export const POLARIA_API_ENDPOINTS = [
   { method: 'GET', path: '/api/docs', status: 'done', note: 'Swagger UI', group: 'sistema' },
   { method: 'GET', path: '/api/docs-json', status: 'done', note: 'OpenAPI JSON', group: 'sistema' },
   // Auth
-  { method: 'POST', path: '/auth/prelogin', status: 'done', note: 'Header opcional x-auth-client: wms | mateo', group: 'auth' },
+  { method: 'POST', path: '/auth/prelogin', status: 'done', note: 'Header x-auth-client: wms | mateo (el front envía X-Auth-Client; HTTP es case-insensitive)', group: 'auth' },
   { method: 'POST', path: '/auth/login', status: 'done', note: 'JWT Supabase + contexto tenant/platform', group: 'auth' },
   { method: 'POST', path: '/auth/mateo-handoff', status: 'done', note: 'Bearer · SSO WMS → Mateo (código 60s)', group: 'auth' },
   { method: 'POST', path: '/auth/mateo/widget-token', status: 'done', note: 'Bearer · JWT widget embebido (~300s)', group: 'auth' },
@@ -76,6 +83,7 @@ export const POLARIA_API_ENDPOINTS = [
   { method: 'POST', path: '/configuracion/bodegas', status: 'done', note: 'configurador | administrador_cuenta', group: 'configuracion' },
   { method: 'POST', path: '/configuracion/bodegas/:idBodega/bootstrap-layout', status: 'done', note: 'Layout ING/SLOT/SAL/PROC (interna)', group: 'configuracion' },
   { method: 'POST', path: '/configuracion/bodegas/:idBodega/ensure-zonas-operativas', status: 'done', note: 'Backfill zonas operativas', group: 'configuracion' },
+  { method: 'POST', path: '/configuracion/empresas', status: 'done', note: 'Solo configurador · alta empresa', group: 'configuracion' },
   { method: 'PATCH', path: '/configuracion/empresas/:codigoEmpresa', status: 'done', note: 'Solo configurador', group: 'configuracion' },
   { method: 'PATCH', path: '/configuracion/cuentas/:codigoCuenta', status: 'done', note: 'Solo configurador', group: 'configuracion' },
   // Integración
@@ -143,7 +151,7 @@ export const POLARIA_API_ENDPOINTS = [
   { method: 'POST', path: '/procesamiento/solicitudes/:id/ordenes/:idOrden/aplicar', status: 'done', note: 'Operario aplica traslados', group: 'procesamiento' },
   { method: 'POST', path: '/procesamiento/solicitudes/:id/terminar', status: 'done', note: 'Cierra solicitud', group: 'procesamiento' },
   // Ventas
-  { method: 'GET', path: '/ventas/ordenes', status: 'done', note: 'Listar OV', group: 'ventas' },
+  { method: 'GET', path: '/ventas/ordenes', status: 'done', note: 'Listar OV (crear borrador = Supabase JS en web, no hay POST Nest)', group: 'ventas' },
   { method: 'POST', path: '/ventas/ordenes/:id/emitir', status: 'done', note: 'borrador → confirmada + reserva stock', group: 'ventas' },
   // Transporte
   { method: 'POST', path: '/transporte/paquetes-despacho', status: 'done', note: 'Custodio · viaje + guías', group: 'transporte' },
@@ -176,7 +184,7 @@ export const POLARIA_API_PENDING = [
   'Salida cruzada con validación de peso avanzada',
   'Observabilidad centralizada (métricas, alertas SLO)',
   'Validación JWT en workflow n8n (POL-71)',
-  'CDN estable del bundle mateo-widget.js en producción',
+  'Modelo Prisma de `precio_producto` (hoy solo Postgres + Supabase JS)',
   'Módulos stub sin código: accounts, audit, companies, files, health, notifications, settings, users, warehouses',
 ]
 
@@ -225,7 +233,42 @@ export const POLARIA_ENV_VARS = {
     { name: 'VITE_CLOUDINARY_CLOUD_NAME', required: true },
     { name: 'VITE_CLOUDINARY_UPLOAD_PRESET', required: true },
   ],
-  optional: ['Fridem Firebase read-only', 'n8n pedido proveedor'],
+  optional: ['Fridem (bodega externa, solo lectura)', 'n8n pedido proveedor'],
+}
+
+export function formatPolariaEnvMarkdown() {
+  const row = (item) => {
+    const req = item.required ? 'Sí' : 'No'
+    const notes = [item.note, item.default ? `default \`${item.default}\`` : ''].filter(Boolean).join(' · ') || '—'
+    return `| \`${item.name}\` | ${req} | ${notes} |`
+  }
+  return [
+    POLARIA_STATUS_CALLOUT,
+    '',
+    '## Variables de entorno',
+    '',
+    'Auth y datos: **Supabase**. Secretos de servidor solo en la API o en rutas Next (`/api/*`). Nunca `SERVICE_ROLE` ni `DATABASE_URL` en el browser.',
+    '',
+    '### polaria-wms-api',
+    '',
+    '| Variable | Obligatorio | Notas |',
+    '| --- | --- | --- |',
+    ...POLARIA_ENV_VARS.api.map(row),
+    '',
+    '### polaria-wms-web (`.env.local`)',
+    '',
+    '| Variable | Obligatorio | Notas |',
+    '| --- | --- | --- |',
+    ...POLARIA_ENV_VARS.web.map(row),
+    '',
+    '### Widget-react',
+    '',
+    '| Variable | Obligatorio | Notas |',
+    '| --- | --- | --- |',
+    ...POLARIA_ENV_VARS.widget.map(row),
+    '',
+    'Opcionales: ' + POLARIA_ENV_VARS.optional.join('; ') + '.',
+  ].join('\n')
 }
 
 /** Mapeo Prisma → id entidad (= nombre tabla Supabase) */
@@ -245,7 +288,9 @@ export function formatPolariaApiMarkdown() {
     '',
     'Guards transversales: `JwtAuthGuard`, `TenantGuard`, `RolesGuard`. Escrituras sensibles además: `SensitiveWriteGuard`.',
     '',
-    'Headers tenant en rutas operativas: `X-Codigo-Empresa`, `X-Codigo-Cuenta`, `X-Id-Bodega`.',
+    'Headers tenant en rutas operativas: `X-Codigo-Empresa`, `X-Codigo-Cuenta`, `X-Id-Bodega`. Auth cliente: `x-auth-client` (`wms` | `mateo`; el front envía `X-Auth-Client`).',
+    '',
+    '**Ventas:** crear OV es insert Supabase JS en web; Nest solo lista y `POST /ventas/ordenes/:id/emitir`.',
     '',
     '| Método | Ruta | Estado | Notas |',
     '| --- | --- | --- | --- |',
@@ -273,7 +318,7 @@ export function formatPolariaApiMarkdown() {
     '| POST | `/api/pedido-proveedor` | Notificación pedido a proveedor |',
     '| POST | `/api/evidencia-transporte` | Subida evidencias Cloudinary |',
     '| POST | `/api/operaciones/sync-demora-alertas` | Sync alertas demora |',
-    '| GET | `/api/ventas/productos-catalogo` | Catálogo productos ventas |',
+    '| GET | `/api/ventas/productos-catalogo` | Catálogo venta: kg en almacenamiento + **precio_producto** (vigente) |',
   )
   return lines.join('\n')
 }

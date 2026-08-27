@@ -289,7 +289,10 @@ function DocReaderExperience({ doc, onBackToIndex, initialHeadingId, onInitialHe
   )
 }
 
-const BODEGA_DOC_IDS = new Set(['bodega-frio-v2', 'bodega-frio-documentacion-v20'])
+const BODEGA_DOC_IDS = new Set([
+  'bodega-frio-documentacion-v20',
+  'polaria-wms-mapa-actual',
+])
 
 function DocIndexCard({ doc, onOpen }) {
   const isBodega = BODEGA_DOC_IDS.has(doc.id)

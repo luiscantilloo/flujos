@@ -179,7 +179,7 @@ const sub_doc_auth = {
     {
       id: 'au_sub',
       type: 'process',
-      data: { label: '🟡 Suscribir warehouse_state (Realtime; API inventario pendiente)' },
+      data: { label: '✅ Suscribir warehouse_state (Realtime mapa)' },
     },
     {
       id: 'au_fri',
@@ -247,7 +247,7 @@ const sub_doc_oc = {
     {
       id: 'oc_rec',
       type: 'process',
-      data: { label: '🟡 Recepción: parcialmente_recibida, recibida, cerrada (API pendiente)' },
+      data: { label: '✅ Recepción: parcialmente_recibida, recibida, cerrada (API + web)' },
     },
     {
       id: 'oc_n8n',

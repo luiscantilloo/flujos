@@ -1,43 +1,19 @@
-# Integración bodega externa
+# Bodega externa
 
-Conexión con bodegas de terceros (ej. Fridem) vía scraping, API o CSV.
+A veces el stock no está en tu cámara, sino en un **tercero** (por ejemplo Fridem). Eso no se opera igual que una bodega interna.
 
-## Tipos de integración
+## Qué hace cada uno
 
-| Tipo | Descripción |
-| --- | --- |
-| `scraping` | Lectura automatizada de sistema externo |
-| `api` | Conexión API del proveedor externo |
-| `csv` | Importación plana periódica |
+1. **Operador o admin de cuenta:** en **Bodega externa** → integración, piden la conexión (cómo van a leer el stock: sistema del tercero, archivo, etc.).
+2. **Configurador (TI):** ve el pedido en **Integración**, configura y activa.
+3. Recién ahí se puede consultar. **Todavía no** se opera esa bodega como si fuera propia (el alta automática de stock externo sigue en camino).
 
-## Flujo
+## Qué no esperar
 
-```
-1. Operador cuenta crea solicitud (/dashboard/bodega-externa/integracion)
-2. POST /integracion/solicitudes
-3. Configurador ve bandeja global (/configurador/integracion)
-4. Configurador configura y activa integración
-5. Stock externo visible en operación (según implementación)
-```
+- No vas a hacer picking ahí como en el mapa interno.
+- Los tiempos los pone TI (hacen falta accesos del cliente externo).
 
-## Roles
+## Si se traba
 
-| Acción | Rol |
-| --- | --- |
-| Crear solicitud | operador_cuenta, administrador_cuenta |
-| Atender solicitud | configurador |
-| Ver solicitudes propias | operador_cuenta, administrador_cuenta |
-
-## Estado actual
-
-- ✅ CRUD solicitudes implementado
-- 🟡 Integración Fridem en producción pendiente
-- 🔵 Sync automático stock externo en roadmap
-
-## Preguntas frecuentes (Mateo)
-
-**¿Quién activa la integración?** Solo el configurador (TI Polaria).
-
-**¿Cuánto tarda?** Depende del tipo; scraping/API requiere credenciales del cliente externo.
-
-**¿Puedo operar bodega externa como interna?** Parcialmente; la vinculación es a nivel cuenta, la sync es el paso pendiente.
+- “No se activa sola”: tiene que atenderla el configurador.
+- Operar como interna: no. Pedí bodega interna o esperá la integración.

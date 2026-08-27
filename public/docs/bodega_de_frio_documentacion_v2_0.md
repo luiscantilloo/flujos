@@ -7,16 +7,18 @@
 | Repos | [polaria-wms-web](https://github.com/PolariaTech/polaria-wms-web) · [polaria-wms-api](https://github.com/PolariaTech/polaria-wms-api) · [polaria-wms-db](https://github.com/PolariaTech/polaria-wms-db) |
 | Dev Hub | [flujos](https://flujos-nine.vercel.app) — este portal (Vite + React) |
 | Stack | Next.js · React · TypeScript · NestJS 11 · Prisma · Supabase |
-| Fecha | Jul 2026 |
+| Fecha | Ago 2026 |
 
-> **Estado Polaria WMS — Jul 2026**
-> ✅ Implementado: auth, configuración, compras+recepción, inventario+mapa Realtime, operaciones, procesamiento, ventas, transporte, Mateo widget
-> 🟡 Maduración: Fridem, FEFO completo, observabilidad, CDN widget prod
-> 🔵 Roadmap: API playground, Storybook
+> **Estado Polaria WMS — Ago 2026**
+> ✅ Implementado en API + web + BD: auth, configuración, compras+recepción, inventario+mapa Realtime, operaciones, procesamiento, ventas, transporte, Mateo widget
+> ✅ Precio de venta operativo: tabla `precio_producto` (no el precio de `metadatos_catalogo`)
+> ✅ Schema por empresa `emp_*` (migración 062); cuentas legacy siguen en `public`
+> 🟡 Maduración: observabilidad, FEFO automático completo, Fridem, CDN widget, Prisma de `precio_producto`
+> 🔵 Roadmap: API playground, Storybook, métricas centralizadas
 >
 > **Repos:** [polaria-wms-web](https://github.com/PolariaTech/polaria-wms-web) · [polaria-wms-api](https://github.com/PolariaTech/polaria-wms-api) · [polaria-wms-db](https://github.com/PolariaTech/polaria-wms-db) · [Widget-react](https://github.com/PolariaTech/Widget-react)
 >
-> **Regla:** el Dev Hub documenta diseño objetivo **y** estado real. Lo no implementado se marca explícitamente.
+> **Regla:** el Dev Hub documenta diseño objetivo **y** estado real. Lo no implementado se marca explícitamente. Complemento vivo: [Polaria WMS — mapa actual](/documentacion/polaria-wms-mapa-actual).
 
 ---
 
@@ -27,8 +29,8 @@
 | Subtítulo | Documentación Técnica  ·  V2.0 |
 | Descripción | Sistema de Operación Multi-Rol · Multi-Cuenta · Multi-Bodega |
 | Stack | Next.js  ·  React  ·  TypeScript  ·  Supabase  ·  Cloudinary  ·  n8n |
-| Fecha | Mayo 2026 |
-| Enlaces | github.com/eldani13/frio  ·  frio-phi.vercel.app |
+| Fecha | Mayo 2026 (Word original) · actualizado Ago 2026 |
+| Enlaces | Complemento vivo: [mapa actual](/documentacion/polaria-wms-mapa-actual) |
 
 ---
 
@@ -106,7 +108,7 @@ El **administrador de cuenta no crea la empresa ni las bodegas**; las hereda del
 | Usuarios | Admin cuenta, operador cuenta, roles de bodega | `usuario.codigo_empresa` (login) + `codigo_cuenta` (operación); NULL solo configurador TI |
 | Catálogos | Productos, clientes, proveedores, compradores, camiones, plantas | FK `codigo_cuenta` |
 | Compras / ventas | SOL, OC, OV y líneas | `codigo_cuenta` + bodega |
-| Bodega operativa | `state/main` | Por `warehouseId` del tenant |
+| Bodega operativa | `warehouse_state` (tabla + Realtime; diseño V2 decía `state/main`) | Por `id_bodega` del tenant |
 | Procesamiento / transporte / historial | Igual que antes | Scoped al tenant |
 
 El **administrador de cuenta** opera **dentro del tenant** que le asignó el configurador. La **empresa** agrupa tenants a nivel comercial y de contrato; el **aislamiento operativo** en RLS es por `codeCuenta` (y por bodega cuando aplica).
@@ -120,7 +122,7 @@ El **administrador de cuenta** opera **dentro del tenant** que le asignó el con
 | Dashboard | 12 posiciones fijas | Dashboard dinámico multi-rol con cola operativa |
 | Procesamiento | Lógica básica de transformación. | Balance de Masa Absoluto (Coproducto, Subproducto, Merma, Remanente). |
 | Ingreso | Registro manual contra OC. | Conciliación Ciega y validación de temperatura con sensores. |
-| Mapa de Bodega | Visualización de slots y ocupación. | Locking en tiempo real (evita duplicidad) y lógica FEFO automática. |
+| Mapa de Bodega | Visualización de slots y ocupación. | Locking en tiempo real (evita duplicidad). FEFO automático en **todas** las salidas: 🔵 pendiente. |
 | Transporte | Registro de viaje TV-#### básico. | Salida Cruzada (Validación de peso) y evidencias GPS/Firma obligatorias. |
 
 ## 3. Stack Tecnológico
@@ -157,7 +159,7 @@ El **administrador de cuenta** opera **dentro del tenant** que le asignó el con
 - **RLS (Row Level Security):** políticas por `codigo_cuenta` y, en bodega, por `id_bodega` vía asignación.
 - **Storage:** firmas y adjuntos de recepción (opcional si no van solo a Cloudinary).
 - **Realtime:** canales acotados por bodega; payload de `warehouse_state` acotado por diseño.
-- **FCM / push (propuesto):** alertas de temperatura a operarios.
+- **Notificaciones push (propuesto):** alertas de temperatura a operarios.
 
 ```text
 Cloudinary (API)
@@ -174,61 +176,28 @@ Almacenamiento y optimización de las evidencias fotográficas del transporte.
 
 > **Nombres legacy:** `frio-frontend` → `polaria-wms-web` · `frio-backend` → `polaria-wms-api`
 
+Estructura **real** (ago 2026) — repos `polaria-wms-web` / `polaria-wms-api` / `polaria-wms-db`:
+
 ```text
-polaria-wms-web/
-├── app/                        # Next.js App Router
-│   ├── (auth)/                 # Rutas de login y recuperación
-│   ├── (dashboard)/            # Vistas principales por rol
-│   │   ├── ingreso/            # Módulo de Ingreso de mercancía
-│   │   ├── mapa/               # Mapa interactivo de slots
-│   │   ├── procesamiento/      # Módulo de transformación
-│   │   └── transporte/         # Flujo para conductores y viajes
-│   ├── components/             # UI Components (SlotCard, Modal, etc.)
-│   ├── context/                # AuthContext (Sesión y Cuenta)
-│   ├── hooks/                  # useWarehouse (Suscripción real-time)
-│   └── services/               # Clientes API → polaria-wms-api
-├── public/
-├── styles/                     # Tailwind CSS 4
-└── lib/                        # Supabase client, schemas
-polaria-wms-api/
-├── src/
-│   ├── main.ts                 # Punto de entrada y Swagger
-│   ├── app.module.ts           # Módulo raíz
-│   ├── common/                 # Elementos transversales
-│   │   ├── decorators/         # @Roles, @CurrentUser
-│   │   ├── guards/             # AuthGuard (Valida Supabase Token)
-│   │   ├── interceptors/       # StripInterceptor (Limpia undefined)
-│   │   └── pipes/              # Validación de datos
-│   ├── Supabase/               # Configuración Supabase Admin SDK
-│   │   ├── Supabase.module.ts
-│   │   └── Supabase.service.ts # Métodos saveWarehouseState, etc.
-│   └── modules/                # Módulos de dominio modularizados
-│       ├── ingreso/            # Lógica de recepción y OC
-│       ├── inventario/         # Gestión de slots y Locking
-│       ├── ventas/             # OV, FEFO, despacho
-│       ├── procesamiento/      # Solicitudes, merma, balance
-│       └── configuracion/      # Empresas, tenants, catálogos (plataforma + cuenta)
-PostgreSQL (Supabase) — rutas lógicas V2 /
-├── empresas/                   # Cliente jurídico del SaaS
-│   └── {codigoEmpresa}/        # ← El configurador crea la empresa primero
-├── tenants/                    # Cuenta operativa (pertenece a una empresa)
-│   └── {codeCuenta}/           # ← Luego el tenant bajo codigoEmpresa
-│       ├── config              # Metadatos del tenant (nombre, activa, reglas)
-│       ├── catalogo/           # Productos de ESTE tenant
-│       ├── clientes/           # Clientes comerciales del tenant
-│       ├── providers/          # Proveedores del tenant
-│       ├── compradores/        # Destinos OV del tenant
-│       ├── ordenesCompra/      # OC del tenant
-│       ├── ordenesVenta/       # OV del tenant
-│       └── solicitudesCompra/  # SOL del tenant
-├── warehouses/                 # Bodegas (cada una con codeCuenta del tenant)
-│   └── {warehouseId}/
-│       ├── state/
-│       │   └── main            # Slots, boxes y alertas en vivo [cite: 403, 404]
-│       └── history/            # Historial de movimientos y mermas
-├── usuarios/                   # Perfiles operativos y roles
-└── systemCounters/             # Contadores globales (ej. Viajes TV-####)
+polaria-wms-web/src/
+├── app/(auth)/login, auth/sso
+├── app/(shell)/configurador/…          # plataforma TI
+├── app/(shell)/dashboard/…             # operación por rol
+│   ├── compras, ingreso, ventas, procesamiento, mapa, transporte
+│   ├── custodio/, operario/, procesador/, jefe-bodega/, administrador-bodega/
+│   └── administracion/catalogo + asignacion-creacion
+├── app/api/                            # route handlers (n8n, catálogo venta, evidencias)
+└── modules/                            # auth, sales, purchases, inventory, mateo host, …
+polaria-wms-api/src/modules/
+├── auth, configurator, configuracion, purchases, inventory
+├── operations, processing, sales, transport, integration, mateo-widget
+polaria-wms-db/migrations/              # 001–066 (precio_producto, emp_*, mateo_support)
+Widget-react/                           # IIFE mateo-widget.js (Shadow DOM)
 ```
+
+Árbol detallado en el Dev Hub: [Estructura del proyecto](/estructura-proyecto).
+
+> Las rutas lógicas tipo `empresas/{codigoEmpresa}/tenants/{codeCuenta}/…` son **modelo mental V2**, no carpetas de archivos. En Postgres: tablas 3NF + schema `emp_*` por empresa (migración 062).
 
 #### Flujo de datos (lectura vs escritura)
 
@@ -251,10 +220,10 @@ EXCEPCIONES (secretos)
 
 | Capa | Qué es | Uso |
 | --- | --- | --- |
-| **Tablas 3NF** | `empresa`, `cuenta`, catálogos, SOL/OC/OV, `slot`, `caja`, … | Contratos, reportes, auditoría, integridad referencial |
-| **`warehouse_state` (jsonb)** | Vista agregada `state/main` por bodega | Inventario en vivo, Realtime, locking entre operarios |
+| **Tablas 3NF** | `empresa`, `cuenta`, catálogos, SOL/OC/OV, `ubicacion`, `lote`, … | Contratos, reportes, auditoría, integridad referencial |
+| **`warehouse_state`** | Fila de stock en vivo por posición (no es un JSON único `state/main`) | Inventario en vivo, Realtime, lock/unlock entre operarios |
 
-Regla: el jsonb es la **proyección operativa** del mapa; las entidades 3NF son la **descomposición lógica** y el destino de reportes. Implementación debe evitar que ambas capas diverjan sin reconciliación.
+Regla de diseño V2 hablaba de un jsonb `state/main`. **En código (ago 2026)** el mapa vive en la tabla `warehouse_state` (3NF + Realtime). `metadatos_catalogo` en producto es JSON de catálogo/SEO; el precio de venta no va ahí.
 
 #### Seguridad de datos — RLS híbrido (polaria-wms-db · TENANT-RLS)
 
@@ -289,6 +258,8 @@ n8n Webhook (Alertas)
 WhatsApp/Email (SLA)
 ```
 
+**Mateo Support (ago 2026):** widget embebido en el shell autenticado (`MateoWidgetHost`). Dos tokens: JWT n8n (`POST /auth/mateo/widget-token`, ~300s) e historial Bearer WMS (`/mateo/conversaciones`). Tablas en schema `mateo_support`. Manual: `/manual-usuario/proceso-mateo`. Referencia: `/referencia/mateo/bodega-frio`.
+
 ## 5. Roles y Permisos
 
 | Rol | Acceso Principal | Acciones Permitidas |
@@ -297,7 +268,7 @@ WhatsApp/Email (SLA)
 | configurador | Plataforma SaaS (TI) | **Crear empresas** y **tenants** (`codeCuenta`), bodegas, primer admin; no opera mercancía |
 | administrador_cuenta | Tenant (`codeCuenta`) | Usuarios, catálogos, OC/OV de su tenant |
 | operador_cuenta | Tenant | SOL, OC, OV, solicitudes de procesamiento |
-| administrador_bodega / jefe_bodega / custodio / operario / procesador / transportista | Bodega del tenant | Operación física y `state/main` (asignación por bodega) |
+| administrador_bodega / jefe_bodega / custodio / operario / procesador / transportista | Bodega del tenant | Operación física y `warehouse_state` (asignación por bodega) |
 | operadorCuentas | *(legacy V1)* | Alias histórico de operador de cuenta — ver `operador_cuenta` |
 | transporte | Viajes | Registrar entregas, evidencia fotográfica, cierre de viaje |
 
@@ -328,11 +299,11 @@ PASO B — Administrador de cuenta (handoff TI → cliente)
 
 Checklist de cierre (configurador):
 
-- [ ] Existe `empresas/{codigoEmpresa}/` activa
-- [ ] Existe `tenants/{codeCuenta}/config` con FK a esa empresa
-- [ ] Al menos una bodega con el mismo `codeCuenta`
+- [ ] Existe `empresa` activa (`codigo_empresa`)
+- [ ] Existe `cuenta` (`codigo_cuenta`) con FK a esa empresa
+- [ ] Al menos una bodega con el mismo `codigo_cuenta`
 - [ ] Administrador de cuenta puede iniciar sesión y solo ve su tenant
-- [ ] Ningún recurso operativo sin `codeCuenta` (salvo usuarios de plataforma)
+- [ ] Ningún recurso operativo sin `codigo_cuenta` (salvo usuarios de plataforma)
 
 > **Mejora Propuesta V2.0: Wizard: paso 1 Empresa → paso 2 Tenant → paso 3 Bodegas → paso 4 Admin cuenta → paso 5 Catálogo mínimo.**
 
@@ -359,8 +330,8 @@ Abrir app
                        → ¿Válida? → NO → Reintento
                        → SÍ → Cargar perfil (rol, empresa, tenant, permisos)
 ↓
-¿Bodega interna? → SÍ → Suscribir warehouses/{id}/state/main
-                 → NO → Consultar inventario Fridem
+¿Bodega interna? → SÍ → Suscribir warehouse_state (Realtime Supabase)
+                 → NO → Consultar inventario Fridem (si aplica)
 ↓
 Dashboard según rol (cualquier rol de la empresa)
 ```
@@ -409,7 +380,7 @@ Estados de slots:
 | reservado | Asignado a orden de salida |
 | en_proceso | Mercancía en procesamiento |
 
-> **Mejora Propuesta V2.0: Implementar mapa visual interactivo de la bodega (plano de slots) donde el operario pueda hacer clic directamente sobre el slot destino para confirmar el movimiento.**
+> **Ago 2026:** el mapa interactivo y el lock de slots **ya están**. Esta “mejora” del Word original quedó implementada.
 
 ### 6.6 Procesamiento (Primario y Secundario)
 
@@ -428,16 +399,23 @@ Actualizar estado de solicitud a 'Terminado'
 
 ### 6.7 Salidas y Ventas
 
-**Responsable: Jefe / Custodio / OperadorCuentas**
+**Responsable: operador_cuenta / admin_cuenta (emitir) · jefe_bodega / custodio / operario (piso)**
+
+Estados reales de OV: `borrador` → `confirmada` → `en_preparacion` → `parcialmente_despachada` → `despachada` / `cancelada`.
+
+**Implementación ago 2026**
+
+1. Crear OV borrador = insert Supabase JS en web (`createOrdenVenta`). **No hay** `POST /ventas/ordenes` en Nest.
+2. Precio del picker y `precio_unitario` = tabla **`precio_producto`** (última `fecha_aplicacion` por producto). No usar `metadatos_catalogo.precio`. Sin fila → `$0`.
+3. Emitir = `POST /ventas/ordenes/:id/emitir` → reserva stock, OT y tareas de picking.
+4. Custodio arma paquete de despacho; transportista registra entrega + evidencias.
 
 ```text
-Estados de Orden de Venta:
-Borrador → Confirmada → En preparación → En transporte → Cerrado(ok) / Cerrado(no ok)
-Generación de Orden de Venta (OV) con líneas: producto, cantidad, comprador, destino
-Custodio cartoniza / ingresa mercancía contra OV
-Sistema valida disponibilidad en slots
-Si hay stock: Crear viaje de transporte (TV-####)
-Asignar camión y conductor
+OV borrador (web/Supabase)
+  → emitir (API) reserva warehouse_state
+  → picking / zona salida
+  → paquete despacho + viaje
+  → evidencia Cloudinary
 ```
 
 ### 6.8 Transporte y Evidencia
@@ -520,9 +498,11 @@ En el modelo 3NF del Dev Hub: **`empresa`** agrupa contratos; **`cuenta`** es el
 | Usuario operativo | `usuario` · `usuarios/{uid}` | `codigo_cuenta` (vacío si configurador) |
 | Rol en bodega | `asignacion_bodega` | `id_usuario` + `id_bodega` + `id_rol` |
 | Catálogo / OC / OV / SOL | tablas `producto`, `orden_compra`, … | `codigo_cuenta` |
-| Inventario en vivo | `warehouse_state` · `state/main` | `id_bodega` → tenant |
+| Inventario en vivo | `warehouse_state` (tabla Postgres + Realtime) | `id_bodega` → tenant |
 
-#### Colecciones Principales (vista documento / Firestore histórico)
+> **Ago 2026:** `state/main` del Word es el modelo mental V2. En producción el mapa es la tabla `warehouse_state` (una fila por posición). Schema por empresa: `emp_*`. Precio de venta: `precio_producto`.
+
+#### Colecciones lógicas (modelo mental V2, no el esquema Postgres)
 
 ```text
 empresas/{codigoEmpresa}/      ← Empresa; el configurador la crea primero
@@ -538,7 +518,9 @@ usuarios/                      → Perfiles; codigo_cuenta indica la empresa
 systemCounters/              → Contadores (ej. TV-####)
 ```
 
-#### Estructura del Estado Principal (state/main)
+#### Estructura del Estado Principal (diseño V2 `state/main`)
+
+> Esquema histórico del documento Word. **Implementado:** tabla `warehouse_state` + Realtime. No hay documento JSON único por bodega.
 
 ```json
 {
@@ -557,7 +539,7 @@ inboundBoxes: BoxRecord[],               // Zona de ingreso
 }
 ```
 
-> **Mejora Propuesta V2.0: Separar el historial en subcolecciones paginadas por mes para evitar documentos con payload excesivo. Implementar reglas de seguridad PostgreSQL (Supabase) granulares por rol y por codeCuenta.**
+> **Ago 2026:** RLS por `codigo_cuenta` + guards Nest **ya están**. El historial no es un documento JSON único: tablas 3NF + Realtime de Supabase.
 
 ## 8. API — polaria-wms-api
 
@@ -565,58 +547,50 @@ Fuente: [github.com/PolariaTech/polaria-wms-api](https://github.com/PolariaTech/
 
 Swagger: `GET /api/docs` · OpenAPI: `GET /api/docs-json`
 
-Guards: `JwtAuthGuard`, `TenantGuard`, `RolesGuard` · Header opcional: `x-auth-client: wms | mateo`
+Guards: `JwtAuthGuard`, `TenantGuard`, `RolesGuard` · escrituras sensibles: `SensitiveWriteGuard`.  
+Headers tenant: `X-Codigo-Empresa`, `X-Codigo-Cuenta`, `X-Id-Bodega`.  
+Header cliente: `x-auth-client` / `X-Auth-Client` (`wms` \| `mateo`).
 
-### ✅ Implementado
+Lista viva de endpoints: Referencia → [API y endpoints](/referencia/api/bodega-frio).
+
+### Auth (web y Nest coinciden)
 
 | Método | Ruta | Notas |
 | --- | --- | --- |
-| GET | `/` | Health check |
-| POST | `/auth/prelogin` | platform \| tenant |
-| POST | `/auth/login` | JWT + contexto |
-| POST | `/auth/mateo-handoff` | Bearer · SSO → Mateo |
-| POST | `/auth/mateo-exchange` | Canje SSO |
-| GET | `/auth/me` | Perfil sesión |
+| POST | `/auth/prelogin` | Valida empresa + usuario |
+| POST | `/auth/login` | JWT Supabase + contexto |
+| POST | `/auth/mateo-handoff` | Bearer · código SSO 60s |
+| POST | `/auth/mateo/widget-token` | JWT widget n8n ~300s |
+| POST | `/auth/mateo-exchange` | Canje código SSO |
+| GET | `/auth/me` | Perfil + `idBodegas[]` |
 | POST | `/auth/logout` | 204 |
-| POST | `/configurador/usuarios` | Rol configurador |
-| POST | `/administracion/usuarios` | administrador_cuenta (tenant JWT) |
-| POST | `/configuracion/bodegas` | configurador \| admin cuenta |
-| POST | `/configuracion/bodegas/:idBodega/bootstrap-layout` | Layout bodega interna |
-| POST | `/compras/solicitudes` | Crear SOL |
-| GET | `/compras/solicitudes` | Listar SOL |
-| GET | `/compras/solicitudes/:id` | Detalle SOL |
-| PATCH | `/compras/solicitudes/:id` | Editar borrador |
-| POST | `/compras/solicitudes/:id/enviar-aprobacion` | |
-| POST | `/compras/solicitudes/:id/aprobar` | |
-| POST | `/compras/solicitudes/:id/rechazar` | |
-| POST | `/compras/solicitudes/:id/cancelar` | |
-| POST | `/compras/solicitudes/:id/convertir-oc` | SOL → OC |
-| POST | `/compras/ordenes` | Crear OC |
-| GET | `/compras/ordenes` | Listar OC |
-| GET | `/compras/ordenes/:id` | Detalle OC |
-| POST | `/compras/ordenes/:id/emitir` | borrador → emitida |
-| POST | `/compras/ordenes/:id/cancelar` | |
-| POST | `/integracion/solicitudes` | operador \| admin cuenta |
-| GET | `/integracion/solicitudes` | Tenant |
-| GET | `/configurador/integracion/solicitudes` | Bandeja configurador |
 
-### Módulos NestJS
+### Módulos NestJS (ago 2026)
 
-| Módulo | Estado |
-| --- | --- |
-| auth, configurator, configuracion, purchases, integration | ✅ |
-| inventory, processing, sales, transport, warehouses | 🟡 placeholder (schema BD listo) |
+| Carpeta | Prefijo | Estado |
+| --- | --- | --- |
+| auth | `/auth` | ✅ |
+| configurator | `/configurador/usuarios`, `/administracion/usuarios` | ✅ |
+| configuracion | `/configuracion/bodegas`, `/empresas`, `/cuentas` | ✅ POST + PATCH empresas |
+| purchases | `/compras/*` | ✅ SOL, OC, recepción |
+| inventory | `/inventario/warehouse-state`, `/movimientos` | ✅ lock/unlock |
+| operations | `/operaciones/*` | ✅ OT, tareas, alertas, presencia |
+| processing | `/procesamiento/solicitudes` | ✅ merma + OT post-cierre |
+| sales | `/ventas/ordenes` | ✅ GET + emitir (crear OV es Supabase JS) |
+| transport | `/transporte` | ✅ paquetes-despacho, entregas |
+| integration | `/integracion/solicitudes` | ✅ + bandeja configurador |
+| mateo-widget | `/mateo/conversaciones` | ✅ Bearer sesión WMS |
+| accounts, audit, files, health, notifications, settings, users, warehouses | — | 🔵 stubs README, sin producto |
 
-### 🔵 Pendiente (diseño V2)
+### Web — route handlers Next (`polaria-wms-web`)
 
-Recepción compra (`parcialmente_recibida`, `recibida`, `cerrada`), inventario/locking, procesamiento, ventas OV, transporte TV, alertas, cola operativa.
-
-### Web — route handlers legacy
-
-| Ruta | Estado |
-| --- | --- |
-| `POST /api/solicitud-compra` (n8n) | 🟡 parcial en polaria-wms-web |
-| `POST /api/evidencia-transporte` (Cloudinary) | 🔵 diseño |
+| Método | Ruta | Estado |
+| --- | --- | --- |
+| GET | `/api/ventas/productos-catalogo` | ✅ stock almacenamiento + `precio_producto` |
+| POST | `/api/solicitud-compra` | ✅ webhook n8n |
+| POST | `/api/pedido-proveedor` | ✅ |
+| POST | `/api/evidencia-transporte` | ✅ Cloudinary |
+| POST | `/api/operaciones/sync-demora-alertas` | ✅ |
 
 ## 9. Integración con Servicios Externos
 
@@ -647,71 +621,73 @@ Definir CLOUDINARY_EVIDENCIA_FOLDER para organizar archivos por bodega o cuenta
 
 ## 10. Variables de Entorno
 
-- Crear .env.local en la raíz del proyecto:
+Valores reales en repos (ago 2026). Solo variables **Supabase**, Nest, Cloudinary, n8n y Mateo.
 
-#### Supabase Principal
-
-```text
-NEXT_PUBLIC_Supabase_API_KEY=
-NEXT_PUBLIC_Supabase_AUTH_DOMAIN=
-NEXT_PUBLIC_Supabase_PROJECT_ID=
-NEXT_PUBLIC_Supabase_STORAGE_BUCKET=
-NEXT_PUBLIC_Supabase_MESSAGING_SENDER_ID=
-NEXT_PUBLIC_Supabase_APP_ID=
-NEXT_PUBLIC_WAREHOUSE_ID=default
-```
-
-#### Fridem (Bodega Externa)
+#### polaria-wms-web (`.env.local`)
 
 ```text
-NEXT_PUBLIC_FRIDEM_API_KEY=
-NEXT_PUBLIC_FRIDEM_AUTH_DOMAIN=
-NEXT_PUBLIC_FRIDEM_PROJECT_ID=
-NEXT_PUBLIC_FRIDEM_DATABASE_URL=
+NEXT_PUBLIC_API_URL=
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_MATEO_WIDGET_SCRIPT_URL=/assets/mateo-widget.js
 ```
 
-#### Cloudinary
+Opcionales: `N8N_WEBHOOK_*` (SOL / pedido proveedor), `CLOUDINARY_*` (evidencias transporte).
 
-```bash
-# Opción A (recomendada):
-CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@CLOUD_NAME
-# Opcionales:
-CLOUDINARY_UNSIGNED_UPLOAD_PRESET=
-CLOUDINARY_EVIDENCIA_FOLDER=evidencia-transporte
-```
-
-#### n8n / Integración Proveedores
+#### polaria-wms-api
 
 ```text
-PEDIDO_PROVEEDOR_DOCUMENT_ID=
-PEDIDO_PROVEEDOR_WEBHOOK_URL=
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+DATABASE_URL=          # Postgres directo Prisma (bypass RLS)
+MATEO_HANDOFF_SECRET=
+MATEO_WIDGET_JWT_SECRET=
+MATEO_WIDGET_JWT_ISSUER=
+MATEO_ALLOWED_ORIGINS=
+PORT=3000
 ```
+
+#### Widget-react
+
+```text
+VITE_N8N_WEBHOOK_URL=
+VITE_CLOUDINARY_CLOUD_NAME=
+VITE_CLOUDINARY_UPLOAD_PRESET=
+```
+
+Fridem (bodega externa, solo lectura) sigue siendo opcional. Lista completa: Referencia → Variables de entorno.
 
 ## 11. Mejoras Propuestas para V2.0
 
 ### 11.1 Seguridad y Autenticación
 
-Reglas PostgreSQL (Supabase) granulares por rol y codeCuenta Sesiones con refresh token automático y expiración configurable Auditoría de acciones críticas (quién, qué, cuándo) en colección auditLog Soporte SSO / Google Workspace para organizaciones
+✅ RLS por `codigo_cuenta` + guards Nest + `security_event` (053).  
+🔵 Pendiente: SSO Google Workspace, auditoría inmutable completa, refresh/revocación avanzada.
 
 ### 11.2 Operación
 
-Mapa visual interactivo de slots en bodega (arrastrar/soltar) Lectura de códigos de barras / QR para ingreso y despacho rápido Notificaciones push en tiempo real (Supabase Cloud Messaging) Geolocalización de camiones durante viajes activos
+✅ Mapa en vivo, lock de slots, FEFO parcial en salidas, evidencias Cloudinary.  
+🔵 Pendiente: QR/barcode end-to-end, push FCM, GPS de camión, FEFO automático en todas las salidas.
 
 ### 11.3 IoT y Temperatura
 
-Integración con sensores de temperatura vía MQTT → Supabase Realtime DB Alertas automáticas por temperatura fuera de rango con historial de lecturas por slot Dashboard de temperatura en tiempo real por zona de bodega
+🔵 Roadmap. No hay MQTT ni dashboard de temperatura por slot en producción.
 
 ### 11.4 Datos y Reportería
 
-KPIs en tiempo real: % ocupación de bodega, % merma, on-time delivery, rotación Reportes programados por email (diario/semanal/mensual) Subcolecciones de historial paginadas por mes Exportación de certificados de calidad por lote procesado
+✅ Embed MIT (`cuenta_reporte_embed`).  
+🔵 Pendiente: KPIs centralizados, reportes email programados, certificados de calidad por lote.
 
 ### 11.5 Integraciones
 
-Módulo de cotización comparativa entre proveedores con historial de precios Integración con ERP existente del cliente vía API REST Firma electrónica legalmente válida para documentos de entrega Notificaciones automáticas al comprador cuando su pedido es despachado
+✅ n8n (pedidos + Mateo).  
+🔵 Pendiente: cotización comparativa, ERP, firma electrónica legal, notificación automática al comprador al despachar.
 
 ### 11.6 Técnico / Mantenibilidad
 
-Refactorizar BodegaDashboard.tsx extrayendo hooks por dominio Cobertura de tests unitarios con Vitest para servicios críticos CI/CD con validación de tipos TypeScript y linting en cada PR Documentación de API con OpenAPI/Swagger para las rutas internas
+✅ Swagger en `/api/docs`, tests Jest/Vitest, módulos por dominio.  
+🔵 Pendiente: Storybook, API playground, métricas centralizadas, Prisma de `precio_producto`.
 
 ## 12. Guía de Instalación y Despliegue
 
@@ -867,63 +843,85 @@ Persona responsable de la recepción y despacho físico de mercancía en bodega.
 | Merge (PostgreSQL (Supabase)) | Operación que actualiza solo los campos especificados sin sobreescribir el resto. |
 | RBAC | Control de acceso basado en roles que determina qué recursos puede ver y usar cada usuario. |
 | IoT | Red de dispositivos físicos conectados a internet que transmiten datos automáticamente. |
-| FCM | Supabase Cloud Messaging — servicio para enviar notificaciones push a dispositivos. |
+| Push | Notificaciones a dispositivos. **No implementado** (roadmap). |
 | PWA | Progressive Web App — aplicación web instalable con capacidades offline y notificaciones push. |
 | SSR | Server-Side Rendering — el servidor genera el HTML antes de enviarlo al navegador. |
 | CDN | Content Delivery Network — red global de servidores para servir archivos con baja latencia. |
 | KPI | Key Performance Indicator — métricas cuantificables que miden el desempeño de un proceso. |
 | MQTT | Protocolo de mensajería ligero para IoT con modelo publicador/suscriptor. |
-| Documentación V2.0  ·  Polaria WMS  ·  Jul 2026 | [PolariaTech](https://github.com/PolariaTech) · Dev Hub [flujos](https://flujos-nine.vercel.app) |
+| precio_producto | Tabla de precio de venta ($/kg). Vigente = `fecha_aplicacion` más reciente. No es `metadatos_catalogo`. |
+| emp_* | Schema Postgres por empresa (migración 062). Legacy permanece en `public`. |
+| JWT widget | Token ~300s (`POST /auth/mateo/widget-token`) para n8n. Distinto del Bearer de sesión WMS. |
+| mateo_support | Schema de `widget_conversacion` / `widget_mensaje`. Vistas `public.widget_*` (064) para Prisma. |
+| Documentación V2.0  ·  Polaria WMS  ·  Ago 2026 | [PolariaTech](https://github.com/PolariaTech) · Dev Hub [flujo](https://flujos-nine.vercel.app) |
 
 ---
 
-## Anexo — Actualización Jul 2026 (sincronizado con repos)
+## Anexo — Actualización Ago 2026 (sincronizado con repos)
 
-Este anexo resume lo implementado desde la redacción original (mayo 2026) según revisión de los cuatro repositorios del producto.
+Sustituye el anexo de jul 2026. Fuente: código de web, API, db y Widget-react. Detalle de rutas: [Polaria WMS — mapa actual](/documentacion/polaria-wms-mapa-actual).
 
 ### Repositorios del ecosistema
 
 | Repo | Stack | Rol |
 | --- | --- | --- |
-| polaria-wms-web | Next.js 16, React 19, TS 5 | UI multi-rol, lecturas Supabase + Realtime |
-| polaria-wms-api | NestJS 11, Prisma 7 | Escrituras, reglas de negocio, guards tenant |
-| polaria-wms-db | PostgreSQL / Supabase | 52 migraciones, RLS híbrido |
-| Widget-react | Vite, React 19 | Mateo Support embebido en WMS |
+| polaria-wms-web | Next.js 16, React 19, TS | UI multi-rol, lecturas Supabase + Realtime |
+| polaria-wms-api | NestJS 11, Prisma 7 (43 modelos) | Escrituras, reglas, guards tenant |
+| polaria-wms-db | PostgreSQL / Supabase | Migraciones **001–066**, RLS híbrido, `emp_*` |
+| Widget-react | Vite, React 19 | Mateo Support embebido (IIFE + Shadow DOM) |
+| flujo | Vite, React | Este Dev Hub |
+| polaria-ui-runner | Playwright | Simulaciones internas (no es producto) |
 
 ### Módulos implementados (antes marcados pendientes)
 
 | Módulo | Estado | Notas |
 | --- | --- | --- |
-| Recepción compra | ✅ | `POST /compras/recepciones/ordenes/:id/cerrar` |
-| Inventario / mapa | ✅ | Realtime POL-141/182, lock/unlock POL-6 |
+| Recepción compra | ✅ | Cierre OC → lote + `warehouse_state` |
+| Inventario / mapa | ✅ | Realtime `warehouse_state`, lock/unlock |
 | Operaciones bodega | ✅ | OT, tareas, alertas, llamada jefe, presencia |
-| Procesamiento frío | ✅ | Flujo E2E primario→secundario + merma |
-| Ventas OV | ✅ | Emitir + reserva stock + OT salida |
-| Transporte | ✅ | Paquete despacho + entregas + Cloudinary |
-| Mateo widget | ✅ | POL-137 embed, conversaciones 051–052 |
+| Procesamiento frío | ✅ | Primario→secundario + merma + OT post-cierre |
+| Ventas OV | ✅ | Crear = Supabase JS; emitir = `POST /ventas/ordenes/:id/emitir` |
+| Precio de venta | ✅ | Tabla `precio_producto` (066). Sin Prisma aún |
+| Transporte | ✅ | Paquetes despacho + entregas + Cloudinary |
+| Mateo widget | ✅ | Embed + 2 tokens + historial `mateo_support` |
+| Schema por empresa | ✅ | `emp_*` + `wms_tenant_tables` (062) |
+| Reportería MIT | ✅ | `cuenta_reporte_embed` |
 | Módulos por rol web | ✅ | custodio, operario, procesador, jefe-bodega, admin-bodega |
 
-### Roles y pantallas home
+### Auth y Mateo (contrato real)
 
-| Rol | Destino al login |
+| Uso | Ruta |
+| --- | --- |
+| Prelogin / login | `POST /auth/prelogin`, `/auth/login` |
+| SSO | `POST /auth/mateo-handoff` → `/auth/mateo-exchange` |
+| Chat n8n | `POST /auth/mateo/widget-token` (JWT ~300s) |
+| Historial chat | `/mateo/conversaciones` (Bearer WMS) |
+
+Header: `X-Auth-Client: wms \| mateo`.
+
+### Roles y pantallas (rutas actuales)
+
+| Rol | Destino típico |
 | --- | --- |
 | configurador | `/configurador` |
-| administrador_cuenta | Panel administración |
-| operador_cuenta | Hub operador |
-| administrador_bodega | `/administrador-bodega/estado-bodega` |
-| jefe_bodega | `/jefe-bodega/estado-bodega` |
-| custodio | `/custodio/ingreso` |
-| operario | `/operario/operacion` |
-| procesador | `/procesador/operacion` |
-| transportista | `/transporte` |
+| administrador_cuenta | `/dashboard/administracion/…` |
+| operador_cuenta | `/dashboard/compras`, `/dashboard/ventas` |
+| administrador_bodega | `/dashboard/administrador-bodega/estado-bodega` |
+| jefe_bodega | `/dashboard/jefe-bodega/estado-bodega` |
+| custodio | `/dashboard/custodio/ingreso` |
+| operario | `/dashboard/operario/operacion` |
+| procesador | `/dashboard/procesador/operacion` |
+| transportista | `/dashboard/transporte` |
 
-### Documentación de testing
+### Tablas que no estaban en el Word V2
 
-Ver referencia Dev Hub: `/referencia/testing/bodega-frio` — suites e2e API, scripts RLS y casos QA críticos.
+`precio_producto`, `widget_conversacion`, `widget_mensaje` (`mateo_support`), `sesion_operativa`, `wms_tenant_tables`, `cuenta_reporte_embed`, `security_event`. Prisma 43 modelos (40 núcleo + sesión + 2 widget). `precio_producto` solo Postgres.
 
-### Manual de usuario (Mateo Support)
+### Manual y testing en este Dev Hub
 
-Nuevo en Dev Hub: `/manual-usuario` — 9 manuales por rol + 7 procesos + FAQ y glosario rápido.
+- Manual: `/manual-usuario` (roles, procesos, Mateo, glosario)
+- Testing: Referencia → Testing
+- Modelo de datos: `/arquitectura` y `/referencia/database/bodega-frio`
 
 ### Pendiente / roadmap
 
@@ -931,4 +929,5 @@ Nuevo en Dev Hub: `/manual-usuario` — 9 manuales por rol + 7 procesos + FAQ y 
 - FEFO automático en todas las salidas
 - Validación JWT en n8n (POL-71)
 - CDN estable `mateo-widget.js`
+- Modelo Prisma de `precio_producto`
 - Observabilidad centralizada

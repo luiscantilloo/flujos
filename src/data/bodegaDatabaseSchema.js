@@ -43,19 +43,19 @@ usuarios/ → admin cuenta y roles (pertenencia por codigo_empresa en login V2)`
 
 export const SCHEMA_META = {
   title: 'Modelo de datos — Polaria WMS',
-  subtitle: '40 modelos Prisma · scope C / C+B · RLS híbrido',
-  version: '5.1-supabase',
+  subtitle: '43 modelos Prisma + precio_producto en Postgres · scope C / C+B · emp_*',
+  version: '5.2-supabase',
   legacySubtitle: 'Bodega de Frío (referencia diseño V2)',
   rootEntity: 'rol',
   docId: V20_DOC_ID,
   product: POLARIA_WMS.productName,
-  prismaModelCount: 40,
+  prismaModelCount: 43,
   repos: POLARIA_WMS.repos,
   engine: 'Supabase PostgreSQL + Realtime + Prisma (API)',
   normalization: '3NF + warehouse_state',
   notes: [
-    'Alineado a polaria-wms-api/prisma/schema.prisma (40 modelos). Dev Hub distingue ✅ implementado vs 🔵 diseño.',
-    'Scope C = codigo_cuenta; C+B = codigo_cuenta + id_bodega.',
+    'Alineado a polaria-wms-api/prisma/schema.prisma (43 modelos: 40 núcleo + SesionOperativa + WidgetConversacion + WidgetMensaje). precio_producto está en Postgres (066) sin modelo Prisma aún.',
+    'Scope C = codigo_cuenta; C+B = codigo_cuenta + id_bodega. Schema por empresa emp_* (062); legacy en public.',
     'Escrituras sensibles vía polaria-wms-api (Prisma bypass RLS); lecturas web con supabase-js + JWT.',
     'Fuente: polaria-wms-db migrations + prisma/schema.prisma. Auth en auth.users (Supabase).',
     'Onboarding: POST /configuracion/bodegas (no insert browser). Integración: solicitud_integracion.',
@@ -135,10 +135,11 @@ export const SCHEMA_DOMAINS = [
   { id: 'warehouse', label: 'FASE 7 · Bodega en vivo', color: 'cyan', order: 4 },
   { id: 'processing', label: 'FASE 8 · Procesamiento', color: 'fuchsia', order: 5 },
   { id: 'sales', label: 'FASE 9 · Ventas y transporte', color: 'amber', order: 6 },
+  { id: 'support', label: 'FASE 10 · Mateo Support y precios', color: 'teal', order: 8 },
   { id: 'system', label: 'FASE 9 · Contadores y auditoría', color: 'slate', order: 7 },
 ]
 
-/** 40 tablas public.* — sincronizado con polaria-wms-db + Supabase */
+/** 40 tablas public.* núcleo Prisma + extras en EXTRA_DATABASE_TABLES (precio_producto, widget, schema emp_*) */
 export const ENTITIES = _SUPABASE_ENTITIES
 
 export { PRISMA_TO_ENTITY, PRISMA_MODEL_COUNT, SUPABASE_ENTITY_COUNT }

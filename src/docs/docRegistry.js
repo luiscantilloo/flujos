@@ -3,22 +3,22 @@
  */
 export const documentationItems = [
   {
-    id: 'bodega-frio-v2',
-    title: 'Bodega de frío — Documentación técnica y operacional (v1.0)',
-    summary:
-      'Visión de negocio, checklist maestra, README, arquitectura, API, variables, instalación, glosario, flujos end-to-end y runbooks.',
-    filePath: '/docs/documentacion_bodega_frio_v2.md',
-    format: 'markdown',
-    sourceNote: 'Generado desde documentacion_bodega_frio_v2.docx.',
-  },
-  {
     id: 'bodega-frio-documentacion-v20',
     title: 'Bodega de frío — Documentación técnica (V2.0)',
     summary:
-      'Empresa vs tenant, arquitectura lectura/escritura, modelo dual 3NF+jsonb, stack, flujos, Supabase, API, despliegue. Actualizado Jul 2026.',
+      'Empresa vs tenant, arquitectura lectura/escritura, modelo dual, stack, flujos, API real, precio_producto, emp_*, Mateo. Actualizado Ago 2026.',
     filePath: '/docs/bodega_de_frio_documentacion_v2_0.md',
     format: 'markdown',
-    sourceNote: 'Generado desde BodegaDeFrio_DocumentacionV2.docx + anexo Jul 2026.',
+    sourceNote: 'Mantenido a mano (Supabase, ago 2026). No regenerar desde el .txt del Word.',
+  },
+  {
+    id: 'polaria-wms-mapa-actual',
+    title: 'Polaria WMS — mapa actual (web, API, BD, Mateo)',
+    summary:
+      'Captura ago 2026: rutas y módulos reales, precio_producto, schema por empresa emp_*, Mateo Support, runner UI. Para que no se pierda lo que ya está en código.',
+    filePath: '/docs/polaria_wms_mapa_actual.md',
+    format: 'markdown',
+    sourceNote: 'Redacción a partir de polaria-wms-web, api, db y Widget-react (ago 2026).',
   },
   {
     id: 'guia-explicacion-er',

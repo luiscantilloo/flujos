@@ -1,82 +1,55 @@
-# Preguntas frecuentes — Mateo Support
+# No me deja… (preguntas frecuentes)
 
-Respuestas rápidas para el widget Mateo Support.
+Empezá por acá si algo “no anda”. Casi siempre es rol, estado del documento o bodega no elegida.
 
-## Login y acceso
+## No puedo entrar
 
-### No puedo iniciar sesión
+1. El correo tiene que ser el que te crearon (no un alias inventado).
+2. Si trabajás en más de una empresa, **elegí la empresa**.
+3. El **configurador** (TI) no elige empresa: solo correo y contraseña.
+4. Contraseña olvidada: pedí reset al admin de cuenta o a TI. No hay un botón mágico en el piso.
 
-1. ¿Es configurador? → Solo correo + contraseña (sin código empresa)
-2. ¿Es usuario de cliente? → Código empresa + usuario + contraseña
-3. Error 422 en prelogin → Empresa incorrecta o usuario no pertenece a esa empresa
-4. Contraseña olvidada → Reset vía Supabase Auth (admin o soporte TI)
+## Entré y no veo nada
 
-### Entro pero no veo nada / pantalla en blanco
+- Roles de bodega: falta que te **asignen la bodega**, o no elegiste la bodega arriba.
+- Recargá. Si sigue en blanco, no es tu PC: es el usuario.
 
-- Verificar que tenga **bodega activa** seleccionada (selector superior)
-- Roles de bodega sin asignación en `asignacion_bodega` → contactar admin cuenta
+## Me manda a otra pantalla
 
-### Me redirige a otra pantalla
+Es normal. Cada rol tiene casa:
 
-| Rol | Destino normal |
+| Rol | A dónde te lleva |
 | --- | --- |
-| configurador | `/configurador` |
-| administrador_bodega | estado-bodega |
-| jefe_bodega | estado-bodega |
-| custodio | `/custodio/ingreso` |
-| operario | `/operario/operacion` |
-| procesador | `/procesador/operacion` |
-| transportista | `/transporte` |
-| operador_cuenta | Hub operador |
-| administrador_cuenta | Panel admin |
+| Configurador | Panel de plataforma |
+| Administrador de cuenta | Panel administrativo |
+| Operador de cuenta | Hub (Proveedor, Ventas, bodegas) |
+| Administrador de bodega | Estado de bodega |
+| Jefe de bodega | Estado de bodega |
+| Custodio | Ingreso |
+| Operario | Operación |
+| Procesador | Operación (procesamiento) |
+| Transportista | Transporte |
 
 ## Compras
 
-### No puedo aprobar la solicitud de compra
+**No puedo aprobar.** Solo administrador de cuenta (o TI). La solicitud tiene que estar **pendiente de aprobación**.
 
-Solo `administrador_cuenta` o `configurador`. La SOL debe estar en `pendiente_aprobacion`.
+**El muelle no ve la OC.** Tiene que estar **emitida**.
 
-### No aparece la OC para recepción
+## Mapa
 
-La OC debe estar `emitida` o `parcialmente_recibida`. Verificar destino bodega configurado.
+No se actualiza: internet, bodega correcta, recargar.
 
-## Inventario
-
-### El mapa no se actualiza
-
-- Conexión a internet
-- Bodega correcta seleccionada
-- Permiso `inventory:read`
-- Problema Realtime → refrescar página
-
-### Posición bloqueada
-
-Otro usuario tiene lock. Esperar 5 min (TTL) o pedir force unlock al jefe/admin bodega.
+Casillero bloqueado: esperá ~5 minutos o pedile al jefe / admin de bodega que lo libere.
 
 ## Ventas
 
-### No puedo emitir la orden de venta
+No emite: la orden tiene que estar en **borrador**, con stock y líneas. Si el producto sale **$0**, falta el precio de venta.
 
-Causas: OV no en borrador, stock insuficiente, o rol sin permiso de emisión.
+## Chat Mateo
 
-## Mateo widget
+Tiene que haber sesión. Recargá. Si no habla, avisá a TI.
 
-### El chat no abre
+## “Veo datos de otra empresa”
 
-- Usuario debe estar logueado en WMS
-- Script `mateo-widget.js` debe cargar (ver consola navegador)
-- `NEXT_PUBLIC_MATEO_WIDGET_SCRIPT_URL` configurado
-
-### Mateo no responde
-
-Workflow n8n puede estar caído. Escalar a equipo técnico Polaria.
-
-## Multi-tenant
-
-### Veo datos de otra empresa
-
-**Incidente de seguridad.** Escalar inmediatamente a TI. No debería ocurrir con RLS activo.
-
-### No veo mi catálogo
-
-Verificar `codigo_cuenta` del usuario coincide con el tenant del catálogo.
+Eso **no debería pasar**. Paro, no sigas operando, avisá a TI ya.

@@ -1,48 +1,33 @@
-# Procesamiento (cadena de frío)
+# Procesamiento en frío
 
-Transformación de **producto primario** a **secundario** con registro de merma.
+Es transformar **producto primario** en **secundario** (corte, filete, porción) y anotar la **merma**.
 
-## Estados solicitud
+## Quién hace qué
 
-```
-pendiente → en_proceso → pendiente_cierre → terminada
-```
-
-## Flujo completo
-
-| Paso | Quién | Acción |
-| --- | --- | --- |
-| 1 | Operador cuenta / jefe | Crear solicitud (`POST /procesamiento/solicitudes`) |
-| 2 | Jefe bodega | Asignar operario → crea OT + tarea |
-| 3 | Operario | Iniciar → mueve stock a zona procesamiento |
-| 4 | Operario | Completar tarea de movimiento |
-| 5 | Jefe | Asignar procesador |
-| 6 | Procesador | Cerrar con kilos merma |
-| 7 | Sistema | Crea OT post-cierre (procesado + desperdicio) |
-| 8 | Operario | Aplicar traslados post-cierre |
-| 9 | Jefe | Marcar solicitud terminada |
-
-## Balance de masa
-
-```
-Entrada (kg primario) = Salida procesada (kg secundario) + Merma (kg) + Sobrante (kg)
-```
-
-El catálogo define % merma esperado por conversión primario→secundario.
-
-## Pantallas
-
-| Rol | Ruta |
+| Paso | Quién |
 | --- | --- |
-| Operador cuenta | `/dashboard/bodega-interna/procesamiento` |
-| Jefe bodega | `/dashboard/procesamiento` + modal asignación |
-| Procesador | `/dashboard/procesador/operacion` |
-| Operario | Tareas en `/dashboard/operario/operacion` |
+| Pedir el procesamiento | Operador de cuenta o jefe |
+| Traer el primario a la zona de proceso | Operario (tarea) |
+| Procesar en planta y declarar merma | Procesador — **Declarar merma y cerrar** |
+| Guardar el secundario | Operario (tarea post-cierre) |
+| Dar por terminada la orden | Jefe de bodega |
 
-## Preguntas frecuentes (Mateo)
+## En la báscula
 
-**¿Quién crea la solicitud?** Operador de cuenta o jefe de bodega.
+Lo que entró (kg de primario) tiene que cuadrar con:
 
-**¿Por qué no puedo cerrar merma?** Solo el rol `procesador` puede cerrar; la solicitud debe estar en proceso.
+**procesado + merma + sobrante**
 
-**¿Qué es post-cierre?** OTs para ubicar el producto ya procesado (y desperdicio opcional) de vuelta en almacenamiento.
+El catálogo puede sugerir un % de merma. Mandan los kilos reales.
+
+## Estados que vas a ver
+
+**Pendiente** → **en proceso** → **pendiente de cierre** → **terminada**.
+
+El procesador cierra cuando el trabajo físico ya está hecho. Si cierra antes, el inventario queda mal.
+
+## Si se traba
+
+- El procesador no ve la orden: el operario no terminó de llevar el primario.
+- Error al declarar merma: más kilos de merma que stock en la zona.
+- El secundario no aparece en almacenamiento: falta que el operario complete el post-cierre.

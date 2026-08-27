@@ -1,41 +1,26 @@
 # Transporte y entregas
 
-Logística de salida: viajes, guías y evidencias.
+El viaje empieza **después** de que el custodio arma el paquete de despacho. Ahí nacen el viaje y las **guías**.
 
-## Entidades
+## Cadena corta
 
-```
-viaje_transporte
-  └── guia_envio (por OV o destino)
-        └── evidencia_transporte (foto, firma)
-```
-
-## Flujo
-
-| Paso | Rol | Acción |
-| --- | --- | --- |
-| 1 | Custodio | `POST /transporte/paquetes-despacho` |
-| 2 | Sistema | Crea viaje + guías, consume stock zona salida |
-| 3 | Transportista | Ve guías en `/dashboard/transporte` |
-| 4 | Transportista | `POST /transporte/entregas` con evidencias |
-
-## Evidencias
-
-- **Foto:** subida a Cloudinary vía `POST /api/evidencia-transporte`
-- **Firma:** captura en pantalla
-- **GPS:** según configuración del dispositivo
-- **Conformidad:** S/N del receptor
+1. **Custodio** despacha (camión + lo que sale de zona de salida).
+2. **Transportista** ve las guías en **Transporte**.
+3. En cada parada: cantidades, **foto**, **firma de quien recibe**, conformidad.
+4. Si entrega de menos, la venta puede quedar **parcialmente despachada**.
 
 ## Camiones
 
-Catálogo en admin cuenta (`/dashboard/administracion/.../camiones`):
-- Tipo: refrigerado, seco, isotérmico
-- Placa, capacidad, estado disponible
+Los carga el **administrador de cuenta** (placa, tipo refrigerado/seco, disponible). Si el camión no está disponible, el custodio no cierra el paquete.
 
-## Preguntas frecuentes (Mateo)
+## Evidencias
 
-**¿Transportista no ve nada?** No hay paquete de despacho creado por custodio.
+- Foto: de lo entregado / del recibo, según lo que les pidan.
+- Firma: en la pantalla, obligatorio.
+- No hace falta saber de “la nube”: si la foto no sube, probá otra más liviana o avisá a TI.
 
-**¿Error al subir foto?** Revisar configuración Cloudinary en servidor web.
+## Si se traba
 
-**¿Puedo entregar parcial?** Sí, con cantidades parciales; OV puede quedar `parcialmente_despachada`.
+- Chofer sin guías: no hay paquete. Custodio primero.
+- Firma faltante: el recuadro **Firma de quien recibe**.
+- Cantidad inválida: no puede superar lo despachado.

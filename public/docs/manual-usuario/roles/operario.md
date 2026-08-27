@@ -1,57 +1,54 @@
 # Operario
 
-| Campo | Valor |
+Tu trabajo es **mover cajas** según las tarjetas que te aparecen. El jefe dispara el trabajo; vos lo ejecutás. No inventes movimientos por fuera de las tareas.
+
+## Cómo entrar
+
+1. Correo → empresa → contraseña.
+2. Vas a **Operación**.
+
+Dejá esta pantalla **abierta** mientras trabajás. Así el jefe te ve disponible. Si la cerrás, desaparecés de su lista.
+
+## Cómo se ve el día
+
+Cada tarjeta es una tarea. Te dice **de dónde** sale y **a dónde** va.
+
+1. Leé origen y destino (casilleros / zonas).
+2. Andá al origen, tomá la mercancía.
+3. Llevala al destino.
+4. Volvé a la pantalla y **completá** la tarjeta (pulsá la tarjeta / confirmar).
+
+Hasta que no completes, el sistema sigue pensando que la caja está en el origen.
+
+## Qué tipos de tarea te van a salir
+
+| Tipo | Qué hacés en la vida real |
 | --- | --- |
-| Rol | `operario` |
-| Nivel | Bodega |
-| Pantalla principal | `/dashboard/operario/operacion` |
-| Creado por | Administrador de cuenta |
+| Movimiento / bodega a bodega | Pasar de un casillero a otro |
+| Despacho / picking | Llevar a zona de salida para un pedido |
+| Procesamiento | Llevar primario a la zona de proceso |
+| Post-cierre | Guardar el producto ya procesado (y desperdicio, si aplica) |
 
-## ¿Quién es?
+## Mapa
 
-Ejecuta **tareas de piso**: movimientos de cajas, picking, traslados a procesamiento y post-cierre. Es quien mueve físicamente la mercancía según las órdenes de trabajo asignadas.
+En el menú **Mapa** ves la bodega en vivo. Si vas a trabajar un casillero, **bloquealo** para que nadie más lo pise. Cuando termines, **liberá**. Si se te olvida, a los ~5 minutos se suelta solo.
 
-## Pantalla principal
+## Si necesitás al jefe
 
-`/dashboard/operario/operacion` — lista de tareas asignadas con botón para completar cada una.
+Pulsá **Llamar**. Le llega un aviso. No uses eso para cada caja: solo si estás trabado (casillero bloqueado, no encontrás el lote, la tarea no cierra).
 
-## Funciones
+## Qué no te toca
 
-| Función | Descripción |
+- Crear ni emitir compras o ventas.
+- Cerrar la recepción del camión (custodio).
+- Declarar merma (procesador).
+- Crear las órdenes de trabajo (jefe).
+
+## Si algo no funciona
+
+| Qué pasa | Qué hacer |
 | --- | --- |
-| Ver cola de tareas | Tareas asignadas por jefe de bodega |
-| Completar tarea | Ejecuta movimiento de stock entre ubicaciones |
-| Llamar al jefe | Botón «Llamar jefe» → alerta al jefe de bodega |
-| Mapa inventario | Acceso rápido a `/dashboard/mapa` |
-| Lock posición | Puede bloquear slot en mapa (POL-6) |
-
-## Tipos de tarea
-
-| Tipo | Descripción |
-| --- | --- |
-| Movimiento | Traslado entre ubicaciones (reabasto, bodega a bodega) |
-| Despacho | Picking hacia zona de salida |
-| Procesamiento | Mover stock a zona de procesamiento |
-| Post-cierre | Ubicar producto procesado tras merma |
-
-## Presencia
-
-El sistema registra heartbeat (`POST /operaciones/presencia/ping`) mientras el operario tiene la pantalla abierta. TTL: 2 minutos. El jefe ve operarios «disponibles» según esta presencia.
-
-## Permisos
-
-| Acción | ¿Puede? |
-| --- | --- |
-| Ejecutar OT | ✅ |
-| Completar tarea | ✅ |
-| Crear OT | ❌ |
-| Cerrar recepción | ❌ |
-| Declarar merma | ❌ |
-
-## Errores frecuentes (soporte)
-
-| Síntoma | Causa | Respuesta |
-| --- | --- | --- |
-| Lista de tareas vacía | Sin asignación del jefe | Jefe debe asignar operario |
-| Error al completar | Slot bloqueado por otro usuario | Esperar unlock o pedir force unlock al jefe |
-| No aparece como disponible | Sin ping presencia | Mantener `/operario/operacion` abierta |
+| Lista vacía | El jefe todavía no te asignó trabajo. Esperá o llamalo. |
+| No puedo completar | Otro tiene el casillero bloqueado. Esperá o pedí que lo libere. |
+| No aparezco como disponible | Dejá **Operación** abierta y con internet. |
+| La tarjeta es de procesamiento | Completala igual: eso mueve el stock a la zona de proceso. La merma la declara el procesador después. |

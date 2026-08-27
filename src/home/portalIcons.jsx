@@ -20,6 +20,7 @@ import {
   HiOutlineSparkles,
   HiOutlineSquares2X2,
   HiOutlineUserGroup,
+  HiOutlineChatBubbleLeftRight,
   HiOutlineWrenchScrewdriver,
 } from 'react-icons/hi2'
 import { TbGitBranch, TbSnowflake } from 'react-icons/tb'
@@ -49,6 +50,7 @@ const ICON_MAP = {
   Snowflake: TbSnowflake,
   Squares2X2: HiOutlineSquares2X2,
   UserGroup: HiOutlineUserGroup,
+  ChatBubbleLeftRight: HiOutlineChatBubbleLeftRight,
 }
 
 export function PortalIcon({ name, className }) {

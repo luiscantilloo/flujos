@@ -1,61 +1,48 @@
 # Administrador de bodega
 
-| Campo | Valor |
+Supervisás **una o más bodegas**: ves el estado, el mapa y los reportes. No sos el que mueve cajas (eso es el operario) ni el que coordina cada ingreso/salida (eso es el jefe de bodega).
+
+## Cómo entrar
+
+1. Correo → empresa → contraseña.
+2. El sistema te lleva solo a **Estado de bodega**.
+
+Arriba, si tenés más de una bodega, **elegí la bodega** que estás mirando. Si no elegís, la pantalla se ve vacía.
+
+## Qué ves
+
+- Un **grid** por zonas (ingreso, almacenamiento, procesamiento, salida) y casilleros.
+- Acceso a **Mapa** (inventario en vivo).
+- **Reportes de bodega**.
+- Resumen de stock, tareas en cola y alertas.
+
+## Tu día a día
+
+1. Al llegar, abrí **Estado de bodega** y mirá alertas y ocupación.
+2. Si un casillero quedó bloqueado y nadie lo está usando, podés **liberarlo** (force unlock). Esperá un momento: a veces el bloqueo caduca solo (~5 minutos).
+3. Usá **Reportes** para salidas y resumen, no para operar el piso.
+4. El **mapa** se actualiza solo. Si no se mueve, recargá y confirmá que la bodega de arriba es la correcta.
+
+## Qué sí y qué no
+
+| Acción | ¿Te toca? |
 | --- | --- |
-| Rol | `administrador_bodega` |
-| Nivel | Bodega |
-| Pantalla principal | `/dashboard/administrador-bodega/estado-bodega` |
-| Creado por | Administrador de cuenta |
+| Ver mapa e inventario | Sí |
+| Bloquear / desbloquear casillero | Sí |
+| Liberar un bloqueo trabado | Sí |
+| Cerrar una recepción si hace falta | Sí (podés), pero lo habitual es el custodio |
+| Botones **Ingresos / Crear Salida / Bodega a Bodega** | No — eso es el **jefe de bodega** |
+| Completar tareas de operario | No |
+| Crear órdenes de venta | No |
 
-## ¿Quién es?
+## Diferencia con el jefe de bodega
 
-Supervisa la operación de **una o más bodegas asignadas**. Tiene permisos de escritura en inventario y estado de bodega, pero su foco es supervisión y reportes (no ejecuta tareas de piso como el operario).
+Vos **mirás y destrabás**. El jefe **ordena el piso**: ingresos, transferencias, salidas y gente.
 
-## Pantallas
+## Si algo no funciona
 
-| Ruta | Función |
+| Qué pasa | Qué hacer |
 | --- | --- |
-| `/dashboard/administrador-bodega/estado-bodega` | Grid visual por zonas/slots |
-| `/dashboard/administrador-bodega/reportes-bodega` | Gráficos y resumen de salidas |
-| `/dashboard/mapa` | Mapa de inventario en tiempo real |
-| `/dashboard/ingreso` | Ver recepciones (según nav) |
-
-## Al entrar al dashboard
-
-El sistema redirige automáticamente a **Estado de bodega** (no al home genérico).
-
-## Permisos
-
-| Permiso | ¿Tiene? |
-| --- | --- |
-| `inventory:write` | ✅ |
-| `warehouse_state:write` | ✅ |
-| `counters:write` | ✅ |
-| Lock/unlock mapa | ✅ |
-| Force unlock | ✅ |
-| Cerrar recepción | ✅ |
-| Crear OT | ❌ (jefe de bodega) |
-| Ejecutar tareas piso | ❌ |
-
-## Diferencia con jefe de bodega
-
-| Aspecto | Admin bodega | Jefe bodega |
-| --- | --- | --- |
-| Estado visual bodega | ✅ | ✅ |
-| Reportes bodega | ✅ | 🟡 (ruta deprecada) |
-| Acciones ingreso/salida/transferencia | ❌ | ✅ |
-| Asignar operarios procesamiento | ❌ | ✅ |
-
-## Widgets del dashboard
-
-- Stock resumido
-- Tareas en cola
-- Alertas de bodega
-
-## Errores frecuentes (soporte)
-
-| Síntoma | Solución |
-| --- | --- |
-| Pantalla vacía en estado bodega | Verificar bodega activa en selector superior |
-| No ve mapa | Debe tener bodega seleccionada + permiso `inventory:read` |
-| "Sin bodega asignada" | Revisar `asignacion_bodega` para ese usuario |
+| Pantalla vacía | Selector de bodega arriba. Si no hay bodegas, pedí asignación al admin de cuenta. |
+| El mapa no cambia | Recargá. Confirmá bodega. Pedí a alguien de piso que mueva una caja de prueba. |
+| “Sin bodega asignada” | El admin de cuenta tiene que vincularte a la bodega. |

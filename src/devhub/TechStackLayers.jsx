@@ -76,11 +76,18 @@ export const TECH_STACK_LAYERS = [
         color: 'text-emerald-400',
       },
       {
-        name: 'VITE_API_URL',
+        name: 'NEXT_PUBLIC_API_URL',
         version: '—',
-        role: 'Cliente HTTP hacia polaria-wms-api',
+        role: 'Cliente HTTP hacia polaria-wms-api (puerto local 3000)',
         icon: TbBrandNextjs,
         color: 'text-slate-100',
+      },
+      {
+        name: 'Zustand',
+        version: '5',
+        role: 'Estado de sesión y tenant en el cliente',
+        icon: TbBrandReact,
+        color: 'text-sky-200',
       },
     ],
   },
@@ -99,7 +106,7 @@ export const TECH_STACK_LAYERS = [
       {
         name: 'Prisma',
         version: '7',
-        role: '42 modelos, DATABASE_URL bypass RLS en escrituras',
+        role: '43 modelos; precio_producto aún solo en Postgres. DATABASE_URL bypass RLS',
         icon: SiPostgresql,
         color: 'text-sky-300',
       },
@@ -141,14 +148,14 @@ export const TECH_STACK_LAYERS = [
       {
         name: 'PostgreSQL',
         version: '15+',
-        role: '40 tablas Prisma; RLS híbrido (lectura web / escritura API)',
+        role: '43 modelos Prisma + extras (precio_producto, emp_*, widget). RLS híbrido',
         icon: SiPostgresql,
         color: 'text-sky-300',
       },
       {
         name: 'Migraciones',
-        version: '010–052',
-        role: 'polaria-wms-db — RLS POL-2, POL-33, widget 051–052',
+        version: '001–066',
+        role: 'polaria-wms-db — RLS, emp_* 062, precio_producto 066, widget 064',
         icon: SiSupabase,
         color: 'text-emerald-300',
       },
@@ -202,7 +209,7 @@ export function TechStackLayers() {
         <div>
           <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Stack tecnológico</h3>
           <p className="mt-1 text-xs text-slate-500">
-            Producto WMS · alineado con doc V2.0 §3 y flujo lectura/escritura §4
+            Producto WMS ago 2026 · Next 16 · Nest 11 · Prisma 43 · migraciones 001–066
           </p>
         </div>
         <CopyButton text={fullCopy} label="Copiar stack completo" />

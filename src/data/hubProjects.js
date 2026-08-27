@@ -17,8 +17,8 @@ export const hubProjects = [
       widget: POLARIA_WMS.repos.widget,
     },
     enabled: true,
-    /** Documento principal para secciones de referencia (v1.0 operacional). */
-    documentationDocId: 'bodega-frio-v2',
+    /** Documento principal para el índice (V2.0 alineado ago 2026). */
+    documentationDocId: 'bodega-frio-documentacion-v20',
     /** Documento diseño objetivo V2. */
     designDocId: 'bodega-frio-documentacion-v20',
   },

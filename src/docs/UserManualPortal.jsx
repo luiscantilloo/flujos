@@ -152,11 +152,12 @@ export function UserManualPortal({ manualId = null, onNavigateManual }) {
             <HiOutlineUserGroup className="h-6 w-6 text-amber-200" aria-hidden />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-300/90">Mateo Support</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-300/90">Polaria WMS</p>
             <h2 className="mt-1 text-3xl font-bold text-slate-50 sm:text-4xl">Manual de usuario</h2>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-400">
-              Guías por rol, procesos de negocio y respuestas frecuentes para soporte. Organizado en{' '}
-              <code className="rounded bg-slate-800 px-1 text-xs text-amber-200">public/docs/manual-usuario/</code>.
+              Paso a paso para quien usa el sistema: cómo entrar, qué hace cada cargo y cómo se hace
+              cada trabajo. Empieza por <strong className="font-medium text-slate-300">Cómo entrar</strong> y
+              luego abre el manual de tu rol.
             </p>
           </div>
         </div>
@@ -167,7 +168,7 @@ export function UserManualPortal({ manualId = null, onNavigateManual }) {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar rol, proceso, SOL, recepción, Mateo…"
+            placeholder="Buscar: custodio, compras, venta, merma, login…"
             className="w-full rounded-2xl border border-slate-700/70 bg-slate-900/55 py-3 pl-11 pr-4 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-amber-400/40 focus:ring-2 focus:ring-amber-500/20"
           />
         </label>

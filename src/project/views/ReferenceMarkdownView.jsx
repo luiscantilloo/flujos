@@ -5,11 +5,31 @@ import { DocDownloadMenu } from '../../docs/components/DocDownloadMenu.jsx'
 import { getDocumentationItemById } from '../../docs/docRegistry.js'
 import { fetchDocMarkdown } from '../../docs/utils/fetchDocMarkdown.js'
 import { extractSectionByTitle } from '../../docs/utils/extractMarkdownSection.js'
-import { formatPolariaApiMarkdown } from '../../data/polariaWmsMeta.js'
+import { formatPolariaApiMarkdown, formatPolariaEnvMarkdown } from '../../data/polariaWmsMeta.js'
 import { formatPolariaSecurityMarkdown } from '../../data/polariaSecurityDoc.js'
 import { formatPolariaTestingMarkdown } from '../../data/polariaTestingDoc.js'
+import { formatPolariaMateoMarkdown } from '../../data/polariaMateoDoc.js'
+import { formatPolariaOnboardingMarkdown } from '../../data/polariaOnboardingDoc.js'
+import { formatPolariaRunbooksMarkdown } from '../../data/polariaRunbooksDoc.js'
+import { formatPolariaArchitectureMarkdown } from '../../data/polariaArchitectureDoc.js'
 
 function resolveReferenceMarkdown(project, topic) {
+  if (topic.markdownSource === 'polaria-architecture' && project.id === 'bodega-frio') {
+    return Promise.resolve({
+      markdown: formatPolariaArchitectureMarkdown(),
+      sourceLabel: 'polariaArchitectureDoc.js — Next + Nest + Supabase, ago 2026',
+      sourcePath: null,
+    })
+  }
+
+  if (topic.markdownSource === 'polaria-env' && project.id === 'bodega-frio') {
+    return Promise.resolve({
+      markdown: formatPolariaEnvMarkdown(),
+      sourceLabel: 'polariaWmsMeta.js — variables reales de los repos',
+      sourcePath: null,
+    })
+  }
+
   if (topic.markdownSource === 'polaria-api' && project.id === 'bodega-frio') {
     return Promise.resolve({
       markdown: formatPolariaApiMarkdown(),
@@ -30,6 +50,30 @@ function resolveReferenceMarkdown(project, topic) {
     return Promise.resolve({
       markdown: formatPolariaTestingMarkdown(),
       sourceLabel: 'polariaTestingDoc.js — suites e2e, RLS y QA',
+      sourcePath: null,
+    })
+  }
+
+  if (topic.markdownSource === 'polaria-mateo' && project.id === 'bodega-frio') {
+    return Promise.resolve({
+      markdown: formatPolariaMateoMarkdown(),
+      sourceLabel: 'polariaMateoDoc.js — Widget-react + API mateo-widget',
+      sourcePath: null,
+    })
+  }
+
+  if (topic.markdownSource === 'polaria-onboarding' && project.id === 'bodega-frio') {
+    return Promise.resolve({
+      markdown: formatPolariaOnboardingMarkdown(),
+      sourceLabel: 'polariaOnboardingDoc.js — 4 repos + Dev Hub, ago 2026',
+      sourcePath: null,
+    })
+  }
+
+  if (topic.markdownSource === 'polaria-runbooks' && project.id === 'bodega-frio') {
+    return Promise.resolve({
+      markdown: formatPolariaRunbooksMarkdown(),
+      sourceLabel: 'polariaRunbooksDoc.js — deploy, bodegas, secretos, ago 2026',
       sourcePath: null,
     })
   }

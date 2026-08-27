@@ -1,75 +1,57 @@
-# Glosario rápido — WMS Polaria
+# Glosario rápido
 
-Términos en lenguaje simple para Mateo Support.
+Palabras que vas a oír en Polaria WMS, en una línea.
 
 ## Organización
 
-| Término | Significado |
+| Palabra | Qué es |
 | --- | --- |
-| **Empresa** | Cliente jurídico del SaaS (`codigo_empresa`) |
-| **Tenant / Cuenta** | Unidad operativa aislada (`codigo_cuenta`) |
-| **Bodega** | Ubicación física de almacenamiento (`id_bodega`) |
-| **Configurador** | TI Polaria que administra plataforma |
+| **Empresa** | El cliente (la razón social). La crea TI. |
+| **Cuenta** | La unidad que opera adentro de la empresa (catálogo, compras, ventas). |
+| **Bodega** | El lugar físico (la cámara). |
+| **Configurador** | TI de Polaria, el que arma empresas y bodegas. |
 
 ## Documentos
 
-| Sigla | Nombre completo | Descripción |
+| Sigla | Nombre | En simple |
 | --- | --- | --- |
-| **SOL** | Solicitud de compra | Pedido interno antes de comprar |
-| **OC** | Orden de compra | Documento formal al proveedor |
-| **OV** | Orden de venta | Pedido de despacho a cliente |
-| **OT** | Orden de trabajo | Tarea operativa en bodega |
-| **TV** | Viaje transporte | Despacho con camión |
+| **SOL** | Solicitud de compra | “Queremos comprar esto.” Todavía no es el pedido al proveedor. |
+| **OC** | Orden de compra | El pedido oficial al proveedor. |
+| **OV** | Orden de venta | El pedido del cliente a preparar y despachar. |
+| **OT** | Orden de trabajo | El trabajo que ve el piso (tareas). |
+| **Guía / viaje** | Transporte | Lo que lleva el chofer. |
 
-## Inventario
+## Bodega
 
-| Término | Significado |
+| Palabra | Qué es |
 | --- | --- |
-| **Slot / Posición** | Ubicación física en el grid de bodega |
-| **warehouse_state** | Stock en vivo por posición |
-| **Lote** | Trazabilidad por ingreso (FEFO, vencimiento) |
-| **Lock** | Bloqueo temporal de posición (evita conflictos) |
-| **FEFO** | First Expired First Out — sale primero lo que vence antes |
-| **Merma** | Pérdida de peso en procesamiento |
+| **Casillero / slot** | Un lugar en el plano. |
+| **Mapa** | El plano en vivo. |
+| **Lote** | El grupo que entró junto (vence, trazabilidad). |
+| **Lock / bloqueo** | “Este casillero lo estoy usando yo.” |
+| **FEFO** | Sale primero lo que vence antes. |
+| **Merma** | Kilos que se pierden al procesar. |
+| **Zona de ingreso** | Donde aterriza lo que llega. |
+| **Almacenamiento** | Donde vive el stock. |
+| **Procesamiento** | Donde se transforma. |
+| **Salida / muelle** | Donde se arma lo que se va. |
 
-## Zonas de bodega
+## Estados (los más comunes)
 
-| Zona | Uso |
+- **SOL:** borrador → pendiente de aprobación → aprobada.
+- **OC:** borrador → emitida → parcialmente recibida → recibida.
+- **OV:** borrador → confirmada → en preparación → despachada.
+
+## Roles (una línea)
+
+| Rol | En una frase |
 | --- | --- |
-| ING / Ingreso | Recepción de mercancía |
-| SLOT / Almacenamiento | Stock principal |
-| PROC / Procesamiento | Línea de transformación |
-| SAL / Salida | Muelle de despacho |
-
-## Estados comunes
-
-| Contexto | Estados |
-| --- | --- |
-| SOL | borrador → pendiente_aprobacion → aprobada |
-| OC | borrador → emitida → parcialmente_recibida → recibida |
-| OV | borrador → confirmada → en_preparacion → despachada |
-| Procesamiento | pendiente → en_proceso → pendiente_cierre → terminada |
-
-## Tecnología (para soporte L2)
-
-| Término | Significado |
-| --- | --- |
-| **RLS** | Row Level Security — aislamiento datos en PostgreSQL |
-| **Realtime** | Actualización en vivo vía Supabase |
-| **JWT** | Token de sesión |
-| **n8n** | Automatización webhooks (SOL, Mateo) |
-| **Cloudinary** | Almacén de imágenes (evidencias transporte) |
-
-## Roles (resumen)
-
-| Rol | Una línea |
-| --- | --- |
-| configurador | TI Polaria |
-| administrador_cuenta | Jefe comercial del cliente |
-| operador_cuenta | Compras/ventas del tenant |
-| administrador_bodega | Supervisor de bodega |
-| jefe_bodega | Jefe operativo piso |
-| custodio | Recepción y despacho muelle |
-| operario | Mueve cajas y ejecuta tareas |
-| procesador | Declara merma en procesamiento |
-| transportista | Entregas con evidencia |
+| Configurador | Arma el sistema. |
+| Administrador de cuenta | Arma el equipo y el catálogo; aprueba compras. |
+| Operador de cuenta | Pide compras y arma ventas. |
+| Administrador de bodega | Mira el estado y los reportes. |
+| Jefe de bodega | Coordina el piso. |
+| Custodio | Recibe y despacha en muelle. |
+| Operario | Mueve las cajas. |
+| Procesador | Declara la merma. |
+| Transportista | Entrega con foto y firma. |
