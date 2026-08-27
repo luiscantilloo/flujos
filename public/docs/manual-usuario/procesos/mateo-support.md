@@ -1,3 +1,6 @@
+Roles admitidos: configurador, administrador de cuenta, operador de cuenta, administrador de bodega, jefe de bodega, custodio, operario, procesador, transportista
+Seccionar: False
+
 # Mateo (chat de ayuda)
 
 Mateo es el **chat** de Polaria WMS: una burbuja abajo a la derecha cuando ya entraste al sistema.

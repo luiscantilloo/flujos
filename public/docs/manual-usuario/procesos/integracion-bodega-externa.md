@@ -1,3 +1,6 @@
+Roles admitidos: operador de cuenta, administrador de cuenta, configurador
+Seccionar: False
+
 # Bodega externa
 
 A veces el stock no está en tu cámara, sino en un **tercero** (por ejemplo Fridem). Eso no se opera igual que una bodega interna.

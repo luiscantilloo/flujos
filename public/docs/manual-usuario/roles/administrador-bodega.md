@@ -1,3 +1,6 @@
+Roles admitidos: administrador de bodega, configurador
+Seccionar: False
+
 # Administrador de bodega
 
 Supervisás **una o más bodegas**: ves el estado, el mapa y los reportes. No sos el que mueve cajas (eso es el operario) ni el que coordina cada ingreso/salida (eso es el jefe de bodega).
