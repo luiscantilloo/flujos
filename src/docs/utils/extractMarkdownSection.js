@@ -2,6 +2,8 @@
  * Extrae el cuerpo de una sección MD hasta el siguiente encabezado del mismo nivel o superior.
  */
 export function extractSectionByTitle(markdown, titlePattern) {
+  if (!markdown || typeof titlePattern?.test !== 'function') return ''
+
   const lines = markdown.split('\n')
   let start = -1
   let level = 0

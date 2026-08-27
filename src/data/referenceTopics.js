@@ -84,6 +84,7 @@ export const referenceTopics = {
     accent: 'sky',
     view: 'markdown',
     markdownSource: 'polaria-mateo',
+    sectionPattern: /mateo support/i,
   },
   glossary: {
     id: 'glossary',

@@ -10,8 +10,30 @@ import { bodegaStepByStepSteps, BODEGA_STEP_COUNT } from '../../src/data/bodegaS
 import { WEB_TREE, API_TREE } from '../../src/data/polariaStructureTrees.js'
 import { ENTITIES, SCHEMA_META } from '../../src/data/bodegaDatabaseSchema.js'
 import { formatFieldType } from '../../src/data/schemaFieldTypes.js'
+import { formatPolariaApiMarkdown, formatPolariaEnvMarkdown } from '../../src/data/polariaWmsMeta.js'
+import { formatPolariaArchitectureMarkdown } from '../../src/data/polariaArchitectureDoc.js'
+import { formatPolariaSecurityMarkdown } from '../../src/data/polariaSecurityDoc.js'
+import { formatPolariaTestingMarkdown } from '../../src/data/polariaTestingDoc.js'
+import { formatPolariaMateoMarkdown } from '../../src/data/polariaMateoDoc.js'
+import { formatPolariaOnboardingMarkdown } from '../../src/data/polariaOnboardingDoc.js'
+import { formatPolariaRunbooksMarkdown } from '../../src/data/polariaRunbooksDoc.js'
+import { formatPolariaChecklistMarkdown } from '../../src/data/polariaChecklistDoc.js'
+import { formatPolariaGlossaryMarkdown } from '../../src/data/polariaGlossaryDoc.js'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
+
+const GENERATED_TOPIC_MARKDOWN = {
+  'polaria-architecture': formatPolariaArchitectureMarkdown,
+  'polaria-env': formatPolariaEnvMarkdown,
+  'polaria-api': formatPolariaApiMarkdown,
+  'polaria-security': formatPolariaSecurityMarkdown,
+  'polaria-testing': formatPolariaTestingMarkdown,
+  'polaria-mateo': formatPolariaMateoMarkdown,
+  'polaria-onboarding': formatPolariaOnboardingMarkdown,
+  'polaria-runbooks': formatPolariaRunbooksMarkdown,
+  'polaria-checklist': formatPolariaChecklistMarkdown,
+  'polaria-glossary': formatPolariaGlossaryMarkdown,
+}
 
 function readDocMarkdown(filePath) {
   const rel = filePath.replace(/^\//, '')
@@ -195,35 +217,29 @@ export function serializeReferenceTopic(topicId, projectId) {
     return [`# ${topic.title} · ${project.name}`, '', topic.subtitle, '', serializeDatabaseSchema()].join('\n\n')
   }
 
-  const doc = documentationItems.find((d) => d.id === project.documentationDocId)
+  const generated = GENERATED_TOPIC_MARKDOWN[topic.markdownSource]
+  if (typeof generated === 'function' && project.id === 'bodega-frio') {
+    return [`# ${topic.title} · ${project.name}`, '', topic.subtitle, '', generated()].join('\n\n')
+  }
+
+  const docId = topic.sectionDocId ?? project.documentationDocId
+  const doc = documentationItems.find((d) => d.id === docId)
   if (!doc) {
     return `# ${topic.title}\n\nSin documento vinculado para ${project.name}.`
   }
 
   const full = readDocMarkdown(doc.filePath)
-
-  if (topic.view === 'markdown') {
-    const section = extractSectionByTitle(full, topic.sectionPattern)
-    return [
-      `# ${topic.title} · ${project.name}`,
-      '',
-      topic.subtitle,
-      '',
-      section || full,
-    ].join('\n\n')
-  }
+  const section = extractSectionByTitle(full, topic.sectionPattern)
 
   if (topic.view === 'glossary') {
-    const section = extractSectionByTitle(full, topic.sectionPattern)
     return [`# Glosario · ${project.name}`, '', section || 'Sección de glosario no encontrada.'].join('\n\n')
   }
 
   if (topic.view === 'checklist') {
-    const section = extractSectionByTitle(full, /estado de la documentación|checklist maestra/i)
     return [`# Checklist · ${project.name}`, '', section || 'Sección de checklist no encontrada.'].join('\n\n')
   }
 
-  return `# ${topic.title}\n\n${topic.subtitle}`
+  return [`# ${topic.title} · ${project.name}`, '', topic.subtitle, '', section || full].join('\n\n')
 }
 
 /** @returns {Array<{ path: string, title: string, description: string, markdown: string, markdownSource?: string }>} */
