@@ -18,9 +18,8 @@ export const BODEGA_FRIO_LEGEND =
 
 export const PORTAL_BRAND = {
   title: 'Dev Hub',
-  subtitle: 'Centro de desarrollo',
-  tagline:
-    'Flujos interactivos, documentación viva y referencias rápidas para el equipo. Todo en un solo lugar.',
+  subtitle: `Centro de desarrollo · Polaria WMS ${POLARIA_WMS.productVersion}`,
+  tagline: `Flujos interactivos, documentación viva y referencias rápidas para el equipo. Producto ${POLARIA_WMS.productVersion}.`,
 }
 
 export const portalCategories = [
@@ -116,7 +115,7 @@ export const portalMainSections = [
     enabled: true,
     featured: true,
     badge: `${documentationItems.length} documentos`,
-    keywords: ['docs', 'guía', 'readme', 'markdown'],
+    keywords: ['docs', 'guía', 'readme', 'markdown', 'novedades', 'alias', 'sesión'],
     action: { type: 'phase', phase: 'docs' },
   },
   {
@@ -240,7 +239,7 @@ export const portalMainSections = [
     id: 'dev-resources',
     category: 'devtools',
     title: 'Stack y scripts',
-    description: 'Next 16, Nest 11, Prisma 43, migraciones 001–066 y comandos por repo.',
+    description: 'Next 16, Nest 11, Prisma 43, migraciones 001–067 y comandos por repo.',
     icon: 'CommandLine',
     accent: 'sky',
     enabled: true,
@@ -374,7 +373,7 @@ export function getPortalPhaseMeta(phase, referenceCtx = null) {
     main: { title: PORTAL_BRAND.title, subtitle: PORTAL_BRAND.tagline },
     flows: { title: 'Flujos interactivos', subtitle: 'Elige un diagrama para explorar el proceso.' },
     docs: { title: 'Documentación', subtitle: 'Referencias del producto y guía general.' },
-    'dev-resources': { title: 'Stack y scripts', subtitle: 'Next 16, Nest 11, Prisma 43, migraciones 001–066.' },
+    'dev-resources': { title: 'Stack y scripts', subtitle: 'Next 16, Nest 11, Prisma 43, migraciones 001–067.' },
     'project-structure': {
       title: 'Estructura del proyecto',
       subtitle: 'Carpetas polaria-wms-web y polaria-wms-api — ✅ vs 🟡 vs 🔵.',

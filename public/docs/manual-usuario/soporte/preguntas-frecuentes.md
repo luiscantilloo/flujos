@@ -8,10 +8,11 @@ Empezá por acá si algo “no anda”. Casi siempre es rol, estado del document
 
 ## No puedo entrar
 
-1. El correo tiene que ser el que te crearon (no un alias inventado).
+1. El correo tiene que ser el que te crearon (no un apodo inventado).
 2. Si trabajás en más de una empresa, **elegí la empresa**.
 3. El **configurador** (TI) no elige empresa: solo correo y contraseña.
 4. Contraseña olvidada: pedí reset al admin de cuenta o a TI. No hay un botón mágico en el piso.
+5. Si ayer dejaste el navegador abierto y hoy te pide login: es normal. La sesión dura **12 horas**.
 
 ## Entré y no veo nada
 
@@ -52,7 +53,17 @@ No emite: la orden tiene que estar en **borrador**, con stock y líneas. Si el p
 
 ## Chat Mateo
 
-Tiene que haber sesión. Recargá. Si no habla, avisá a TI.
+Tiene que haber sesión de Polaria. Recargá. Si cerraste Polaria o pasaron 12 horas, Mateo también se cierra: entrá de nuevo.
+
+Los enlaces del chat van subrayados y se abren en otra pestaña. Un PDF en “ruta” se puede bajar si el archivo existe; si da 404, avisá a TI.
+
+## Teléfonos
+
+Se ven con el código de país (ejemplo `+57 …`). Si ves un número “crudo” sin `+`, recargá; el sistema ya lo formatea.
+
+## Compradores y alias (admin de cuenta)
+
+En **Creación de compradores**: **Editar** en la fila, **Crear Alias** al lado de Nuevo comprador, y clic en la fila para ver datos + alias. El alias es cómo ese comprador llama al producto (sandía → patilla). No cambia el nombre del catálogo.
 
 ## “Veo datos de otra empresa”
 

@@ -1,8 +1,20 @@
-# Polaria WMS — mapa actual del producto (ago 2026)
+# Polaria WMS 2.4.3 — mapa actual del producto (ago 2026)
 
 Documento de **captura** para que no se pierda lo que ya está en código: web, API, BD, Mateo Support y el runner de UI. Complementa (no reemplaza) la documentación V1/V2 de Bodega de frío.
 
-> **Dónde vive en este Dev Hub:** Documentación → *Polaria WMS — mapa actual*. Referencia → *Mateo Support*. Estructura de proyecto → árboles web/API. Modelo de datos → tablas extra. Manual → Ventas / Mateo / glosario.
+> **Dónde vive en este Dev Hub:** Documentación → *Novedades 29 ago 2026* (índice del día) y *Polaria WMS — mapa actual*. Referencia → *Mateo Support*. Estructura de proyecto → árboles web/API. Modelo de datos → tablas extra. Manual → empezar / admin cuenta / Mateo / FAQ / glosario.
+
+## Cambios 29 ago 2026
+
+Índice narrativo (repos, archivos, Drive): [Novedades 29 ago 2026](/documentacion/novedades-2026-08-29).
+
+| Área | Qué quedó |
+| --- | --- |
+| Sesión | Tope **12 h** desde el login (`SESSION_MAX_AGE_MS`). Al vencer o al logout, redirige a `/login`. |
+| Mateo | Se cierra con Polaria (reset de token + unmount). JWT n8n ~300 s se **renueva** mientras hay sesión WMS; no es un logout a los 5 min. Enlaces subrayados (otra pestaña). Nombre de PDF en “ruta” es descarga si el archivo existe. |
+| Creación (admin cuenta) | Botón **Editar** en Proveedores, Clientes, Compradores, Camiones y Plantas (no en Asignación ni catálogo de productos). |
+| Teléfonos | Display internacional (`+57 …`) aunque el valor guardado venga sin `+`. |
+| Alias | Botón **Crear Alias** junto a Nuevo comprador. Tabla `comprador_producto_alias` (migración **067**, RLS, clone `emp_*`). Flujo: comprador → producto (código/nombre) → modal de alias. Clic en la fila del comprador abre ficha + lista de alias. |
 
 ---
 
@@ -12,7 +24,7 @@ Documento de **captura** para que no se pierda lo que ya está en código: web, 
 | --- | --- | --- |
 | `polaria-wms-web` | App operativa (SaaS) | Next.js 16 App Router, módulos por dominio, supabase-js + Realtime |
 | `polaria-wms-api` | Escrituras y orquestación | NestJS 11, Prisma 7, Swagger `/api/docs` |
-| `polaria-wms-db` | Esquema PostgreSQL / Supabase | Migraciones `001`–`066`, RLS, schema por empresa |
+| `polaria-wms-db` | Esquema PostgreSQL / Supabase | Migraciones `001`–`067`, RLS, schema por empresa |
 | `Widget-react` | **Mateo Support** (chat embebido) | React 19, Vite, Shadow DOM, IIFE `mateo-widget.js` |
 | `flujo` (este hub) | Documentación viva | React + Vite, diagramas, manuales, ER |
 | `polaria-ui-runner` | Simulaciones UI (no es producto) | Playwright + Node; limpia datos demo |
@@ -48,7 +60,7 @@ App Router real (grupos `(shell)/dashboard`, `(shell)/configurador`, `(shell)/pl
 | `/dashboard/operario/operacion` | `operario/` | Cola de tareas |
 | `/dashboard/procesador/operacion` | `procesador/` | Cierre merma |
 | `/dashboard/administracion/catalogo` | `admin-panel/` | Catálogo |
-| `/dashboard/administracion/asignacion-creacion/*` | `admin-panel/` | Usuarios, proveedores, clientes, compradores, camiones, plantas, bodegas |
+| `/dashboard/administracion/asignacion-creacion/*` | `admin-panel/` | Usuarios; **Creación:** proveedores, clientes, compradores (alias + ficha), camiones, plantas (con **Editar**); bodegas |
 
 ### 2.2 Configurador (plataforma TI)
 
@@ -58,7 +70,7 @@ También existe `/platform` (shell de plataforma).
 
 ### 2.3 Auth
 
-- `/login` — prelogin empresa + usuario → password
+- `/login` — prelogin empresa + usuario → password. Sesión WMS: **12 h** (`SESSION_MAX_AGE_MS`); al vencer, logout + Mateo se cierra.
 - `/auth/sso` — SSO Mateo
 
 Contrato (web y Nest coinciden):
@@ -129,7 +141,7 @@ Widget en Prisma: `@@map("widget_conversacion")` **sin** `@@schema("mateo_suppor
 
 ### 4.1 Migraciones
 
-Serie `001`–`066` (también en `supabase/migrations/`). Hitos recientes:
+Serie `001`–`067` (también en `supabase/migrations/`). Hitos recientes:
 
 | N° | Qué |
 | --- | --- |
@@ -143,6 +155,7 @@ Serie `001`–`066` (también en `supabase/migrations/`). Hitos recientes:
 | 064 | Vistas `public.widget_*` + reload PostgREST |
 | 065 | FK clone unqualified → schema tenant |
 | 066 | **`precio_producto`** + RLS SELECT + índice |
+| 067 | **`comprador_producto_alias`**: alias por par comprador+producto; RLS catálogo; `wms_sync_table_to_tenants`; `NOTIFY pgrst` |
 
 ### 4.2 `precio_producto` (fuente de precio de venta)
 
@@ -180,6 +193,7 @@ RLS por usuario + `codigo_cuenta`. Auth conversaciones = Bearer WMS, **no** el J
 | `security_event` | 053 | Eventos de seguridad append-only |
 | `wms_tenant_tables` | 062 | Catálogo de tablas a clonar a `emp_*` |
 | `precio_producto` | 066 | Precio venta; sin Prisma |
+| `comprador_producto_alias` | 067 | Alias de catálogo por comprador; UNIQUE (id_comprador, id_producto); sin Prisma |
 
 ---
 
@@ -205,6 +219,8 @@ Asistente embebido en el shell autenticado de Polaria WMS. Docs de origen: `docs
 
 Pendiente: validación JWT en n8n (POL-71), CDN estable del bundle en producción.
 
+**Sesión (29 ago 2026):** el JWT de n8n (~300 s) no cierra a Mateo. La sesión de Polaria (12 h) sí: al vencer o al logout se resetea el tokenFetcher y se desmonta el widget. Los enlaces del chat van subrayados y abren otra pestaña; un nombre de PDF en “ruta” es descarga cuando hay URL válida.
+
 ---
 
 ## 6. Runner UI — `polaria-ui-runner`
@@ -227,6 +243,10 @@ Herramienta **interna** (Playwright) para simular Andino / Mar Azul / Aves. No e
 - [x] MIT inventario / `cuenta_reporte_embed`
 - [x] Integración bodega externa (operador → bandeja configurador)
 - [x] `security_event` append-only; runner no es producto
+- [x] Sesión WMS 12 h + cierre conjunto de Mateo
+- [x] Alias de producto por comprador (`comprador_producto_alias`, 067)
+- [x] Editar en Creación (proveedores, clientes, compradores, camiones, plantas)
+- [x] Teléfonos con prefijo de país en display
 
 ---
 

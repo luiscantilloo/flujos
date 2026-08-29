@@ -1,6 +1,13 @@
-# React + Vite
+# Polaria WMS Dev Hub (`flujo`)
+
+**Versión de producto: 2.4.3**
+
+Portal de documentación, diagramas y manuales de usuario de Polaria WMS.
+
+## React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
 
 Currently, two official plugins are available:
 

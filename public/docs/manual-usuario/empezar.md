@@ -11,6 +11,8 @@ Este manual es para **quien trabaja con el producto todos los días**. No hace f
 5. Escribe tu **contraseña**.
 6. Espera unos segundos. El sistema te lleva solo a **tu pantalla de trabajo** (no todos ven lo mismo).
 
+La sesión dura **12 horas** desde que entras. Si dejás el navegador abierto y volvés al día siguiente, Polaria te pide login de nuevo. No hace falta que cierres la pestaña: el sistema corta solo.
+
 **Si eres del equipo TI (Configurador):** normalmente no eliges empresa. Entras con correo y contraseña y vas al **Panel** de plataforma.
 
 ### Si no puedes entrar
@@ -56,7 +58,7 @@ Nadie hace todo. Cada rol hace un tramo. Las guías de **procesos** (Compras, Ve
 
 - **Menú izquierdo:** Inicio, Compras, Ventas, Mapa, Ingreso, Operación, Transporte… según tu rol.
 - **Selector de bodega** (arriba): si tienes más de una, elige la bodega en la que estás trabajando **antes** de mover mercancía.
-- **Mateo:** burbuja de chat abajo a la derecha. Pregúntale en español (“no me deja emitir la venta”). Si no responde, recarga o avisa a TI.
+- **Mateo:** burbuja de chat abajo a la derecha. Pregúntale en español (“no me deja emitir la venta”). Si no responde, recarga o avisa a TI. Si se vence tu sesión de Polaria (o cerrás sesión), Mateo también se cierra.
 
 ## 5. Palabras que vas a oír (sin tecnicismos)
 

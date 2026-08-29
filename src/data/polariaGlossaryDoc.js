@@ -24,7 +24,10 @@ const GLOSSARY_ROWS = [
   ['RLS', 'Row Level Security en PostgreSQL: el JWT del usuario limita filas.', 'políticas en `polaria-wms-db`'],
   ['Anon key', 'Clave pública de Supabase. La seguridad es RLS, no ocultar la key.', '`NEXT_PUBLIC_SUPABASE_ANON_KEY`'],
   ['Service role', 'Clave de servidor. Solo API; nunca al browser.', '`SUPABASE_SERVICE_ROLE_KEY`'],
-  ['Mateo', 'Chat embebido. JWT ~300 s para n8n; historial con Bearer WMS.', 'schema `mateo_support` · vistas `widget_*`'],
+  ['Mateo', 'Chat embebido. JWT n8n ~300 s (se renueva); historial con Bearer WMS. Cierra con la sesión de 12 h de Polaria. Enlaces subrayados (nueva pestaña); PDF en “ruta” descargable si el archivo existe.', 'schema `mateo_support` · vistas `widget_*`'],
+  ['Comprador', 'Destino comercial de una venta (persona o punto).', '`comprador` · `id_comprador`'],
+  ['Alias de producto', 'Nombre con el que un comprador conoce un ítem del catálogo (sandía → patilla). No altera `producto`. Un par comprador+producto = un alias.', '`comprador_producto_alias` · migración 067 · `wms_sync_table_to_tenants`'],
+  ['Sesión WMS (12 h)', 'Tope de sesión en el browser desde el login. Al vencer o al logout, Mateo también se cierra.', '`SESSION_MAX_AGE_MS` · `auth-session-timeout`'],
   ['Fridem', 'Bodega externa de terceros, inventario solo lectura (en maduración).', 'integración externa'],
 ]
 

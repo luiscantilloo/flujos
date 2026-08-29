@@ -280,7 +280,7 @@ export const WEB_TREE = [
               { id: 'pw-adm-cat', name: 'catalogo/' },
               { id: 'pw-adm-prov', name: 'proveedores/' },
               { id: 'pw-adm-cli', name: 'clientes/' },
-              { id: 'pw-adm-comp', name: 'compradores/' },
+              { id: 'pw-adm-comp', name: 'compradores/', hint: '✅ CRUD + alias + ficha' },
               { id: 'pw-adm-cam', name: 'camiones/' },
               { id: 'pw-adm-pla', name: 'plantas/' },
               { id: 'pw-adm-usu', name: 'usuarios/' },
@@ -292,7 +292,7 @@ export const WEB_TREE = [
           },
           { id: 'pw-mod-adm-bod', name: 'administrador-bodega/', hint: '✅ estado + reportes' },
           { id: 'pw-mod-audit', name: 'audit/' },
-          { id: 'pw-mod-auth', name: 'auth/', hint: '✅ login / prelogin' },
+          { id: 'pw-mod-auth', name: 'auth/', hint: '✅ login / prelogin / sesión 12h' },
           { id: 'pw-mod-co', name: 'companies/', hint: '🔵 placeholder (empresas en configurator/)' },
           {
             id: 'pw-mod-config',

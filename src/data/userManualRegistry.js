@@ -33,7 +33,7 @@ export const userManualItems = [
     title: 'Cómo entrar y usar este manual',
     summary: 'Login, qué pantalla te toca y las palabras que vas a oír (SOL, OC, OV, mapa).',
     filePath: '/docs/manual-usuario/empezar.md',
-    keywords: ['entrar', 'login', 'empezar', 'inicio', 'correo', 'contraseña', 'rol'],
+    keywords: ['entrar', 'login', 'empezar', 'inicio', 'correo', 'contraseña', 'rol', 'sesión', '12 horas'],
   },
   {
     id: 'rol-configurador',
@@ -48,10 +48,10 @@ export const userManualItems = [
     id: 'rol-administrador-cuenta',
     category: 'roles',
     title: 'Administrador de cuenta',
-    summary: 'Armar el equipo, catálogo, proveedores, clientes y aprobar compras.',
+    summary: 'Armar el equipo, catálogo, proveedores, clientes, compradores (alias) y aprobar compras.',
     filePath: '/docs/manual-usuario/roles/administrador-cuenta.md',
     roleId: 'administrador_cuenta',
-    keywords: ['admin', 'cuenta', 'catálogo', 'proveedor', 'cliente', 'usuarios'],
+    keywords: ['admin', 'cuenta', 'catálogo', 'proveedor', 'cliente', 'usuarios', 'alias', 'comprador', 'editar', 'teléfono'],
   },
   {
     id: 'rol-operador-cuenta',
@@ -168,9 +168,9 @@ export const userManualItems = [
     id: 'proceso-mateo',
     category: 'procesos',
     title: 'Mateo (chat de ayuda)',
-    summary: 'La burbuja de chat: cómo preguntar y qué hacer si no responde.',
+    summary: 'La burbuja de chat: enlaces, PDFs, sesión de 12 h y qué hacer si no responde.',
     filePath: '/docs/manual-usuario/procesos/mateo-support.md',
-    keywords: ['mateo', 'widget', 'chat', 'soporte', 'ayuda'],
+    keywords: ['mateo', 'widget', 'chat', 'soporte', 'ayuda', 'enlace', 'pdf', 'sesión'],
   },
   {
     id: 'soporte-faq',
@@ -178,7 +178,7 @@ export const userManualItems = [
     title: 'No me deja… (preguntas frecuentes)',
     summary: 'Login, botones que no aparecen, mapa, ventas y chat.',
     filePath: '/docs/manual-usuario/soporte/preguntas-frecuentes.md',
-    keywords: ['faq', 'error', 'login', 'no puedo', 'ayuda'],
+    keywords: ['faq', 'error', 'login', 'no puedo', 'ayuda', 'sesión', 'alias', 'teléfono'],
   },
   {
     id: 'soporte-glosario',
@@ -186,7 +186,7 @@ export const userManualItems = [
     title: 'Glosario rápido',
     summary: 'SOL, OC, OV, merma, mapa y el resto, en una línea cada uno.',
     filePath: '/docs/manual-usuario/soporte/glosario-rapido.md',
-    keywords: ['glosario', 'sol', 'oc', 'ov', 'ot', 'palabras'],
+    keywords: ['glosario', 'sol', 'oc', 'ov', 'ot', 'palabras', 'alias', 'sesión'],
   },
 ]
 

@@ -18,11 +18,20 @@ Mateo es el **chat** de Polaria WMS: una burbuja abajo a la derecha cuando ya en
 
 Podés abrir el chat chico o más grande. El historial de **tus** conversaciones se guarda; otro usuario no ve las tuyas.
 
+Cuando Mateo te da un **enlace**, aparece subrayado: hacé clic y se abre en **otra pestaña**. No dice “ver documento”: ves la dirección y la abrís. Si menciona un **PDF** (por ejemplo en “ruta”), ese nombre también es un enlace para bajarlo, cuando el archivo está disponible.
+
+## Sesión (Polaria y Mateo juntos)
+
+- La sesión de Polaria dura **12 horas** desde el login. Al vencerse, te manda a entrar de nuevo.
+- Mateo **se cierra con Polaria**: si cerrás sesión o se vencen las 12 horas, el chat también se corta (no queda un token viejo colgado).
+- El chat con el asistente (n8n) usa un token corto (~5 minutos) que **se renueva solo** mientras tu sesión de Polaria sigue viva. Eso no es un cierre de sesión: es el recambio interno del chat.
+
 ## Si no responde o se cierra
 
 1. Recargá la página y volvé a abrir el chat.
-2. Si te pide entrar de nuevo, tu sesión se venció: login otra vez.
-3. Si sigue mudo, avisá a TI o al administrador de cuenta. A veces el asistente está caído: no es que vos hayas hecho algo mal.
+2. Si te pide entrar de nuevo, tu sesión de 12 horas se venció o cerraste Polaria: login otra vez.
+3. Si un PDF da error (página no encontrada), recargá o pedí el archivo de nuevo; avisá a TI si se repite.
+4. Si sigue mudo, avisá a TI o al administrador de cuenta. A veces el asistente está caído: no es que vos hayas hecho algo mal.
 
 ## Qué no es Mateo
 

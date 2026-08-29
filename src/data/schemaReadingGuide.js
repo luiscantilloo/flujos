@@ -34,7 +34,7 @@ export const SCHEMA_READING_PHASES = [
     id: '4',
     label: 'FASE 4 — Catálogos',
     actor: 'administrador_cuenta',
-    summary: 'proveedor, cliente, producto, comprador, planta, camion (scope C).',
+    summary: 'proveedor, cliente, producto, comprador, comprador_producto_alias, planta, camion (scope C).',
   },
   {
     id: '5',
@@ -70,7 +70,7 @@ export const SCHEMA_READING_PHASES = [
     id: '10',
     label: 'FASE 10 — Precios, Mateo y tenant schema',
     actor: 'sistema · soporte',
-    summary: 'precio_producto, widget Mateo (mateo_support), sesion_operativa, wms_tenant_tables / emp_*, cuenta_reporte_embed, security_event.',
+    summary: 'precio_producto, widget Mateo (mateo_support), sesion_operativa, wms_tenant_tables / emp_*, cuenta_reporte_embed, security_event, comprador_producto_alias (067).',
   },
 ]
 
@@ -87,7 +87,8 @@ export const TABLE_READING_SEQUENCE = [
   { order: 9, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'proveedor', table: 'proveedor', title: 'Proveedor', readFirst: 'Scope C.', thenRead: 'cliente.', createdBy: 'admin_cuenta', indexes: ['PK (id_proveedor)'] },
   { order: 10, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'cliente', table: 'cliente', title: 'Cliente', readFirst: 'Scope C.', thenRead: 'producto.', createdBy: 'admin_cuenta', indexes: ['PK (id_cliente)'] },
   { order: 11, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'producto', table: 'producto', title: 'Producto', readFirst: 'SKU por tenant.', thenRead: 'comprador.', createdBy: 'admin_cuenta', indexes: ['PK (id_producto)'] },
-  { order: 12, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'comprador', table: 'comprador', title: 'Comprador', readFirst: 'Scope C.', thenRead: 'planta.', createdBy: 'admin_cuenta', indexes: ['PK (id_comprador)'] },
+  { order: 12, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'comprador', table: 'comprador', title: 'Comprador', readFirst: 'Scope C. Teléfono E.164 en UI.', thenRead: 'comprador_producto_alias.', createdBy: 'admin_cuenta', indexes: ['PK (id_comprador)'] },
+  { order: 12.5, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'comprador_producto_alias', table: 'comprador_producto_alias', title: 'Alias producto por comprador', readFirst: 'Cómo ese comprador llama al ítem. UNIQUE (id_comprador, id_producto). No toca producto.', thenRead: 'planta.', createdBy: 'admin_cuenta', indexes: ['PK (id_alias)', 'UNIQUE (id_comprador, id_producto)'] },
   { order: 13, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'planta', table: 'planta', title: 'Planta', readFirst: 'Destino OV.', thenRead: 'camion.', createdBy: 'admin_cuenta', indexes: ['PK (id_planta)'] },
   { order: 14, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'camion', table: 'camion', title: 'Camión', readFirst: 'Flota tenant.', thenRead: 'asignacion_bodega.', createdBy: 'admin_cuenta', indexes: ['PK (id_camion)'] },
   { order: 15, phaseId: '5', phaseLabel: 'FASE 5', entityId: 'asignacion_bodega', table: 'asignacion_bodega', title: 'Asignación bodega', readFirst: 'Roles físicos por bodega.', thenRead: 'SOL.', createdBy: 'admin_cuenta', indexes: ['PK (id_asignacion)'] },

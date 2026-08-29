@@ -5,6 +5,7 @@
 
 export const POLARIA_WMS = {
   productName: 'Polaria WMS',
+  productVersion: '2.4.3',
   legacySubtitle: 'Bodega de Frío (referencia de diseño V2)',
   statusDate: 'Ago 2026',
   repos: {
@@ -21,7 +22,7 @@ export const POLARIA_WMS = {
     db: {
       name: 'polaria-wms-db',
       url: 'https://github.com/PolariaTech/polaria-wms-db',
-      role: 'Migraciones Supabase 001–066, RLS, schema por empresa emp_*, precio_producto',
+      role: 'Migraciones Supabase 001–067, RLS, schema por empresa emp_*, precio_producto, comprador_producto_alias',
     },
     widget: {
       name: 'Widget-react',
@@ -54,10 +55,11 @@ export const IMPLEMENTATION_STATUS = {
   design: { icon: '🔵', label: 'Diseño / roadmap', key: 'design' },
 }
 
-export const POLARIA_STATUS_CALLOUT = `> **Estado Polaria WMS — Ago 2026**
+export const POLARIA_STATUS_CALLOUT = `> **Estado Polaria WMS ${POLARIA_WMS.productVersion} — Ago 2026**
 > ✅ Implementado en API + web + BD (compras, recepción, inventario, operaciones, procesamiento, ventas, transporte, Mateo widget)
 > ✅ Precio de venta operativo: tabla \`precio_producto\` (no el precio de \`metadatos_catalogo\`)
 > ✅ Schema por empresa \`emp_*\` (migración 062); cuentas legacy siguen en \`public\`
+> ✅ Sesión WMS tope 12 h; Mateo se cierra con Polaria. Alias de producto por comprador (\`comprador_producto_alias\`, 067)
 > 🟡 Maduración: observabilidad, FEFO automático completo, Fridem, CDN widget, Prisma de \`precio_producto\`
 > 🔵 Roadmap: API playground, Storybook, métricas centralizadas
 >
@@ -184,7 +186,7 @@ export const POLARIA_API_PENDING = [
   'Salida cruzada con validación de peso avanzada',
   'Observabilidad centralizada (métricas, alertas SLO)',
   'Validación JWT en workflow n8n (POL-71)',
-  'Modelo Prisma de `precio_producto` (hoy solo Postgres + Supabase JS)',
+  'Modelo Prisma de `precio_producto` y `comprador_producto_alias` (hoy solo Postgres + Supabase JS)',
   'Módulos stub sin código: accounts, audit, companies, files, health, notifications, settings, users, warehouses',
 ]
 

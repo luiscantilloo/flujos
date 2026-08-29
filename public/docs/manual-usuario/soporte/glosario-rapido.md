@@ -14,6 +14,8 @@ Palabras que vas a oír en Polaria WMS, en una línea.
 | **Cuenta** | La unidad que opera adentro de la empresa (catálogo, compras, ventas). |
 | **Bodega** | El lugar físico (la cámara). |
 | **Configurador** | TI de Polaria, el que arma empresas y bodegas. |
+| **Sesión (12 h)** | Tiempo máximo desde el login. Al vencerse, Polaria y Mateo piden entrar de nuevo. |
+| **Alias de producto** | Cómo un comprador llama a un ítem del catálogo (sandía → patilla). No cambia el producto. |
 
 ## Documentos
 

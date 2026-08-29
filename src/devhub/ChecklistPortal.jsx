@@ -95,7 +95,7 @@ export function ChecklistPortal({ project, onBackToMain, onBackToProjects }) {
               </p>
               <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">Checklist del proyecto</h2>
               <p className="mt-3 text-pretty text-base leading-relaxed text-slate-400">
-                Estado vivo ago 2026: docs, Swagger, emp_*, Mateo, migraciones 001–066 y huecos reales
+                Estado vivo **2.4.3** · ago 2026: docs, Swagger, emp_*, Mateo, migraciones 001–067 y huecos reales
                 (Prisma de precio, Playwright del producto, Fridem).
               </p>
             </div>

@@ -36,6 +36,8 @@ const SEMANTIC_RELATIONS = [
   { from: 'cuenta', to: 'proveedor', label: 'catálogo C' },
   { from: 'cuenta', to: 'cliente', label: 'clientes' },
   { from: 'cuenta', to: 'producto', label: 'productos' },
+  { from: 'comprador', to: 'comprador_producto_alias', label: 'alias' },
+  { from: 'producto', to: 'comprador_producto_alias', label: 'alias' },
   { from: 'cliente', to: 'producto', label: 'SKU cliente' },
   { from: 'solicitud_compra', to: 'solicitud_compra_linea', label: 'líneas SOL' },
   { from: 'solicitud_compra', to: 'orden_compra', label: 'convierte OC' },

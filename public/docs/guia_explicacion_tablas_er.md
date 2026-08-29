@@ -574,13 +574,13 @@ El vecino que te encarga un pastel.
 
 **Quién lo usa o lo crea:** El jefe de la empresa cliente
 
-**Antes de este paso:** Scope C.
+**Antes de este paso:** Scope C. Teléfono E.164 en UI.
 
-**Después sigue:** planta.
+**Después sigue:** comprador_producto_alias.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
-Cuando vendes, eliges a qué comprador va el envío.
+Cuando vendes, eliges a qué comprador va el envío. En Creación podés editarlo, ver su ficha y ponerle alias a los productos.
 
 <details>
 <summary>🔧 Detalle técnico (para adultos / programadores)</summary>
@@ -601,6 +601,51 @@ Cuando vendes, eliges a qué comprador va el envío.
 **Índices (para que el programa vaya rápido):**
 
 - PK (id_comprador)
+
+</details>
+
+### Paso 12.5 — comprador_producto_alias — Cómo ese comprador llama a un producto del catálogo.
+
+**En una frase:** Cómo ese comprador llama a un producto del catálogo.
+
+**Imagínalo así:**
+
+Vos decís sandía; el vecino dice patilla. Es el mismo fruto.
+
+**Quién lo usa o lo crea:** El jefe de la empresa cliente
+
+**Antes de este paso:** Cómo ese comprador llama al ítem. UNIQUE (id_comprador, id_producto). No toca producto.
+
+**Después sigue:** planta.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+El jefe elige comprador, elige producto (código y nombre) y escribe el alias. El catálogo no cambia: queda una fila extra por par comprador + producto.
+
+<details>
+<summary>🔧 Detalle técnico (para adultos / programadores)</summary>
+
+**Nombre en el sistema:** Alias de producto por comprador
+
+✅ Migración 067. Nombre con el que un comprador conoce un producto. No modifica `producto`. Clonada a emp_* vía wms_sync_table_to_tenants.
+
+**Conexiones en el dibujo ER:**
+
+- Se relaciona con **cuenta**: cuenta
+- Se relaciona con **comprador**: comprador
+- Se relaciona con **producto**: producto
+
+**Datos importantes en la tabla:**
+
+- **id_alias** (es el código único de la fila)
+- **codigo_cuenta** (apunta a otra tabla: cuenta.codigo_cuenta)
+- **id_comprador** (apunta a otra tabla: comprador.id_comprador)
+- **id_producto** (apunta a otra tabla: producto.id_producto)
+
+**Índices (para que el programa vaya rápido):**
+
+- PK (id_alias)
+- UNIQUE (id_comprador, id_producto)
 
 </details>
 
@@ -926,7 +971,7 @@ Sin líneas no sabes cuántas cajas esperar.
 
 **Quién lo usa o lo crea:** La gente que trabaja dentro del almacén o en el camión
 
-**Antes de este paso:** 🟡 Schema listo.
+**Antes de este paso:** ✅ API + web (custodio/jefe).
 
 **Después sigue:** recepcion_compra_linea.
 
@@ -1837,7 +1882,7 @@ La cámara de seguridad del sistema.
 
 **Antes de este paso:** INSERT solo backend.
 
-**Después sigue:** Fin secuencia 40 tablas.
+**Después sigue:** precio_producto y Mateo.
 
 #### Cuenta esto en voz alta (30–60 segundos)
 
@@ -1871,6 +1916,112 @@ INSERT solo backend.
 
 ---
 
+## FASE 10 — Precios, Mateo y tenant schema
+
+**En palabras fáciles:**
+
+precio_producto, widget Mateo (mateo_support), sesion_operativa, wms_tenant_tables / emp_*, cuenta_reporte_embed, security_event, comprador_producto_alias (067).
+
+### Paso 41 — precio_producto — Precio de venta
+
+**En una frase:** Precio de venta
+
+**Quién lo usa o lo crea:** El jefe de la empresa cliente
+
+**Antes de este paso:** Vigente = fecha_aplicacion más reciente. Sin Prisma.
+
+**Después sigue:** widget_conversacion.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Vigente = fecha_aplicacion más reciente. Sin Prisma.
+
+### Paso 42 — widget_conversacion — Conversación Mateo
+
+**En una frase:** Conversación Mateo
+
+**Quién lo usa o lo crea:** El programa solo, sin persona
+
+**Antes de este paso:** Schema mateo_support + vista public (064).
+
+**Después sigue:** widget_mensaje.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Schema mateo_support + vista public (064).
+
+### Paso 43 — widget_mensaje — Mensaje Mateo
+
+**En una frase:** Mensaje Mateo
+
+**Quién lo usa o lo crea:** El programa solo, sin persona
+
+**Antes de este paso:** Append idempotente.
+
+**Después sigue:** sesion_operativa.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Append idempotente.
+
+### Paso 44 — sesion_operativa — Presencia operario
+
+**En una frase:** Presencia operario
+
+**Quién lo usa o lo crea:** El programa solo, sin persona
+
+**Antes de este paso:** POST /operaciones/presencia/ping.
+
+**Después sigue:** wms_cuenta de trabajo_tables / emp_*.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+POST /operaciones/presencia/ping.
+
+### Paso 45 — wms_tenant_tables — Catálogo clone emp_*
+
+**En una frase:** Catálogo clone emp_*
+
+**Quién lo usa o lo crea:** El programa solo, sin persona
+
+**Antes de este paso:** Migración 062.
+
+**Después sigue:** cuenta_reporte_embed.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Migración 062.
+
+### Paso 46 — cuenta_reporte_embed — Embed reportería
+
+**En una frase:** Embed reportería
+
+**Quién lo usa o lo crea:** El programa solo, sin persona
+
+**Antes de este paso:** MIT / Looker por cuenta. Service role.
+
+**Después sigue:** security_event.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+MIT / Looker por cuenta. Service role.
+
+### Paso 47 — security_event — Evento de seguridad
+
+**En una frase:** Evento de seguridad
+
+**Quién lo usa o lo crea:** El programa solo, sin persona
+
+**Antes de este paso:** Append-only. Sin PostgREST authenticated.
+
+**Después sigue:** Fin extras 2026.
+
+#### Cuenta esto en voz alta (30–60 segundos)
+
+Append-only. Sin PostgREST authenticated.
+
+---
+
 ## Lista rápida — todos los pasos
 
 | Paso | Tabla | De qué trata | Quién |
@@ -1888,6 +2039,7 @@ INSERT solo backend.
 | 10 | `cliente` | Dueño de una marca o línea de productos. | El jefe de la empresa cliente |
 | 11 | `producto` | Cada cosa que guardas, compras o vendes (con su código). | El jefe de la empresa cliente |
 | 12 | `comprador` | Quién te compra a ti (a quien envías producto). | El jefe de la empresa cliente |
+| 12.5 | `comprador_producto_alias` | Cómo ese comprador llama a un producto del catálogo. | El jefe de la empresa cliente |
 | 13 | `planta` | A dónde puede ir el producto (otra fábrica o sitio). | El jefe de la empresa cliente |
 | 14 | `camion` | Los camiones de la empresa. | El jefe de la empresa cliente |
 | 15 | `asignacion_bodega` | Quién trabaja en qué bodega y con qué trabajo. | El jefe de la empresa cliente |
@@ -1916,6 +2068,13 @@ INSERT solo backend.
 | 38 | `evidencia_transporte` | Prueba de entrega (foto, firma Cloudinary). | transportista |
 | 39 | `contador` | Contador para números automáticos (OC, OV, TV…). | El programa solo, sin persona |
 | 40 | `auditoria_operacion` | Cuaderno de "quién hizo qué y cuándo". | El programa solo, sin persona |
+| 41 | `precio_producto` | Precio de venta | El jefe de la empresa cliente |
+| 42 | `widget_conversacion` | Conversación Mateo | El programa solo, sin persona |
+| 43 | `widget_mensaje` | Mensaje Mateo | El programa solo, sin persona |
+| 44 | `sesion_operativa` | Presencia operario | El programa solo, sin persona |
+| 45 | `wms_tenant_tables` | Catálogo clone emp_* | El programa solo, sin persona |
+| 46 | `cuenta_reporte_embed` | Embed reportería | El programa solo, sin persona |
+| 47 | `security_event` | Evento de seguridad | El programa solo, sin persona |
 
 ## Preguntas que suele hacer un niño (y la respuesta)
 
@@ -1940,4 +2099,4 @@ Para ver al instante dónde está cada caja, como un GPS del almacén.
 
 ---
 
-*40 piezas del rompecabezas · modelo 3NF · Dev Hub Bodega de Frío*
+*41 piezas del rompecabezas · modelo 3NF · Dev Hub Bodega de Frío*

@@ -3,10 +3,19 @@
  */
 export const documentationItems = [
   {
-    id: 'bodega-frio-documentacion-v20',
-    title: 'Bodega de frío — Documentación técnica (V2.0)',
+    id: 'novedades-2026-08-29',
+    title: 'Novedades 29 ago 2026 — Polaria WMS 2.4.3',
     summary:
-      'Empresa vs tenant, arquitectura lectura/escritura, modelo dual, stack, flujos, API real, precio_producto, emp_*, Mateo. Actualizado Ago 2026.',
+      'Índice del día: tope de sesión 12 h, cierre de Mateo, enlaces/PDF, Editar en Creación, teléfonos +país, alias comprador–producto (067). Manuales y Drive incluidos.',
+    filePath: '/docs/novedades_2026-08-29.md',
+    format: 'markdown',
+    sourceNote: 'Captura del chat de producto 29 ago 2026 (web, db, Widget-react, este hub).',
+  },
+  {
+    id: 'bodega-frio-documentacion-v20',
+    title: 'Bodega de frío — Documentación técnica (generación V2 · producto 2.4.3)',
+    summary:
+      'Empresa vs tenant, arquitectura lectura/escritura, modelo dual, stack, flujos, API real, precio_producto, emp_*, Mateo. Producto 2.4.3 · Ago 2026.',
     filePath: '/docs/bodega_de_frio_documentacion_v2_0.md',
     format: 'markdown',
     sourceNote: 'Mantenido a mano (Supabase, ago 2026). No regenerar desde el .txt del Word.',
@@ -15,7 +24,7 @@ export const documentationItems = [
     id: 'polaria-wms-mapa-actual',
     title: 'Polaria WMS — mapa actual (web, API, BD, Mateo)',
     summary:
-      'Captura ago 2026: rutas y módulos reales, precio_producto, schema por empresa emp_*, Mateo Support, runner UI. Para que no se pierda lo que ya está en código.',
+      'Producto 2.4.3. Captura ago 2026: rutas y módulos reales, precio_producto, comprador_producto_alias (067), sesión 12 h, emp_*, Mateo Support, runner UI.',
     filePath: '/docs/polaria_wms_mapa_actual.md',
     format: 'markdown',
     sourceNote: 'Redacción a partir de polaria-wms-web, api, db y Widget-react (ago 2026).',

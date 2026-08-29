@@ -54,12 +54,12 @@ export const SCHEMA_META = {
   engine: 'Supabase PostgreSQL + Realtime + Prisma (API)',
   normalization: '3NF + warehouse_state',
   notes: [
-    'Alineado a polaria-wms-api/prisma/schema.prisma (43 modelos: 40 núcleo + SesionOperativa + WidgetConversacion + WidgetMensaje). precio_producto está en Postgres (066) sin modelo Prisma aún.',
+    'Alineado a polaria-wms-api/prisma/schema.prisma (43 modelos: 40 núcleo + SesionOperativa + WidgetConversacion + WidgetMensaje). precio_producto (066) y comprador_producto_alias (067) están en Postgres sin modelo Prisma aún.',
     'Scope C = codigo_cuenta; C+B = codigo_cuenta + id_bodega. Schema por empresa emp_* (062); legacy en public.',
     'Escrituras sensibles vía polaria-wms-api (Prisma bypass RLS); lecturas web con supabase-js + JWT.',
     'Fuente: polaria-wms-db migrations + prisma/schema.prisma. Auth en auth.users (Supabase).',
     'Onboarding: POST /configuracion/bodegas (no insert browser). Integración: solicitud_integracion.',
-    'Login: POST /auth/prelogin → POST /auth/login; SSO Mateo opcional.',
+    'Login: POST /auth/prelogin → POST /auth/login; SSO Mateo opcional. Sesión WMS: tope 12 h en el browser; Mateo se cierra con Polaria.',
   ],
 }
 
@@ -75,6 +75,7 @@ export const AUTH_LOGIN_V20 = {
     steps: [
       'POST /auth/prelogin — validar codigoEmpresa + usuario (flujo platform | tenant)',
       'POST /auth/login — contraseña (Supabase Auth) → sesión JWT',
+      'Tope 12 h en el browser (`SESSION_MAX_AGE_MS`); al vencer o logout se cierra Mateo',
       'Opcional: SSO Mateo (mateo-handoff / mateo-exchange, header x-auth-client)',
       'Cargar rol, tenant(s) y permisos → dashboard según rol',
     ],
@@ -139,8 +140,34 @@ export const SCHEMA_DOMAINS = [
   { id: 'system', label: 'FASE 9 · Contadores y auditoría', color: 'slate', order: 7 },
 ]
 
-/** 40 tablas public.* núcleo Prisma + extras en EXTRA_DATABASE_TABLES (precio_producto, widget, schema emp_*) */
-export const ENTITIES = _SUPABASE_ENTITIES
+const COMPRADOR_PRODUCTO_ALIAS_ENTITY = {
+  id: 'comprador_producto_alias',
+  domain: 'catalog',
+  name: 'Alias de producto por comprador',
+  table: 'comprador_producto_alias',
+  physical: 'public.comprador_producto_alias',
+  prismaModel: null,
+  scope: 'C',
+  implementationStatus: 'done',
+  desc: '✅ Migración 067. Nombre con el que un comprador conoce un producto. No modifica `producto`. Clonada a emp_* vía wms_sync_table_to_tenants.',
+  fields: [
+    { name: 'id_alias', type: 'uuid', pk: true, nullable: false },
+    { name: 'codigo_cuenta', type: 'varchar', pk: false, nullable: false, fk: 'cuenta.codigo_cuenta' },
+    { name: 'id_comprador', type: 'uuid', pk: false, nullable: false, fk: 'comprador.id_comprador' },
+    { name: 'id_producto', type: 'uuid', pk: false, nullable: false, fk: 'producto.id_producto' },
+    { name: 'alias', type: 'varchar', pk: false, nullable: false },
+    { name: 'created_at', type: 'timestamptz', pk: false, nullable: false },
+    { name: 'updated_at', type: 'timestamptz', pk: false, nullable: false },
+  ],
+  relations: [
+    { card: 'N', entity: 'cuenta', label: 'cuenta' },
+    { card: 'N', entity: 'comprador', label: 'comprador' },
+    { card: 'N', entity: 'producto', label: 'producto' },
+  ],
+}
+
+/** 40 tablas public.* núcleo Prisma + extras (precio_producto en EXTRA; alias 067 aquí para el ER de catálogo) */
+export const ENTITIES = [..._SUPABASE_ENTITIES, COMPRADOR_PRODUCTO_ALIAS_ENTITY]
 
 export { PRISMA_TO_ENTITY, PRISMA_MODEL_COUNT, SUPABASE_ENTITY_COUNT }
 
@@ -214,7 +241,7 @@ export const SUPABASE_MAPPING = [
   },
   {
     logical: 'Onboarding FASE B (admin cuenta)',
-    physical: 'productos, clientes, proveedores, compradores, camiones, plantas, operador_cuenta, usuario_bodega',
+    physical: 'productos, clientes, proveedores, compradores, comprador_producto_alias, camiones, plantas, operador_cuenta, usuario_bodega',
   },
   { logical: 'Empresa + tenant + bodega', physical: 'empresa, cuenta, bodega, solicitud_alta_bodega' },
   { logical: 'Auth + usuarios + asignación', physical: 'auth.users, usuario, asignacion_bodega' },

@@ -112,7 +112,13 @@ const STEP_KIDS = {
   comprador: {
     frase: 'Quién te compra a ti (a quien envías producto).',
     analogia: 'El vecino que te encarga un pastel.',
-    guion: 'Cuando vendes, eliges a qué comprador va el envío.',
+    guion: 'Cuando vendes, eliges a qué comprador va el envío. En Creación podés editarlo, ver su ficha y ponerle alias a los productos.',
+  },
+  comprador_producto_alias: {
+    frase: 'Cómo ese comprador llama a un producto del catálogo.',
+    analogia: 'Vos decís sandía; el vecino dice patilla. Es el mismo fruto.',
+    guion:
+      'El jefe elige comprador, elige producto (código y nombre) y escribe el alias. El catálogo no cambia: queda una fila extra por par comprador + producto.',
   },
   camion: {
     frase: 'Los camiones de la empresa.',
