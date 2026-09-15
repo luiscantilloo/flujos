@@ -154,8 +154,8 @@ export const TECH_STACK_LAYERS = [
       },
       {
         name: 'Migraciones',
-        version: '001–067',
-        role: 'polaria-wms-db — RLS, emp_* 062, precio_producto 066, alias 067, widget 064',
+        version: '001–080',
+        role: 'polaria-wms-db — RLS, emp_* 062, precio 066, equivalencias 073, captura 074, impresora 076, editar OV 080',
         icon: SiSupabase,
         color: 'text-emerald-300',
       },
@@ -209,7 +209,7 @@ export function TechStackLayers() {
         <div>
           <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Stack tecnológico</h3>
           <p className="mt-1 text-xs text-slate-500">
-            Producto WMS **2.4.3** · Next 16 · Nest 11 · Prisma 43 · migraciones 001–067
+            Producto WMS **2.5.34** · Next 16 · Nest 11 · Prisma 43 · migraciones 001–080
           </p>
         </div>
         <CopyButton text={fullCopy} label="Copiar stack completo" />

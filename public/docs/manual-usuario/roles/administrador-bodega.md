@@ -24,7 +24,7 @@ Arriba, si tenés más de una bodega, **elegí la bodega** que estás mirando. S
 
 1. Al llegar, abrí **Estado de bodega** y mirá alertas y ocupación.
 2. Si un casillero quedó bloqueado y nadie lo está usando, podés **liberarlo** (force unlock). Esperá un momento: a veces el bloqueo caduca solo (~5 minutos).
-3. Usá **Reportes** para salidas y resumen, no para operar el piso.
+3. Usá **Reportes** para salidas y resumen, no para operar el piso. Ahí hay **Desde** y **Hasta** (día de Bogotá) y **Rastrear caja**.
 4. El **mapa** se actualiza solo. Si no se mueve, recargá y confirmá que la bodega de arriba es la correcta.
 
 ## Qué sí y qué no

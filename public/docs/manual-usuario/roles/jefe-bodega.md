@@ -54,6 +54,8 @@ Si llegó un camión contra orden de compra, el custodio cierra la recepción (k
 4. El operario hace el picking hacia la zona de salida.
 5. El **custodio** arma el paquete de despacho; el chofer entrega.
 
+Si en piso marcan la hoja a mano, el PDF de la OV trae un **QR**: escanear en **Safari**, **Tomar foto** o **Elegir de galería**, **Subir y leer hoja**. La oficina después baja el PDF actualizado. Detalle: guía **Ventas y despacho**.
+
 Si la salida está bloqueada, la OV todavía no está emitida o no hay reserva.
 
 ## Operarios “disponibles”

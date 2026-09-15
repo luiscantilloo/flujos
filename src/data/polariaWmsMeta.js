@@ -1,13 +1,13 @@
 /**
- * Metadatos Polaria WMS — fuente de verdad para el Dev Hub (ago 2026).
+ * Metadatos Polaria WMS — fuente de verdad para el Dev Hub (sep 2026).
  * Repos: polaria-wms-api, polaria-wms-web, polaria-wms-db, Widget-react
  */
 
 export const POLARIA_WMS = {
   productName: 'Polaria WMS',
-  productVersion: '2.4.3',
+  productVersion: '2.5.34',
   legacySubtitle: 'Bodega de Frío (referencia de diseño V2)',
-  statusDate: 'Ago 2026',
+  statusDate: 'Sep 2026',
   repos: {
     api: {
       name: 'polaria-wms-api',
@@ -22,7 +22,7 @@ export const POLARIA_WMS = {
     db: {
       name: 'polaria-wms-db',
       url: 'https://github.com/PolariaTech/polaria-wms-db',
-      role: 'Migraciones Supabase 001–067, RLS, schema por empresa emp_*, precio_producto, comprador_producto_alias',
+      role: 'Migraciones Supabase 001–080, RLS, schema por empresa emp_*, precio_producto, equivalencias, captura surtido, impresora',
     },
     widget: {
       name: 'Widget-react',
@@ -55,11 +55,12 @@ export const IMPLEMENTATION_STATUS = {
   design: { icon: '🔵', label: 'Diseño / roadmap', key: 'design' },
 }
 
-export const POLARIA_STATUS_CALLOUT = `> **Estado Polaria WMS ${POLARIA_WMS.productVersion} — Ago 2026**
+export const POLARIA_STATUS_CALLOUT = `> **Estado Polaria WMS ${POLARIA_WMS.productVersion} — Sep 2026**
 > ✅ Implementado en API + web + BD (compras, recepción, inventario, operaciones, procesamiento, ventas, transporte, Mateo widget)
-> ✅ Precio de venta operativo: tabla \`precio_producto\` (no el precio de \`metadatos_catalogo\`)
-> ✅ Schema por empresa \`emp_*\` (migración 062); cuentas legacy siguen en \`public\`
-> ✅ Sesión WMS tope 12 h; Mateo se cierra con Polaria. Alias de producto por comprador (\`comprador_producto_alias\`, 067)
+> ✅ Precio de venta operativo: tabla \`precio_producto\` + **Lista de precio**; equivalencias por comprador
+> ✅ Pedido: IA leer archivo/mensaje, editar OV (080), captura QR de surtido (074), cajas/presentación (079)
+> ✅ Schema por empresa \`emp_*\` (062); PostgREST expone \`emp_*\` (078)
+> ✅ Sesión WMS tope 12 h; Mateo se cierra con Polaria. Impresoras y bodega default de cuenta
 > 🟡 Maduración: observabilidad, FEFO automático completo, Fridem, CDN widget, Prisma de \`precio_producto\`
 > 🔵 Roadmap: API playground, Storybook, métricas centralizadas
 >
@@ -74,20 +75,22 @@ export const POLARIA_API_ENDPOINTS = [
   { method: 'POST', path: '/auth/prelogin', status: 'done', note: 'Header x-auth-client: wms | mateo (el front envía X-Auth-Client; HTTP es case-insensitive)', group: 'auth' },
   { method: 'POST', path: '/auth/login', status: 'done', note: 'JWT Supabase + contexto tenant/platform', group: 'auth' },
   { method: 'POST', path: '/auth/mateo-handoff', status: 'done', note: 'Bearer · SSO WMS → Mateo (código 60s)', group: 'auth' },
-  { method: 'POST', path: '/auth/mateo/widget-token', status: 'done', note: 'Bearer · JWT widget embebido (~300s)', group: 'auth' },
+  { method: 'POST', path: '/auth/mateo/widget-token', status: 'done', note: 'Bearer · JWT widget embebido (~300s); claims incluyen phone_number. conversation_id NO va en el JWT (va en body n8n)', group: 'auth' },
   { method: 'POST', path: '/auth/mateo-exchange', status: 'done', note: 'Canje código SSO → tokens', group: 'auth' },
   { method: 'GET', path: '/auth/me', status: 'done', note: 'Bearer · perfil + idBodegas[]', group: 'auth' },
   { method: 'POST', path: '/auth/logout', status: 'done', note: 'Bearer · 204', group: 'auth' },
   // Usuarios
   { method: 'POST', path: '/configurador/usuarios', status: 'done', note: 'Rol configurador · scope plataforma', group: 'usuarios' },
   { method: 'POST', path: '/administracion/usuarios', status: 'done', note: 'Rol administrador_cuenta · tenant del JWT', group: 'usuarios' },
+  { method: 'PATCH', path: '/administracion/usuarios/:idUsuario', status: 'done', note: 'Admin cuenta · nombre, correo, teléfono (no cambia código/rol)', group: 'usuarios' },
+  { method: 'POST', path: '/administracion/usuarios/:idUsuario/password', status: 'done', note: 'Admin cuenta · restablecer contraseña', group: 'usuarios' },
   // Configuración
   { method: 'POST', path: '/configuracion/bodegas', status: 'done', note: 'configurador | administrador_cuenta', group: 'configuracion' },
   { method: 'POST', path: '/configuracion/bodegas/:idBodega/bootstrap-layout', status: 'done', note: 'Layout ING/SLOT/SAL/PROC (interna)', group: 'configuracion' },
   { method: 'POST', path: '/configuracion/bodegas/:idBodega/ensure-zonas-operativas', status: 'done', note: 'Backfill zonas operativas', group: 'configuracion' },
   { method: 'POST', path: '/configuracion/empresas', status: 'done', note: 'Solo configurador · alta empresa', group: 'configuracion' },
   { method: 'PATCH', path: '/configuracion/empresas/:codigoEmpresa', status: 'done', note: 'Solo configurador', group: 'configuracion' },
-  { method: 'PATCH', path: '/configuracion/cuentas/:codigoCuenta', status: 'done', note: 'Solo configurador', group: 'configuracion' },
+  { method: 'PATCH', path: '/configuracion/cuentas/:codigoCuenta', status: 'done', note: 'Solo configurador · incluye idBodegaDefault', group: 'configuracion' },
   // Integración
   { method: 'POST', path: '/integracion/solicitudes', status: 'done', note: 'operador_cuenta | administrador_cuenta', group: 'integracion' },
   { method: 'GET', path: '/integracion/solicitudes', status: 'done', note: 'Listar del tenant', group: 'integracion' },
@@ -136,7 +139,7 @@ export const POLARIA_API_ENDPOINTS = [
   { method: 'GET', path: '/operaciones/llamadas', status: 'done', note: 'Llamadas al jefe', group: 'operaciones' },
   { method: 'POST', path: '/operaciones/llamadas', status: 'done', note: 'Operario llama al jefe', group: 'operaciones' },
   { method: 'POST', path: '/operaciones/llamadas/:id/atender', status: 'done', note: 'Jefe atiende llamada', group: 'operaciones' },
-  { method: 'GET', path: '/operaciones/reportes/bodega', status: 'done', note: 'Reportes de bodega', group: 'operaciones' },
+  { method: 'GET', path: '/operaciones/reportes/bodega', status: 'done', note: 'Reportes de bodega · query fechaDesde/fechaHasta (YYYY-MM-DD, default hoy Bogotá)', group: 'operaciones' },
   { method: 'GET', path: '/operaciones/operarios-disponibles', status: 'done', note: 'Operarios con carga', group: 'operaciones' },
   { method: 'POST', path: '/operaciones/presencia/ping', status: 'done', note: 'Heartbeat operario (TTL 2 min)', group: 'operaciones' },
   // Procesamiento
@@ -153,8 +156,8 @@ export const POLARIA_API_ENDPOINTS = [
   { method: 'POST', path: '/procesamiento/solicitudes/:id/ordenes/:idOrden/aplicar', status: 'done', note: 'Operario aplica traslados', group: 'procesamiento' },
   { method: 'POST', path: '/procesamiento/solicitudes/:id/terminar', status: 'done', note: 'Cierra solicitud', group: 'procesamiento' },
   // Ventas
-  { method: 'GET', path: '/ventas/ordenes', status: 'done', note: 'Listar OV (crear borrador = Supabase JS en web, no hay POST Nest)', group: 'ventas' },
-  { method: 'POST', path: '/ventas/ordenes/:id/emitir', status: 'done', note: 'borrador → confirmada + reserva stock', group: 'ventas' },
+  { method: 'GET', path: '/ventas/ordenes', status: 'done', note: 'Listar OV (crear/editar borrador = Supabase JS en web, no hay POST/PATCH Nest)', group: 'ventas' },
+  { method: 'POST', path: '/ventas/ordenes/:id/emitir', status: 'done', note: 'borrador → confirmada + reserva stock. Idempotente si ya no es borrador', group: 'ventas' },
   // Transporte
   { method: 'POST', path: '/transporte/paquetes-despacho', status: 'done', note: 'Custodio · viaje + guías', group: 'transporte' },
   { method: 'POST', path: '/transporte/entregas', status: 'done', note: 'Transportista · evidencias Cloudinary', group: 'transporte' },
@@ -175,7 +178,7 @@ export const POLARIA_API_MODULE_STATUS = [
   { module: 'inventory', path: '/inventario', status: 'done', note: 'warehouse_state, lock/unlock, movimientos' },
   { module: 'operations', path: '/operaciones', status: 'done', note: 'OT, tareas, alertas, llamadas, reportes' },
   { module: 'processing', path: '/procesamiento', status: 'done', note: 'Flujo primario→secundario + merma' },
-  { module: 'sales', path: '/ventas', status: 'done', note: 'Emitir OV + reserva stock' },
+  { module: 'sales', path: '/ventas', status: 'done', note: 'Listar + emitir OV (idempotente). Crear/editar OV = web + Supabase' },
   { module: 'transport', path: '/transporte', status: 'done', note: 'Paquetes despacho + entregas' },
   { module: 'mateo-widget', path: '/mateo/conversaciones', status: 'done', note: 'Persistencia chat embebido' },
 ]
@@ -185,8 +188,7 @@ export const POLARIA_API_PENDING = [
   'FEFO automático completo en todas las salidas',
   'Salida cruzada con validación de peso avanzada',
   'Observabilidad centralizada (métricas, alertas SLO)',
-  'Validación JWT en workflow n8n (POL-71)',
-  'Modelo Prisma de `precio_producto` y `comprador_producto_alias` (hoy solo Postgres + Supabase JS)',
+  'Modelo Prisma de `precio_producto`, `comprador_producto_alias`, `impresora` y `orden_venta_surtido_captura` (hoy Postgres + Supabase JS)',
   'Módulos stub sin código: accounts, audit, companies, files, health, notifications, settings, users, warehouses',
 ]
 
@@ -292,7 +294,7 @@ export function formatPolariaApiMarkdown() {
     '',
     'Headers tenant en rutas operativas: `X-Codigo-Empresa`, `X-Codigo-Cuenta`, `X-Id-Bodega`. Auth cliente: `x-auth-client` (`wms` | `mateo`; el front envía `X-Auth-Client`).',
     '',
-    '**Ventas:** crear OV es insert Supabase JS en web; Nest solo lista y `POST /ventas/ordenes/:id/emitir`.',
+    '**Ventas:** crear/editar OV es insert/update Supabase JS en web; Nest lista y `POST /ventas/ordenes/:id/emitir` (idempotente). Impresoras no tienen controller Nest.',
     '',
     '| Método | Ruta | Estado | Notas |',
     '| --- | --- | --- | --- |',
@@ -321,6 +323,9 @@ export function formatPolariaApiMarkdown() {
     '| POST | `/api/evidencia-transporte` | Subida evidencias Cloudinary |',
     '| POST | `/api/operaciones/sync-demora-alertas` | Sync alertas demora |',
     '| GET | `/api/ventas/productos-catalogo` | Catálogo venta: kg en almacenamiento + **precio_producto** (vigente) |',
+    '| POST | `/api/ventas/leer-pedido` | IA: texto/archivos → líneas del pedido |',
+    '| POST | `/api/ventas/imprimir-orden` | PDF tarea almacén (QR de captura) |',
+    '| POST | `/captura-orden/:id/api` | Foto de hoja surtida (ruta pública) |',
   )
   return lines.join('\n')
 }

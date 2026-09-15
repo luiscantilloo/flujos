@@ -49,7 +49,22 @@ Casillero bloqueado: esperá ~5 minutos o pedile al jefe / admin de bodega que l
 
 ## Ventas
 
-No emite: la orden tiene que estar en **borrador**, con stock y líneas. Si el producto sale **$0**, falta el precio de venta.
+No emite: la orden tiene que tener stock y líneas. **Validar y enviar** ya emite; si quedó **borrador**, usá **Emitir venta** en el detalle. Si el producto sale **$0**, falta el precio en **Lista de precio** (o una equivalencia de ese comprador).
+
+**Editar** solo en borrador / confirmada / en preparación. Si ya despachó, no.
+
+**Imprimir** no anda: pedí a TI la impresora de la cuenta (**Configurador → Impresoras**). Siempre podés **Descargar** el PDF.
+
+### Foto de la hoja (QR)
+
+1. El PDF de la OV tiene un QR.
+2. Abrilo en **Safari** (no dentro de WhatsApp).
+3. **Tomar foto** o **Elegir de galería** → **Subir y leer hoja**.
+4. No pide login. Si el botón no se activa, recargá en Safari y volvé a elegir la foto.
+
+## Lista de precio y equivalencias
+
+**Lista de precio** es la cuarta tarjeta del admin de cuenta: precio vigente. **Equivalencia** se carga en **Editar comprador → Equivalencia**, no hay botón “Crear Alias” en la lista.
 
 ## Chat Mateo
 
@@ -63,7 +78,7 @@ Se ven con el código de país (ejemplo `+57 …`). Si ves un número “crudo�
 
 ## Compradores y alias (admin de cuenta)
 
-En **Creación de compradores**: **Editar** en la fila, **Crear Alias** al lado de Nuevo comprador, y clic en la fila para ver datos + alias. El alias es cómo ese comprador llama al producto (sandía → patilla). No cambia el nombre del catálogo.
+En **Creación de compradores**: **Editar** abre la ficha; pestaña **Equivalencia** → **Crear equivalencia** (nombre que usa el cliente + precio opcional). Clic en la fila para ver datos + equivalencias. **Lista de precio** es otra tarjeta del panel (precio vigente de la cuenta).
 
 ## “Veo datos de otra empresa”
 

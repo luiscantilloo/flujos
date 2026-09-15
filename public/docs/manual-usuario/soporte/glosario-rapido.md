@@ -15,7 +15,9 @@ Palabras que vas a oír en Polaria WMS, en una línea.
 | **Bodega** | El lugar físico (la cámara). |
 | **Configurador** | TI de Polaria, el que arma empresas y bodegas. |
 | **Sesión (12 h)** | Tiempo máximo desde el login. Al vencerse, Polaria y Mateo piden entrar de nuevo. |
-| **Alias de producto** | Cómo un comprador llama a un ítem del catálogo (sandía → patilla). No cambia el producto. |
+| **Alias / equivalencia** | Cómo un comprador llama a un ítem del catálogo (sandía → patilla). Puede llevar **precio especial**. No cambia el producto. |
+| **Lista de precio** | Precio vigente de la cuenta. Lo carga el administrador. |
+| **Captura de surtido** | Foto de la hoja de la OV vía QR (`/captura-orden`). Sin login. |
 
 ## Documentos
 
@@ -26,6 +28,7 @@ Palabras que vas a oír en Polaria WMS, en una línea.
 | **OV** | Orden de venta | El pedido del cliente a preparar y despachar. |
 | **OT** | Orden de trabajo | El trabajo que ve el piso (tareas). |
 | **Guía / viaje** | Transporte | Lo que lleva el chofer. |
+| **QR de captura** | Foto de la hoja | El PDF de la OV; se escanea en Safari y se sube la foto surtida. |
 
 ## Bodega
 

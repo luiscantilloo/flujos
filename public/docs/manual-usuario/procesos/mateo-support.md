@@ -26,6 +26,8 @@ Cuando Mateo te da un **enlace**, aparece subrayado: hacé clic y se abre en **o
 - Mateo **se cierra con Polaria**: si cerrás sesión o se vencen las 12 horas, el chat también se corta (no queda un token viejo colgado).
 - El chat con el asistente (n8n) usa un token corto (~5 minutos) que **se renueva solo** mientras tu sesión de Polaria sigue viva. Eso no es un cierre de sesión: es el recambio interno del chat.
 
+Si Mateo te abre Polaria con un enlace (`/auth/sso`), vas a ver **Conectando con Polaria WMS…** y te deja en tu pantalla. Si el código expiró, **Ir a iniciar sesión**.
+
 ## Si no responde o se cierra
 
 1. Recargá la página y volvé a abrir el chat.

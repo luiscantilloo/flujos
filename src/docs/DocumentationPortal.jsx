@@ -290,6 +290,7 @@ function DocReaderExperience({ doc, onBackToIndex, initialHeadingId, onInitialHe
 }
 
 const BODEGA_DOC_IDS = new Set([
+  'novedades-2026-09-15',
   'novedades-2026-08-29',
   'bodega-frio-documentacion-v20',
   'polaria-wms-mapa-actual',

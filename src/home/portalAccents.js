@@ -47,6 +47,14 @@ export const ACCENT_STYLES = {
     iconBg: 'bg-cyan-500/15 border-cyan-400/25',
     badge: 'bg-cyan-500/15 text-cyan-200 border-cyan-400/20',
   },
+  teal: {
+    ring: 'ring-teal-500/30',
+    border: 'group-hover:border-teal-400/40',
+    glow: 'from-teal-500/25 via-cyan-500/10 to-teal-900/20',
+    icon: 'text-teal-300',
+    iconBg: 'bg-teal-500/15 border-teal-400/25',
+    badge: 'bg-teal-500/15 text-teal-200 border-teal-400/20',
+  },
   slate: {
     ring: 'ring-slate-500/20',
     border: 'group-hover:border-slate-500/40',

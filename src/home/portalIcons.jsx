@@ -5,6 +5,7 @@ import {
   HiOutlineChartBar,
   HiOutlineCircleStack,
   HiOutlineClipboardDocumentCheck,
+  HiOutlineClipboardDocumentList,
   HiOutlineCodeBracket,
   HiOutlineCommandLine,
   HiOutlineCube,
@@ -51,6 +52,7 @@ const ICON_MAP = {
   Squares2X2: HiOutlineSquares2X2,
   UserGroup: HiOutlineUserGroup,
   ChatBubbleLeftRight: HiOutlineChatBubbleLeftRight,
+  ClipboardDocumentList: HiOutlineClipboardDocumentList,
 }
 
 export function PortalIcon({ name, className }) {

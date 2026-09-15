@@ -1,8 +1,10 @@
 # Polaria WMS Dev Hub (`flujo`)
 
-**Versión de producto: 2.4.3**
+**Versión de producto: 2.5.34**
 
-Portal de documentación, diagramas y manuales de usuario de Polaria WMS.
+Portal de documentación, diagramas, manuales de usuario y schemas de formularios de Polaria WMS.
+
+Rutas útiles: `/manual-usuario`, `/formularios/esquema`. Los `schema_*.md` viven en `public/docs/formularios/schemas/`.
 
 ## React + Vite
 

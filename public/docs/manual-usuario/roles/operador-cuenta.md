@@ -37,13 +37,20 @@ Estados que vas a ver: borrador → emitida → (cuando reciban) parcialmente re
 
 ## Vender
 
-1. Entrá a **Ventas** → órdenes.
-2. Pulsá **Nueva orden de venta**.
-3. Elegí cliente/comprador y productos. El precio lo toma el sistema del **precio de venta vigente**. Si sale **$0**, ese producto no tiene precio cargado: no emitas así; avisá al admin.
-4. Guardá el **borrador**. Revisalo.
-5. Pulsá **Emitir venta**.
+1. Entrá a **Ventas** → **Órdenes venta**.
+2. Pulsá **Nueva venta** (no dice “Nueva orden de venta”).
+3. Elegí cómo empezar:
+   - **Primera vez** — el comprador no existe: llenás la ficha y seguís al pedido.
+   - **Venta nueva** — captura a mano.
+   - **Tengo el mensaje o archivos** — pegás el WhatsApp/correo o subís PDF/Excel/foto, elegís el **cliente** y pulsá **Leer y llenar el formulario**. Revisá antes de enviar.
+4. El precio lo toma de la **lista de precio** o de la **equivalencia** de ese comprador. Si sale **$0**, no lo dejes: avisá al admin.
+5. Pulsá **Validar y enviar**. Eso **emite** (reserva stock y avisa a piso).
 
-Al emitir, el sistema reserva stock y le aparecen tareas al piso (picking). Si no hay stock, no va a emitir: cambiá líneas o esperá un ingreso.
+Si quedó en **Borrador**, abrí el detalle y pulsá **Emitir venta**.
+
+Para corregir una OV en **borrador**, **confirmada** o **en preparación**: **Editar** en la fila. Si ya salió a despacho, no se edita.
+
+**Imprimir** / **Descargar** genera el PDF con QR. En piso escanean ese QR, fotografían la hoja y vos después podés **Descargar PDF actualizado (surtido)**.
 
 Detalle del ciclo: guía **Ventas y despacho**.
 
@@ -64,6 +71,8 @@ Si hay que transformar producto (primario → secundario):
 ## Qué no te toca
 
 - Aprobar solicitudes (eso es el administrador de cuenta).
+- Cargar la **lista de precio** (admin de cuenta).
+- Configurar impresoras (configurador / TI).
 - Cerrar la recepción en muelle.
 - Completar tareas de operario ni registrar entregas del chofer.
 
@@ -73,5 +82,8 @@ Si hay que transformar producto (primario → secundario):
 | --- | --- |
 | No puedo convertir la SOL a OC | Tiene que estar **aprobada**. Pedile al admin de cuenta. |
 | No aparece **Emitir orden** | Falta bodega destino en la OC. |
-| No emite la venta | Stock insuficiente, o la OV no está en borrador, o el precio/líneas están mal. |
-| El producto sale a $0 | No hay precio de venta cargado para ese producto. |
+| No emite la venta | Stock insuficiente, líneas vacías, precio $0, o no está en borrador. |
+| El producto sale a $0 | No hay precio en **Lista de precio** ni equivalencia de ese comprador. |
+| No aparece **Editar** | La OV ya está despachada, cerrada o cancelada. |
+| No imprime | Pedile a TI la impresora de la cuenta. |
+| El QR / la foto no carga | Que usen **Safari** y la URL de producción (https). |

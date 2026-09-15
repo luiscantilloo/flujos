@@ -1,6 +1,7 @@
 import { getFlowApplicationById, getPortalPhaseMeta, PORTAL_BRAND } from '../data/portalConfig.js'
 import { getHubProject } from '../data/hubProjects.js'
 import { getReferenceTopic } from '../data/referenceTopics.js'
+import { getFormularioItemById, formularioItems } from '../data/formularioRegistry.js'
 import { paths } from './paths.js'
 
 /**
@@ -33,6 +34,25 @@ export function getRouteMeta(pathname, params = {}) {
 
   if (pathname === paths.userManual || pathname.startsWith('/manual-usuario')) {
     return getPortalPhaseMeta('user-manual')
+  }
+
+  if (pathname.startsWith('/formularios/esquema/') && params.formId) {
+    const form = getFormularioItemById(params.formId)
+    if (form) {
+      return { title: form.title, subtitle: 'Schema de campos · protocolo de validación v1.0' }
+    }
+    return { title: 'Schema no encontrado', subtitle: 'El formulario solicitado no existe en el índice.' }
+  }
+
+  if (pathname === paths.formulariosEsquema || pathname.startsWith('/formularios/esquema')) {
+    return {
+      title: 'Esquema',
+      subtitle: `${formularioItems.length} schemas de campos agrupados por rol.`,
+    }
+  }
+
+  if (pathname === paths.formularios || pathname.startsWith('/formularios')) {
+    return getPortalPhaseMeta('formularios')
   }
 
   if (pathname === paths.projectStructure) {
@@ -108,6 +128,18 @@ export function getBackNavigation(pathname, params = {}) {
   }
 
   if (pathname === paths.userManual || pathname.startsWith('/manual-usuario')) {
+    return { show: true, label: 'Menú principal', to: paths.home }
+  }
+
+  if (pathname.startsWith('/formularios/esquema/') && params.formId) {
+    return { show: true, label: 'Esquema por rol', to: paths.formulariosEsquema }
+  }
+
+  if (pathname === paths.formulariosEsquema || pathname.startsWith('/formularios/esquema')) {
+    return { show: true, label: 'Formularios', to: paths.formularios }
+  }
+
+  if (pathname === paths.formularios || pathname.startsWith('/formularios')) {
     return { show: true, label: 'Menú principal', to: paths.home }
   }
 

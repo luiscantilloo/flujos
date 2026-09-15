@@ -50,7 +50,7 @@ Piénsalo como una cadena:
 2. **Muelle** recibe la mercancía y la deja en ingreso.
 3. **Piso** acomoda las cajas en el mapa de la bodega.
 4. Si hay que **transformar** producto (por ejemplo filetear), se procesa y se declara merma.
-5. **Oficina** arma la venta, **piso** prepara, **muelle** despacha, **chofer** entrega con foto y firma.
+5. **Oficina** arma la venta (a mano o leyendo un mensaje/archivo), **imprime** la hoja con QR, **piso** prepara y puede **fotografiar** esa hoja, **muelle** despacha, **chofer** entrega con foto y firma.
 
 Nadie hace todo. Cada rol hace un tramo. Las guías de **procesos** (Compras, Ventas, etc.) muestran la cadena completa.
 
@@ -66,7 +66,9 @@ Nadie hace todo. Cada rol hace un tramo. Las guías de **procesos** (Compras, Ve
 | --- | --- |
 | SOL / solicitud | Pedido interno: “necesitamos comprar esto”. |
 | OC / orden de compra | Pedido oficial al proveedor. |
-| OV / orden de venta | Pedido del cliente que hay que armar y despachar. |
+| OV / orden de venta | Pedido del cliente que hay que armar y despachar. El PDF lleva un QR para fotografiar la hoja surtida. |
+| Lista de precio | Precio vigente de cada producto. Lo carga el administrador de cuenta. |
+| Equivalencia | Cómo ese comprador llama (y a veces cobra) un producto. |
 | Mapa | Plano de la bodega: cada casillero con lo que hay adentro. |
 | Merma | Kilos que se pierden al procesar (hueso, recorte, evaporación). |
 | Lock / bloqueo | Un casillero “ocupado” por alguien para que dos personas no pisen el mismo lugar. |

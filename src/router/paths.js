@@ -15,6 +15,9 @@ export const paths = {
   devResources: '/recursos',
   userManual: '/manual-usuario',
   userManualItem: (manualId) => `/manual-usuario/${encodeURIComponent(manualId)}`,
+  formularios: '/formularios',
+  formulariosEsquema: '/formularios/esquema',
+  formularioSchema: (formId) => `/formularios/esquema/${encodeURIComponent(formId)}`,
   projectStructure: '/estructura-proyecto',
   projectStructureTab: (tab) =>
     `/estructura-proyecto?tab=${encodeURIComponent(tab)}`,

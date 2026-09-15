@@ -1,6 +1,7 @@
 import { getFlowApplicationById, getPortalPhaseMeta, PORTAL_BRAND } from '../data/portalConfig.js'
 import { getDocumentationItemById } from '../docs/docRegistry.js'
 import { getUserManualItemById } from '../data/userManualRegistry.js'
+import { getFormularioItemById, formularioItems, formularioSchemaPath } from '../data/formularioRegistry.js'
 import { getHubProject } from '../data/hubProjects.js'
 import { getReferenceTopic } from '../data/referenceTopics.js'
 import { paths } from '../router/paths.js'
@@ -118,6 +119,33 @@ export function getRouteSeo(pathname, params = {}) {
   if (pathname === paths.userManual) {
     const phase = getPortalPhaseMeta('user-manual')
     return { ...meta, title: phase.title, description: phase.subtitle, canonicalPath: paths.userManual }
+  }
+
+  if (pathname.startsWith('/formularios/esquema/') && params.formId) {
+    const form = getFormularioItemById(params.formId)
+    if (form) {
+      return {
+        ...meta,
+        title: `${form.title} — Formularios`,
+        description: form.summary,
+        canonicalPath: paths.formularioSchema(params.formId),
+        markdownSource: formularioSchemaPath(form),
+      }
+    }
+  }
+
+  if (pathname === paths.formulariosEsquema) {
+    return {
+      ...meta,
+      title: 'Esquema — Formularios',
+      description: `${formularioItems.length} schemas de campos agrupados por rol.`,
+      canonicalPath: paths.formulariosEsquema,
+    }
+  }
+
+  if (pathname === paths.formularios) {
+    const phase = getPortalPhaseMeta('formularios')
+    return { ...meta, title: phase.title, description: phase.subtitle, canonicalPath: paths.formularios }
   }
 
   return {

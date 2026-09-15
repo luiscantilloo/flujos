@@ -6,6 +6,7 @@ import {
 } from './appDevelopmentFlow.js'
 import { documentationItems } from '../docs/docRegistry.js'
 import { userManualItems } from '../data/userManualRegistry.js'
+import { formularioItems } from '../data/formularioRegistry.js'
 import { ENTITIES } from './bodegaDatabaseSchema.js'
 import { getEnabledHubProjects, getHubProject } from './hubProjects.js'
 import { getReferenceTopic } from './referenceTopics.js'
@@ -36,7 +37,7 @@ export const portalCategories = [
   {
     id: 'devtools',
     label: 'Herramientas',
-    description: 'Checklist, onboarding, runbooks, stack y testing (ago 2026).',
+    description: 'Checklist, onboarding, runbooks, stack y testing (sep 2026).',
   },
   {
     id: 'soon',
@@ -131,6 +132,20 @@ export const portalMainSections = [
     badge: `${userManualItems.length} guías`,
     keywords: ['manual', 'usuario', 'rol', 'soporte', 'mateo', 'faq', 'proceso'],
     action: { type: 'phase', phase: 'user-manual' },
+  },
+  {
+    id: 'formularios',
+    category: 'explore',
+    title: 'Formularios',
+    description:
+      'Schema de campos por rol: validación, tabulación y pre-llenado (IA / BD) según el protocolo v1.0.',
+    icon: 'ClipboardDocumentList',
+    accent: 'teal',
+    enabled: true,
+    featured: true,
+    badge: `${formularioItems.length} schemas`,
+    keywords: ['formulario', 'schema', 'validación', 'campos', 'modal', 'captura'],
+    action: { type: 'phase', phase: 'formularios' },
   },
   {
     id: 'database',
@@ -239,7 +254,7 @@ export const portalMainSections = [
     id: 'dev-resources',
     category: 'devtools',
     title: 'Stack y scripts',
-    description: 'Next 16, Nest 11, Prisma 43, migraciones 001–067 y comandos por repo.',
+    description: 'Next 16, Nest 11, Prisma 43, migraciones 001–080 y comandos por repo.',
     icon: 'CommandLine',
     accent: 'sky',
     enabled: true,
@@ -310,6 +325,7 @@ export const portalStats = {
   flows: 0,
   docs: documentationItems.length,
   userManuals: userManualItems.length,
+  formularios: formularioItems.length,
   glossaryTerms: 20,
   schemaEntities: ENTITIES.length,
   projects: getEnabledHubProjects().length,
@@ -373,7 +389,7 @@ export function getPortalPhaseMeta(phase, referenceCtx = null) {
     main: { title: PORTAL_BRAND.title, subtitle: PORTAL_BRAND.tagline },
     flows: { title: 'Flujos interactivos', subtitle: 'Elige un diagrama para explorar el proceso.' },
     docs: { title: 'Documentación', subtitle: 'Referencias del producto y guía general.' },
-    'dev-resources': { title: 'Stack y scripts', subtitle: 'Next 16, Nest 11, Prisma 43, migraciones 001–067.' },
+    'dev-resources': { title: 'Stack y scripts', subtitle: 'Next 16, Nest 11, Prisma 43, migraciones 001–080.' },
     'project-structure': {
       title: 'Estructura del proyecto',
       subtitle: 'Carpetas polaria-wms-web y polaria-wms-api — ✅ vs 🟡 vs 🔵.',
@@ -389,6 +405,10 @@ export function getPortalPhaseMeta(phase, referenceCtx = null) {
     'user-manual': {
       title: 'Manual de usuario',
       subtitle: 'Guías por rol y proceso para operación y Mateo Support.',
+    },
+    formularios: {
+      title: 'Formularios',
+      subtitle: 'Schema de campos por rol — protocolo de validación v1.0.',
     },
   }
   return map[phase] ?? { title: PORTAL_BRAND.title, subtitle: PORTAL_BRAND.tagline }

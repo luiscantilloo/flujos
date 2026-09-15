@@ -14,6 +14,9 @@ export function DocumentHead() {
   const routeParams = {
     flowAppId: params.flowAppId,
     docId: params.docId,
+    manualId: params.manualId,
+    sectionId: params.sectionId,
+    formId: params.formId,
     topicId: params.topicId,
     projectId: isReference ? params.projectId : undefined,
     stepProjectId: isStepByStep ? params.projectId : undefined,

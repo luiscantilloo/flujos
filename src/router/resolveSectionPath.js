@@ -21,6 +21,8 @@ export function getSectionPath(section) {
         return paths.devResources
       case 'user-manual':
         return paths.userManual
+      case 'formularios':
+        return paths.formularios
       case 'project-structure':
         return paths.projectStructure
       case 'stack-architecture':

@@ -42,11 +42,27 @@ Hacelo **en este orden**. Si saltás un paso, el resto no cierra.
 2. Creá el usuario con rol **Administrador de cuenta**, vinculado a la empresa (y a la cuenta).
 3. Entregale correo y contraseña inicial. **A partir de acá, él arma el equipo** (operadores, jefe, custodios…).
 
-### 5. (Opcional) Más usuarios
+### 5. Bodega por defecto de la cuenta
 
-Podés crear más gente desde acá, pero lo normal es que el administrador de cuenta lo haga en su panel.
+1. **Creación** → **Cuentas**.
+2. Abrí las bodegas de esa cuenta (badge / `+N`).
+3. Marcá el radio **Default** y **Guardar bodega por defecto**.
+4. El pedido de venta preselecciona esa bodega destino.
 
-### 6. Integración de bodega externa
+### 6. Impresoras (para el PDF de la OV)
+
+Sin impresora, el operador no puede **Imprimir** la hoja de almacén (sí puede **Descargar**).
+
+1. **Asignación** → **Impresoras**.
+2. **Configurar impresora** / **Agregar**: cuenta, marca/modelo, conexión (IPP Wi‑Fi / Ethernet, o USB con QZ Tray), papel carta.
+3. Podés asignarla a un **usuario** de esa cuenta.
+4. **Guardar impresora**. Después se edita con **Editar impresora**.
+
+### 7. (Opcional) Más usuarios
+
+Podés crear más gente desde acá, pero lo normal es que el administrador de cuenta lo haga en su panel. El admin de cuenta también **edita** nombre/correo/teléfono y **restablece contraseña**.
+
+### 8. Integración de bodega externa
 
 Si el cliente pide conectar una bodega de terceros:
 
@@ -67,3 +83,5 @@ Si el cliente pide conectar una bodega de terceros:
 | Error al crear el layout de la bodega | Suele ser que ya está creado. Seguí con usuarios. |
 | No ves solicitudes de integración | Revisá el menú **Integración**, no el dashboard del cliente. |
 | El admin de cuenta no entra | Revisá que el correo exista, la empresa esté activa y el rol sea administrador de cuenta. |
+| Ventas no imprime | Falta impresora en **Asignación → Impresoras** para esa cuenta. |
+| El pedido no trae bodega | Marcá **Default** en las bodegas de la cuenta. |

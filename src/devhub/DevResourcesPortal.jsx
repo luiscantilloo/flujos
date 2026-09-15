@@ -37,7 +37,7 @@ const PRODUCT_REPOS = [
   {
     name: POLARIA_WMS.repos.db.name,
     url: POLARIA_WMS.repos.db.url,
-    dev: 'supabase db push / scripts SQL (001–067)',
+    dev: 'supabase db push / scripts SQL (001–080)',
     role: POLARIA_WMS.repos.db.role,
   },
   {
@@ -50,7 +50,7 @@ const PRODUCT_REPOS = [
 
 const INSTALL_STEPS = [
   'Clonar polaria-wms-api, polaria-wms-web, polaria-wms-db y Widget-react',
-  'Aplicar migraciones 001–067 desde polaria-wms-db (incluye emp_*, precio_producto, comprador_producto_alias, widget)',
+  'Aplicar migraciones 001–080 desde polaria-wms-db (incluye emp_*, precio, equivalencias, captura surtido, impresora)',
   'API: .env con DATABASE_URL, SUPABASE_*, MATEO_HANDOFF_SECRET, MATEO_WIDGET_JWT_SECRET',
   'Web: .env.local con NEXT_PUBLIC_API_URL (http://localhost:3000) y NEXT_PUBLIC_SUPABASE_*',
   'Widget: VITE_N8N_WEBHOOK_URL y Cloudinary; demo en puerto 5174',
@@ -59,6 +59,7 @@ const INSTALL_STEPS = [
 
 const QUICK_LINKS = [
   { label: 'Manual de usuario', to: paths.userManual },
+  { label: 'Formularios · Esquema', to: paths.formulariosEsquema },
   { label: 'API y endpoints', to: paths.reference('api', 'bodega-frio') },
   { label: 'Onboarding dev', to: paths.reference('onboarding', 'bodega-frio') },
   { label: 'Runbooks', to: paths.reference('runbooks', 'bodega-frio') },
@@ -113,7 +114,7 @@ export function DevResourcesPortal({ onBackToMain, onOpenDocSection }) {
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">Stack y scripts</h2>
             <p className="mt-3 text-pretty text-base leading-relaxed text-slate-400">
               Ecosistema <strong className="font-medium text-slate-300">Polaria WMS</strong> (4 repos producto + este Dev
-              Hub). Producto **2.4.3** · Ago 2026 · Prisma 43 · migraciones 001–067.
+              Hub). Producto **2.5.34** · Sep 2026 · Prisma 43 · migraciones 001–080.
             </p>
           </div>
 
