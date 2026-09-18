@@ -1,6 +1,6 @@
 # Polaria WMS Dev Hub (`flujo`)
 
-**Versión de producto: 2.5.34**
+**Versión de producto: 2.7.5**
 
 Portal de documentación, diagramas, manuales de usuario y schemas de formularios de Polaria WMS.
 
