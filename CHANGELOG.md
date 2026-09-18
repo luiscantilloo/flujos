@@ -2,6 +2,31 @@
 
 Todos los repos de producto (`polaria-wms-web`, `polaria-wms-api`, `polaria-wms-db`, `Widget-react`) y este Dev Hub (`flujo`) publican la misma versión de producto.
 
+## 2.7.5 — 2026-09-17
+
+### Cambiado
+- Acceso a **Polaria WMS** y **Mateo IA** por **usuario** (`usuario.acceso_wms` / `usuario.acceso_mateo`). La ficha Acceso de la cuenta solo enciende o apaga el login (`cuenta.esta_activa`).
+- Configurador → Cuentas: maestros reales de cada tenant (catálogo, lista de precio, proveedores, clientes, compradores, camiones, plantas).
+- Carga unificada: card del QR/SSO; dentro de tablas, sin recuadro interior.
+- Gestión de precios de compradores: plantilla Excel protegida sin contraseña (solo Equivalencia y Precio nuevo).
+
+### Base de datos
+- Migración **083** (`usuario.acceso_wms` / `usuario.acceso_mateo`).
+
+La generación de diseño sigue siendo **V2**. El número de producto es **2.7.5**.
+
+## 2.6.0 — 2026-09-16
+
+### Añadido
+- **Configurador → Cuentas**: gobierno TI de todas las cuentas (ficha Acceso, Usuarios y Bodegas; maestros y operación).
+- Acceso de cuenta por producto: **Polaria WMS**, **Mateo IA** o **ambos**. El configurador siempre tiene los dos. Si la cuenta es solo Mateo, el login WMS redirige a Mateo y no muestra el WMS. Si no hay Mateo, el botón del topbar no aparece.
+- Teléfono único en el perfil (E.164; migración **081**). El login WMS sigue siendo solo con correo.
+
+### Base de datos
+- Migraciones **081** (teléfono único) y **082** (`cuenta.acceso_wms` / `cuenta.acceso_mateo`).
+
+La generación de diseño sigue siendo **V2**. El número de producto es **2.6.0**.
+
 ## 2.5.34 — 2026-09-15
 
 ### Añadido
