@@ -21,9 +21,9 @@ const SECURITY_OBSERVATIONS = [
     status: 'partial',
   },
   {
-    title: 'JWT + sesiones controladas: tope de 12 h en cliente',
+    title: 'JWT + sesiones controladas: tope de 1 mes en cliente',
     detail:
-      'El browser corta la sesión WMS a las 12 h desde el login (`SESSION_MAX_AGE_MS`) y cierra Mateo (token + UI) en el mismo momento. Sigue pendiente: rotación de refresh, revocación inmediata en incidentes, sesiones concurrentes e invalidación por cambio de privilegios.',
+      'El browser corta la sesión WMS al cumplirse 1 mes desde el login (`SESSION_MAX_AGE_MS`) y cierra Mateo (token + UI) en el mismo momento. Sigue pendiente: rotación de refresh, revocación inmediata en incidentes, sesiones concurrentes e invalidación por cambio de privilegios.',
     status: 'partial',
   },
   {
@@ -122,7 +122,7 @@ export function formatPolariaSecurityMarkdown() {
     '| SSO Mateo | `mateo-handoff` / `mateo-exchange` (código 60s) | ✅ |',
     '| Header cliente | `x-auth-client: wms \\| mateo` en prelogin/login | ✅ |',
     '| Logout | `POST /auth/logout` — invalida sesión Supabase; el front también corta Mateo | ✅ |',
-    '| Tope de sesión WMS | 12 h desde el login (`SESSION_MAX_AGE_MS`); redirige a `/login` | ✅ |',
+    '| Tope de sesión WMS | 1 mes desde el login (`SESSION_MAX_AGE_MS`); redirige a `/login` | ✅ |',
     '',
     '> La autorización en cliente puede eludirse. **RLS en PostgreSQL** y **guards en la API** son la barrera real en servidor.',
     '',
@@ -170,8 +170,8 @@ export function formatPolariaSecurityMarkdown() {
     '| Flujo | Token | Duración |',
     '| --- | --- | --- |',
     '| Chat n8n | JWT widget (`POST /auth/mateo/widget-token`) | ~300s (refresh mientras hay sesión WMS) |',
-    '| Historial conversaciones | Bearer sesión WMS | Hasta 12 h o logout |',
-    '| Cierre conjunto | Logout o tope 12 h de Polaria | Resetea token Mateo y desmonta el widget |',
+    '| Historial conversaciones | Bearer sesión WMS | Hasta 1 mes o logout |',
+    '| Cierre conjunto | Logout o tope 1 mes de Polaria | Resetea token Mateo y desmonta el widget |',
     '| Enlaces / PDF | Render rich del widget | Subrayado, `target=_blank`; PDF en “ruta” con `download` si hay URL |',
     '| SSO WMS ↔ Mateo | Código handoff | 60s |',
     '',

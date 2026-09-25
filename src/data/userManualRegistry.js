@@ -33,7 +33,7 @@ export const userManualItems = [
     title: 'Cómo entrar y usar este manual',
     summary: 'Login, qué pantalla te toca y las palabras que vas a oír (SOL, OC, OV, mapa).',
     filePath: '/docs/manual-usuario/empezar.md',
-    keywords: ['entrar', 'login', 'empezar', 'inicio', 'correo', 'contraseña', 'rol', 'sesión', '12 horas'],
+    keywords: ['entrar', 'login', 'empezar', 'inicio', 'correo', 'contraseña', 'rol', 'sesión', '1 mes'],
   },
   {
     id: 'rol-configurador',
@@ -168,7 +168,7 @@ export const userManualItems = [
     id: 'proceso-mateo',
     category: 'procesos',
     title: 'Mateo (chat de ayuda)',
-    summary: 'La burbuja de chat: enlaces, PDFs, sesión de 12 h y qué hacer si no responde.',
+    summary: 'La burbuja de chat: enlaces, PDFs, sesión de 1 mes y qué hacer si no responde.',
     filePath: '/docs/manual-usuario/procesos/mateo-support.md',
     keywords: ['mateo', 'widget', 'chat', 'soporte', 'ayuda', 'enlace', 'pdf', 'sesión'],
   },

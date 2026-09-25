@@ -62,7 +62,7 @@ export const POLARIA_STATUS_CALLOUT = `> **Estado Polaria WMS ${POLARIA_WMS.prod
 > ✅ Admin: maestro **Grupos** (antes Clientes); acceso WMS/Mateo por usuario (083)
 > ✅ Pedido: IA leer archivo/mensaje, editar OV (080), captura QR de surtido (074), cajas/presentación (079)
 > ✅ Schema por empresa \`emp_*\` (062); PostgREST expone \`emp_*\` (078)
-> ✅ Sesión WMS tope 12 h; Mateo se cierra con Polaria. Impresoras y bodega default de cuenta
+> ✅ Sesión WMS tope 1 mes; Mateo se cierra con Polaria. Impresoras y bodega default de cuenta
 > 🟡 Maduración: observabilidad, FEFO automático completo, Fridem, CDN widget, Prisma de \`precio_producto\`
 > 🔵 Roadmap: API playground, Storybook, métricas centralizadas
 >

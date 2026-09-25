@@ -64,7 +64,7 @@
 | ¿Requiere temperatura al entregar? | Selección | No | Sí, No | ficha.requiereTemp o Sí | No | Comprador abierto | — | — | Front, Back, BD |
 | ¿Requiere ficha técnica del producto? | Selección | No | Sí, No | ficha.requiereFicha o No | No | Comprador abierto | — | — | Front, Back, BD |
 | Política de rechazo y devolución | Texto largo | No | textarea | ficha.politicaDevolucion | No | Comprador abierto | — | — | Front, Back, BD |
-| Equivalencia (pestaña Equivalencia) | Texto | Sí si la fila cambió | varchar(255); no puede quedar vacío si se editó | alias de comprador_producto_alias | Sí (id_comprador + id_producto) | Fila de alias | Se envía en el mismo Guardar del modal si el draft cambió | La equivalencia no puede quedar vacía. / La equivalencia es obligatoria. / La equivalencia no puede superar 255 caracteres. | Front, Back, BD |
+| Equivalencia (pestaña Equivalencia) | Texto | No (puede quedar vacío si solo cambia el precio) | varchar(255) | alias de comprador_producto_alias | Sí (id_comprador + id_producto) | Fila de alias | Se envía en el mismo Guardar del modal si el draft cambió | La equivalencia no puede superar 255 caracteres. | Front, Back, BD |
 | Precio comprador (pestaña Equivalencia) | Número decimal (texto) | No | ≥ 0; vacío → quitar override (null = lista default); parseDecimalEs | precio override o lista | No | Fila de alias | Si el valor iguala precioLista se guarda null | Ingresa un precio válido (0 o mayor). | Front, Back, BD |
 | Código (pestaña Equivalencia) | Texto | — | Código de catálogo | alias.codigoProducto | No | Fila de alias | No editable | — | Front, BD |
 | Nombre (pestaña Equivalencia) | Texto | — | Título de catálogo | alias.nombreProducto | No | Fila de alias | No editable | — | Front, BD |

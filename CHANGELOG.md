@@ -22,6 +22,8 @@ Todos los repos de producto (`polaria-wms-web`, `polaria-wms-api`, `polaria-wms-
 
 La generación de diseño sigue siendo **V2**. El número de producto es **2.7.15**.
 
+Verificación manual del hub: abrir portal, confirmar versión 2.7.15, schemas de reportes/precios/grupos visibles, mapa/CHANGELOG actualizados. Resultado: PASS.
+
 ## 2.7.5 — 2026-09-17
 
 ### Cambiado
