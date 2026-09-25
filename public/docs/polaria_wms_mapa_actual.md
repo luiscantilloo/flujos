@@ -59,7 +59,7 @@ Documento de **captura** para que no se pierda lo que ya está en código: web, 
 | --- | --- | --- |
 | `polaria-wms-web` | App operativa (SaaS) | Next.js 16 App Router, módulos por dominio, supabase-js + Realtime |
 | `polaria-wms-api` | Escrituras y orquestación | NestJS 11, Prisma 7, Swagger `/api/docs` |
-| `polaria-wms-db` | Esquema PostgreSQL / Supabase | Migraciones `001`–`084`, RLS, schema por empresa |
+| `polaria-wms-db` | Esquema PostgreSQL / Supabase | Migraciones `001–086`, RLS, schema por empresa |
 | `Widget-react` | **Mateo Support** (chat embebido) | React 19, Vite, Shadow DOM, IIFE `mateo-widget.js` |
 | `flujo` (este hub) | Documentación viva | React + Vite, diagramas, manuales, ER |
 | `polaria-ui-runner` | Simulaciones UI (no es producto) | Playwright + Node; limpia datos demo |
@@ -183,7 +183,7 @@ Widget en Prisma: `@@map("widget_conversacion")` **sin** `@@schema("mateo_suppor
 
 ### 4.1 Migraciones
 
-Serie `001`–`084` (también en `supabase/migrations/`). Hitos recientes:
+Serie `001–086` (también en `supabase/migrations/`). Hitos recientes:
 
 | N° | Qué |
 | --- | --- |

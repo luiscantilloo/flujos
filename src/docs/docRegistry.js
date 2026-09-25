@@ -33,7 +33,7 @@ export const documentationItems = [
     id: 'polaria-wms-mapa-actual',
     title: 'Polaria WMS — mapa actual (web, API, BD, Mateo)',
     summary:
-      'Producto 2.7.15. Captura sep 2026: reportes embed + permisos, Grupos, Excel/PDF precios, acceso por usuario, migraciones 081–084; base 2.5.34 (QR, IA, lista de precio).',
+      'Producto 2.7.15. Captura sep 2026: reportes embed + permisos, Grupos, Excel/PDF precios, acceso por usuario, migraciones 081–086; base 2.5.34 (QR, IA, lista de precio).',
     filePath: '/docs/polaria_wms_mapa_actual.md',
     format: 'markdown',
     sourceNote: 'Redacción a partir de polaria-wms-web, api, db y Widget-react (ago–sep 2026).',

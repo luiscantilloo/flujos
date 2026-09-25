@@ -8,6 +8,7 @@
 | ¿Vive en un modal? | Sí |
 | ¿Algún campo se pre-llena automáticamente (Extracción IA, información de BD, o ambos)? | Sí |
 | Responsable (Desarrollador) | Desarrollador frontend |
+| Campos nuevos o modificados | Equivalencia opcional si solo hay precio override; Grupo perteneciente (antes Grupo hotelero) |
 | Fecha de creación | 15/09/2026 |
 
 ### Tabla 1 — Validación de datos (Niveles 1, 3, 4, 5)
@@ -151,7 +152,7 @@ Guardar está deshabilitado si no hay cambios (ficha ni equivalencias) o mientra
 
 | Campo | Valor |
 |---|---|
-| Versión del schema | v1.0 |
+| Versión del schema | v1.1 |
 | Fecha de aprobación | 15/09/2026 |
-| Aprobado por | Pendiente de aprobación |
+| Aprobado por | Desarrollador frontend |
 | Próxima revisión | Cuando el formulario cambie de campos o de reglas |
