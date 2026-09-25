@@ -70,7 +70,7 @@ export const SCHEMA_READING_PHASES = [
     id: '10',
     label: 'FASE 10 — Precios, Mateo y tenant schema',
     actor: 'sistema · soporte',
-    summary: 'precio_producto, widget Mateo (mateo_support), sesion_operativa, wms_tenant_tables / emp_*, cuenta_reporte_embed, security_event, comprador_producto_alias (067).',
+    summary: 'precio_producto, widget Mateo (mateo_support), sesion_operativa, wms_tenant_tables / emp_*, cuenta_reporte_embed, usuario_reporte_embed (084), security_event, comprador_producto_alias (067).',
   },
 ]
 
@@ -85,7 +85,7 @@ export const TABLE_READING_SEQUENCE = [
   { order: 7, phaseId: '3', phaseLabel: 'FASE 3', entityId: 'solicitud_integracion', table: 'solicitud_integracion', title: 'Integración externa', readFirst: 'Operador → configurador.', thenRead: 'tarea_cuenta.', createdBy: 'operador_cuenta', indexes: ['PK (id_solicitud_integracion)'] },
   { order: 8, phaseId: '3', phaseLabel: 'FASE 3', entityId: 'tarea_cuenta', table: 'tarea_cuenta', title: 'Tarea cuenta', readFirst: 'Bandeja configurador.', thenRead: 'catálogos.', createdBy: 'configurador', indexes: ['PK (id_tarea_cuenta)'] },
   { order: 9, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'proveedor', table: 'proveedor', title: 'Proveedor', readFirst: 'Scope C.', thenRead: 'cliente.', createdBy: 'admin_cuenta', indexes: ['PK (id_proveedor)'] },
-  { order: 10, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'cliente', table: 'cliente', title: 'Cliente', readFirst: 'Scope C.', thenRead: 'producto.', createdBy: 'admin_cuenta', indexes: ['PK (id_cliente)'] },
+  { order: 10, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'cliente', table: 'cliente', title: 'Grupo (UI)', readFirst: 'Scope C. En admin se muestra como Grupos.', thenRead: 'producto.', createdBy: 'admin_cuenta', indexes: ['PK (id_cliente)'] },
   { order: 11, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'producto', table: 'producto', title: 'Producto', readFirst: 'SKU por tenant.', thenRead: 'comprador.', createdBy: 'admin_cuenta', indexes: ['PK (id_producto)'] },
   { order: 12, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'comprador', table: 'comprador', title: 'Comprador', readFirst: 'Scope C. Teléfono E.164 en UI.', thenRead: 'comprador_producto_alias.', createdBy: 'admin_cuenta', indexes: ['PK (id_comprador)'] },
   { order: 12.5, phaseId: '4', phaseLabel: 'FASE 4', entityId: 'comprador_producto_alias', table: 'comprador_producto_alias', title: 'Alias producto por comprador', readFirst: 'Cómo ese comprador llama al ítem. UNIQUE (id_comprador, id_producto). No toca producto.', thenRead: 'planta.', createdBy: 'admin_cuenta', indexes: ['PK (id_alias)', 'UNIQUE (id_comprador, id_producto)'] },
@@ -122,7 +122,8 @@ export const TABLE_READING_SEQUENCE = [
   { order: 43, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'widget_mensaje', table: 'widget_mensaje', title: 'Mensaje Mateo', readFirst: 'Append idempotente.', thenRead: 'sesion_operativa.', createdBy: 'sistema', indexes: ['PK (id_mensaje)'] },
   { order: 44, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'sesion_operativa', table: 'sesion_operativa', title: 'Presencia operario', readFirst: 'POST /operaciones/presencia/ping.', thenRead: 'wms_tenant_tables / emp_*.', createdBy: 'sistema', indexes: ['PK (id_sesion)'] },
   { order: 45, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'wms_tenant_tables', table: 'wms_tenant_tables', title: 'Catálogo clone emp_*', readFirst: 'Migración 062.', thenRead: 'cuenta_reporte_embed.', createdBy: 'sistema', indexes: ['PK (table_name)'] },
-  { order: 46, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'cuenta_reporte_embed', table: 'cuenta_reporte_embed', title: 'Embed reportería', readFirst: 'MIT / Looker por cuenta. Service role.', thenRead: 'security_event.', createdBy: 'sistema', indexes: ['PK (codigo_cuenta)'] },
+  { order: 46, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'cuenta_reporte_embed', table: 'cuenta_reporte_embed', title: 'Embed reportería', readFirst: 'Varios reportes por cuenta. Service role. reporte_id NOT NULL (084).', thenRead: 'usuario_reporte_embed.', createdBy: 'sistema', indexes: ['PK (id_cuenta_reporte_embed)'] },
+  { order: 46.5, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'usuario_reporte_embed', table: 'usuario_reporte_embed', title: 'Permiso reporte por usuario', readFirst: 'Grant usuario ↔ reporte. Migración 084.', thenRead: 'security_event.', createdBy: 'admin_cuenta', indexes: ['PK (id_usuario_reporte_embed)', 'UNIQUE (id_usuario, id_cuenta_reporte_embed)'] },
   { order: 47, phaseId: '10', phaseLabel: 'FASE 10', entityId: 'security_event', table: 'security_event', title: 'Evento de seguridad', readFirst: 'Append-only. Sin PostgREST authenticated.', thenRead: 'Fin extras 2026.', createdBy: 'sistema', indexes: ['PK (id_security_event)'] },
 ]
 

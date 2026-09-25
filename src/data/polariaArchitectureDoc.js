@@ -18,7 +18,7 @@ export function formatPolariaArchitectureMarkdown() {
     '| --- | --- | --- |',
     `| Cliente | [${POLARIA_WMS.repos.web.name}](${POLARIA_WMS.repos.web.url}) | Next.js 16 App Router, módulos por dominio, login, selector de bodega, mapa |`,
     `| API | [${POLARIA_WMS.repos.api.name}](${POLARIA_WMS.repos.api.url}) | NestJS 11, Prisma 7 (${POLARIA_WMS.prismaModelCount} modelos), guards tenant, Swagger \`${POLARIA_WMS.swaggerPath}\` |`,
-    `| Datos | [${POLARIA_WMS.repos.db.name}](${POLARIA_WMS.repos.db.url}) | Migraciones 001–080, RLS, schema \`emp_*\`, \`precio_producto\`, equivalencias, captura surtido, \`impresora\`, \`warehouse_state\` |`,
+    `| Datos | [${POLARIA_WMS.repos.db.name}](${POLARIA_WMS.repos.db.url}) | Migraciones 001–084, RLS, schema \`emp_*\`, \`precio_producto\`, equivalencias, captura surtido, \`impresora\`, \`warehouse_state\`, reportes embed |`,
     `| Widget | [${POLARIA_WMS.repos.widget.name}](${POLARIA_WMS.repos.widget.url}) | Mateo Support (IIFE), n8n + Cloudinary |`,
     '',
     '### Flujo de datos',

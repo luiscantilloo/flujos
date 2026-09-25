@@ -24,7 +24,7 @@
 | Código de cliente | Texto (solo lectura) | Sí | varchar(32) | comprador.codigo | Sí (por cuenta: uq_comprador_cuenta_codigo) | Comprador abierto | No se modifica | — | Front, BD |
 | Nombre comercial | Texto | Sí | varchar(255); HTML required | comprador / detalle.comprador | No | Comprador abierto | — | Falta el nombre comercial. / El nombre del comprador es obligatorio. | Front, Back, BD |
 | Apodo interno | Texto | No | text | ficha.apodo | No | Comprador abierto | — | — | Front, Back, BD |
-| Grupo hotelero | Texto | No | text | ficha.grupo | No | Comprador abierto | — | — | Front, Back, BD |
+| Grupo perteneciente | Selección | No | Catálogo `tmp_grupo_perteneciente` por cuenta | ficha.grupo | No | Comprador abierto | Columna grupo; opciones desde BD (tmp de prueba) | — | Front, Back, BD |
 | Vendedor asignado | Texto (solo lectura) | No | text | ficha.vendedor | No | Comprador abierto | — | — | Front, Back, BD |
 | Estado | Selección | No | Activo, Suspendido por cartera, Prospecto | ficha.estado o Activo | No | Comprador abierto | — | — | Front, Back, BD |
 | Teléfono | Teléfono internacional E.164 | No | Si hay valor, isValidInternationalPhone | detalle.telefono | No | Contactos (fallback) | Si el principal está vacío se usa el primer contacto E.164 válido | Ingresa un número de teléfono válido. / El teléfono del comprador no es válido. | Front, Back, BD |
@@ -97,7 +97,7 @@
 | Código de cliente | Sí | Información de BD | No |
 | Nombre comercial | Sí | Información de BD | Sí |
 | Apodo interno | Sí | Información de BD | Sí |
-| Grupo hotelero | Sí | Información de BD | Sí |
+| Grupo perteneciente | Sí | Información de BD | Sí |
 | Vendedor asignado | Sí | Información de BD | No |
 | Estado | Sí | Información de BD | Sí |
 | Teléfono | Sí | Información de BD | Sí |

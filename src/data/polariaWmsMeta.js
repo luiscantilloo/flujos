@@ -5,7 +5,7 @@
 
 export const POLARIA_WMS = {
   productName: 'Polaria WMS',
-  productVersion: '2.5.34',
+  productVersion: '2.7.15',
   legacySubtitle: 'Bodega de Frío (referencia de diseño V2)',
   statusDate: 'Sep 2026',
   repos: {
@@ -22,7 +22,7 @@ export const POLARIA_WMS = {
     db: {
       name: 'polaria-wms-db',
       url: 'https://github.com/PolariaTech/polaria-wms-db',
-      role: 'Migraciones Supabase 001–080, RLS, schema por empresa emp_*, precio_producto, equivalencias, captura surtido, impresora',
+      role: 'Migraciones Supabase 001–084, RLS, schema por empresa emp_*, precio_producto, equivalencias, captura surtido, impresora, reportes embed',
     },
     widget: {
       name: 'Widget-react',
@@ -57,7 +57,9 @@ export const IMPLEMENTATION_STATUS = {
 
 export const POLARIA_STATUS_CALLOUT = `> **Estado Polaria WMS ${POLARIA_WMS.productVersion} — Sep 2026**
 > ✅ Implementado en API + web + BD (compras, recepción, inventario, operaciones, procesamiento, ventas, transporte, Mateo widget)
-> ✅ Precio de venta operativo: tabla \`precio_producto\` + **Lista de precio**; equivalencias por comprador
+> ✅ Precio de venta operativo: tabla \`precio_producto\` + **Lista de precio**; equivalencias por comprador (Excel/PDF)
+> ✅ Reportes embed por cuenta (URL) y permisos por usuario (\`usuario_reporte_embed\`, migración 084)
+> ✅ Admin: maestro **Grupos** (antes Clientes); acceso WMS/Mateo por usuario (083)
 > ✅ Pedido: IA leer archivo/mensaje, editar OV (080), captura QR de surtido (074), cajas/presentación (079)
 > ✅ Schema por empresa \`emp_*\` (062); PostgREST expone \`emp_*\` (078)
 > ✅ Sesión WMS tope 12 h; Mateo se cierra con Polaria. Impresoras y bodega default de cuenta

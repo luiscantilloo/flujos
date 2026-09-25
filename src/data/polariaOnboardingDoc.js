@@ -47,7 +47,7 @@ export function formatPolariaOnboardingMarkdown() {
     '1. Node 20+ (la CI de la API usa Node 20). npm 10+.',
     '2. Clonar los cuatro repos de producto + este hub.',
     '3. Pedir al configurador: acceso GitHub, usuario de desarrollo y secretos de `.env` (nunca commitearlos).',
-    '4. Aplicar migraciones **001–080** desde `polaria-wms-db` (Supabase del entorno de desarrollo; incluye equivalencias, captura surtido, impresoras).',
+    '4. Aplicar migraciones **001–084** desde `polaria-wms-db` (Supabase del entorno de desarrollo; incluye equivalencias, captura surtido, impresoras, reportes embed).',
     '5. API: `npm install` → copiar `.env` → `npx prisma generate` → `npm run start:dev`.',
     '6. Web: `npm install` → `.env.local` con `NEXT_PUBLIC_*` → `npm run dev` (puerto **3001**, no 3000).',
     '7. Probar `POST /auth/prelogin` (header `X-Auth-Client: wms`) y login. Elegir bodega en el selector.',

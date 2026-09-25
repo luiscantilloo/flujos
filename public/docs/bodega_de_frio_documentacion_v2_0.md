@@ -2,16 +2,17 @@
 
 | Meta | Detalle |
 | --- | --- |
-| Producto | **Polaria WMS 2.5.34** (referencia histórica: Bodega de Frío generación V2) |
-| Subtítulo | Documentación Técnica · diseño V2 · producto **2.5.34** |
+| Producto | **Polaria WMS 2.7.15** (referencia histórica: Bodega de Frío generación V2) |
+| Subtítulo | Documentación Técnica · diseño V2 · producto **2.7.15** |
 | Repos | [polaria-wms-web](https://github.com/PolariaTech/polaria-wms-web) · [polaria-wms-api](https://github.com/PolariaTech/polaria-wms-api) · [polaria-wms-db](https://github.com/PolariaTech/polaria-wms-db) |
 | Dev Hub | [flujos](https://flujos-nine.vercel.app) — este portal (Vite + React) |
 | Stack | Next.js · React · TypeScript · NestJS 11 · Prisma · Supabase |
 | Fecha | Sep 2026 |
 
-> **Estado Polaria WMS 2.5.34 — Sep 2026**
+> **Estado Polaria WMS 2.7.15 — Sep 2026**
 > ✅ Implementado en API + web + BD: auth, configuración, compras+recepción, inventario+mapa Realtime, operaciones, procesamiento, ventas (IA, editar, captura QR), transporte, Mateo widget
-> ✅ Precio de venta operativo: tabla `precio_producto` + Lista de precio; equivalencias por comprador
+> ✅ Precio de venta operativo: tabla `precio_producto` + Lista de precio; equivalencias por comprador (Excel/PDF)
+> ✅ Reportes embed por cuenta + permisos por usuario (`usuario_reporte_embed`, 084); maestro **Grupos**; acceso WMS/Mateo por usuario (083)
 > ✅ Schema por empresa `emp_*` (062); PostgREST expone `emp_*` (078); cuentas legacy siguen en `public`
 > 🟡 Maduración: observabilidad, FEFO automático completo, Fridem, CDN widget, Prisma de `precio_producto`
 > 🔵 Roadmap: API playground, Storybook, métricas centralizadas
@@ -26,7 +27,7 @@
 
 | Meta | Detalle |
 | --- | --- |
-| Subtítulo | Documentación Técnica · generación V2 · producto **2.5.34** |
+| Subtítulo | Documentación Técnica · generación V2 · producto **2.7.15** |
 | Descripción | Sistema de Operación Multi-Rol · Multi-Cuenta · Multi-Bodega |
 | Stack | Next.js  ·  React  ·  TypeScript  ·  Supabase  ·  Cloudinary  ·  n8n |
 | Fecha | Mayo 2026 (Word original) · actualizado Ago 2026 |
@@ -191,7 +192,7 @@ polaria-wms-web/src/
 polaria-wms-api/src/modules/
 ├── auth, configurator, configuracion, purchases, inventory
 ├── operations, processing, sales, transport, integration, mateo-widget
-polaria-wms-db/migrations/              # 001–080 (precio, equivalencias, captura surtido, impresora, emp_*, mateo_support)
+polaria-wms-db/migrations/              # 001–084 (precio, equivalencias, captura surtido, impresora, emp_*, mateo_support, reportes embed)
 Widget-react/                           # IIFE mateo-widget.js (Shadow DOM)
 ```
 
@@ -853,13 +854,13 @@ Persona responsable de la recepción y despacho físico de mercancía en bodega.
 | emp_* | Schema Postgres por empresa (migración 062). Legacy permanece en `public`. |
 | JWT widget | Token ~300s (`POST /auth/mateo/widget-token`) para n8n. Distinto del Bearer de sesión WMS. |
 | mateo_support | Schema de `widget_conversacion` / `widget_mensaje`. Vistas `public.widget_*` (064) para Prisma. |
-| Documentación generación V2 · Polaria WMS **2.5.34** · Sep 2026 | [PolariaTech](https://github.com/PolariaTech) · Dev Hub [flujo](https://flujos-nine.vercel.app) |
+| Documentación generación V2 · Polaria WMS **2.7.15** · Sep 2026 | [PolariaTech](https://github.com/PolariaTech) · Dev Hub [flujo](https://flujos-nine.vercel.app) |
 
 ---
 
-## Anexo — Producto 2.5.34 (sincronizado con repos, sep 2026)
+## Anexo — Producto 2.7.15 (sincronizado con repos, sep 2026)
 
-Sustituye el anexo de ago 2026 (2.4.3). Fuente: código de web, API, db y Widget-react. Detalle: [mapa actual](/documentacion/polaria-wms-mapa-actual) y [novedades 2.5.34](/documentacion/novedades-2026-09-15).
+Sustituye el anexo de 2.5.34. Fuente: código de web, API, db y Widget-react. Detalle: [mapa actual](/documentacion/polaria-wms-mapa-actual) y [novedades 2.5.34](/documentacion/novedades-2026-09-15) (base sep); cambios 2.7.x en el `CHANGELOG` del hub.
 
 ### Repositorios del ecosistema
 
@@ -867,7 +868,7 @@ Sustituye el anexo de ago 2026 (2.4.3). Fuente: código de web, API, db y Widget
 | --- | --- | --- |
 | polaria-wms-web | Next.js 16, React 19, TS | UI multi-rol, lecturas Supabase + Realtime |
 | polaria-wms-api | NestJS 11, Prisma 7 (43 modelos) | Escrituras, reglas, guards tenant |
-| polaria-wms-db | PostgreSQL / Supabase | Migraciones **001–080**, RLS híbrido, `emp_*` |
+| polaria-wms-db | PostgreSQL / Supabase | Migraciones **001–084**, RLS híbrido, `emp_*` |
 | Widget-react | Vite, React 19 | Mateo Support embebido (IIFE + Shadow DOM) |
 | flujo | Vite, React | Este Dev Hub |
 | polaria-ui-runner | Playwright | Simulaciones internas (no es producto) |
@@ -890,7 +891,9 @@ Sustituye el anexo de ago 2026 (2.4.3). Fuente: código de web, API, db y Widget
 | Transporte | ✅ | Paquetes despacho + entregas + Cloudinary |
 | Mateo widget | ✅ | Embed + 2 tokens + historial `mateo_support`; enlaces/PDF |
 | Schema por empresa | ✅ | `emp_*` + `wms_tenant_tables` (062) |
-| Reportería MIT | ✅ | `cuenta_reporte_embed` |
+| Reportería MIT | ✅ | `cuenta_reporte_embed` + permisos `usuario_reporte_embed` (084) |
+| Grupos (UI) | ✅ | Maestro admin; tabla física `cliente` |
+| Acceso WMS/Mateo | ✅ | Flags por usuario (083) |
 | Módulos por rol web | ✅ | custodio, operario, procesador, jefe-bodega, admin-bodega |
 
 ### Auth y Mateo (contrato real)
@@ -920,7 +923,7 @@ Header: `X-Auth-Client: wms \| mateo`.
 
 ### Tablas que no estaban en el Word V2
 
-`precio_producto`, `comprador_producto_alias`, `orden_venta_surtido_captura`, `impresora`, `widget_conversacion`, `widget_mensaje` (`mateo_support`), `sesion_operativa`, `wms_tenant_tables`, `cuenta_reporte_embed`, `security_event`. Prisma 43 modelos (40 núcleo + sesión + 2 widget). Precio, equivalencias, captura e impresora: solo Postgres + JS.
+`precio_producto`, `comprador_producto_alias`, `orden_venta_surtido_captura`, `impresora`, `widget_conversacion`, `widget_mensaje` (`mateo_support`), `sesion_operativa`, `wms_tenant_tables`, `cuenta_reporte_embed`, `usuario_reporte_embed`, `security_event`. Prisma 43 modelos (40 núcleo + sesión + 2 widget). Precio, equivalencias, captura, impresora y reportes embed: solo Postgres + JS.
 
 ### Manual y testing en este Dev Hub
 

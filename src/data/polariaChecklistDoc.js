@@ -23,7 +23,7 @@ const CHECKLIST_ROWS = [
   ['Entornos local vs producción (puertos, secretos, hosting)', 'Media', 'Completo'],
   ['Observabilidad centralizada (métricas, alertas SLO)', 'Baja', 'Pendiente'],
   ['Política de versionado semántico (SemVer)', 'Baja', 'Completo'],
-  ['Migraciones Postgres 001–080 documentadas', 'Alta', 'Completo'],
+  ['Migraciones Postgres 001–084 documentadas', 'Alta', 'Completo'],
   ['Storybook o catálogo de componentes UI', 'Baja', 'Pendiente'],
   ['Compliance y normativas aplicables', 'Baja', 'Pendiente'],
   ['Modelo Prisma de `precio_producto`, equivalencias, `impresora` y captura surtido (hoy Postgres + JS)', 'Alta', 'Pendiente'],

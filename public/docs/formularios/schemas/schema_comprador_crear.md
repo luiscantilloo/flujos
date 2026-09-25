@@ -24,7 +24,7 @@
 | Código de cliente | Texto (solo lectura) | — | varchar(32); en alta muestra placeholder | Se genera al guardar | Sí (por cuenta: uq_comprador_cuenta_codigo) | Nombre comercial o Razón social | generateCodigoCuentaFromNombre(nombre) al guardar | No se pudo generar el código del comprador. | Front, Back, BD |
 | Nombre comercial | Texto | Sí | varchar(255) en columna nombre; HTML required | — | No | — | Es el nombre persistido; si queda vacío se usa razón social | Falta el nombre comercial. / El nombre del comprador es obligatorio. | Front, Back, BD |
 | Apodo interno | Texto | No | text | — | No | — | — | — | Front, Back, BD |
-| Grupo hotelero | Texto | No | text | — | No | — | — | — | Front, Back, BD |
+| Grupo perteneciente | Selección | No | Catálogo `tmp_grupo_perteneciente` por cuenta | — | No | — | Columna grupo; opciones desde BD (tmp de prueba) | — | Front, Back, BD |
 | Vendedor asignado | Texto (solo lectura) | No | text; si vacío se muestra "—" | Nombre del usuario de sesión | No | Sesión | emptyAltaFormState(vendedorNombre); al guardar ficha.vendedor se fuerza a vendedorNombre | — | Front, Back, BD |
 | Estado | Selección | No | Activo, Suspendido por cartera, Prospecto | Activo | No | — | — | — | Front, Back, BD |
 | Teléfono | Teléfono internacional E.164 | No | Si hay valor, isValidInternationalPhone; si vacío se usa el primer teléfono de contacto válido | — | No | Contactos (fallback) | telefonoGuardar = teléfono principal o primer contacto válido o "" | Ingresa un número de teléfono válido. / El teléfono del comprador no es válido. | Front, Back, BD |
@@ -79,7 +79,7 @@
 | Código de cliente | 8 | Sí (siempre, readOnly) | — |
 | Nombre comercial | 9 | No | Sí, al abrir el modal |
 | Apodo interno | 10 | No | — |
-| Grupo hotelero | 11 | No | — |
+| Grupo perteneciente | 11 | No | — |
 | Vendedor asignado | 12 | Sí (siempre, readOnly) | — |
 | Estado | 13 | No | — |
 | Teléfono | 14 | No | — |
