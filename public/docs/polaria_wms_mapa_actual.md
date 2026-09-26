@@ -1,8 +1,27 @@
-# Polaria WMS 2.5.34 — mapa actual del producto (sep 2026)
+# Polaria WMS 2.7.15 — mapa actual del producto (sep 2026)
 
 Documento de **captura** para que no se pierda lo que ya está en código: web, API, BD, Mateo Support y el runner de UI. Complementa (no reemplaza) la documentación V1/V2 de Bodega de frío.
 
-> **Dónde vive en este Dev Hub:** Documentación → *Novedades sep 2026* (2.5.34) y *Novedades 29 ago 2026* (2.4.3). Referencia → *Mateo Support*. Estructura de proyecto → árboles web/API. Modelo de datos → tablas extra. Manual → ventas / operador / admin cuenta / configurador / FAQ / glosario.
+> **Dónde vive en este Dev Hub:** Documentación → *Novedades sep 2026* (2.5.34) y *Novedades 29 ago 2026* (2.4.3); el detalle reciente de **2.7.15** está en el `CHANGELOG` del hub. Referencia → *Mateo Support*. Estructura de proyecto → árboles web/API. Modelo de datos → tablas extra. Manual → ventas / operador / admin cuenta / configurador / FAQ / glosario.
+
+## Cambios sep 2026 (2.7.15)
+
+| Área | Qué quedó |
+| --- | --- |
+| Reportes embed | Admin: **Cargar reportes** por URL (`cuenta_reporte_embed`). **Permisos de reportes** por usuario (`usuario_reporte_embed`). Rutas Next `/reportes-embed/gestion` y `/reportes-embed/permisos`. |
+| Migración | **084**: tabla `usuario_reporte_embed` + `reporte_id` obligatorio en `cuenta_reporte_embed`. |
+| Precios comprador | Importación Excel y exportación PDF de la lista de precios/equivalencias. |
+| Alias | Equivalencia y precio especial **opcionales** al crear alias. |
+| Grupos | Maestro UI **Clientes** renombrado a **Grupos** (tabla `cliente` sin cambio de nombre físico). |
+
+## Cambios sep 2026 (2.7.5)
+
+| Área | Qué quedó |
+| --- | --- |
+| Acceso producto | **WMS** / **Mateo** por **usuario** (`usuario.acceso_wms` / `usuario.acceso_mateo`, migración **083**). La ficha Acceso de cuenta solo enciende/apaga login (`cuenta.esta_activa`). |
+| Configurador | Cuentas: maestros reales del tenant (catálogo, lista de precio, proveedores, clientes/grupos, compradores, camiones, plantas). |
+| Carga UI | Card del QR/SSO; dentro de tablas, sin recuadro interior. |
+| Precios | Plantilla Excel protegida sin contraseña (solo Equivalencia y Precio nuevo). |
 
 ## Cambios sep 2026 (2.5.34)
 
@@ -40,7 +59,7 @@ Documento de **captura** para que no se pierda lo que ya está en código: web, 
 | --- | --- | --- |
 | `polaria-wms-web` | App operativa (SaaS) | Next.js 16 App Router, módulos por dominio, supabase-js + Realtime |
 | `polaria-wms-api` | Escrituras y orquestación | NestJS 11, Prisma 7, Swagger `/api/docs` |
-| `polaria-wms-db` | Esquema PostgreSQL / Supabase | Migraciones `001`–`080`, RLS, schema por empresa |
+| `polaria-wms-db` | Esquema PostgreSQL / Supabase | Migraciones `001–086`, RLS, schema por empresa |
 | `Widget-react` | **Mateo Support** (chat embebido) | React 19, Vite, Shadow DOM, IIFE `mateo-widget.js` |
 | `flujo` (este hub) | Documentación viva | React + Vite, diagramas, manuales, ER |
 | `polaria-ui-runner` | Simulaciones UI (no es producto) | Playwright + Node; limpia datos demo |
@@ -78,7 +97,7 @@ App Router real (grupos `(shell)/dashboard`, `(shell)/configurador`, `(shell)/pl
 | `/dashboard/procesador/operacion` | `procesador/` | Cierre merma |
 | `/dashboard/administracion/catalogo` | `admin-panel/` | Catálogo |
 | `/dashboard/administracion/lista-precio` | `admin-panel/` | Precio vigente (`precio_producto`) |
-| `/dashboard/administracion/asignacion-creacion/*` | `admin-panel/` | Usuarios (editar + reset password); **Creación:** proveedores, clientes, compradores (ficha + **Equivalencia**), camiones, plantas |
+| `/dashboard/administracion/asignacion-creacion/*` | `admin-panel/` | Usuarios (editar + reset password + **permisos de reportes**); **Creación:** proveedores, **grupos** (antes clientes), compradores (ficha + **Equivalencia** Excel/PDF), camiones, plantas; **Cargar reportes** (`reportes-embed/`) |
 
 ### 2.2 Configurador (plataforma TI)
 
@@ -164,7 +183,7 @@ Widget en Prisma: `@@map("widget_conversacion")` **sin** `@@schema("mateo_suppor
 
 ### 4.1 Migraciones
 
-Serie `001`–`080` (también en `supabase/migrations/`). Hitos recientes:
+Serie `001–086` (también en `supabase/migrations/`). Hitos recientes:
 
 | N° | Qué |
 | --- | --- |
@@ -189,6 +208,10 @@ Serie `001`–`080` (también en `supabase/migrations/`). Hitos recientes:
 | 078 | PostgREST expone schemas `emp_*` |
 | 079 | `orden_venta_linea.cajas`, `presentacion` |
 | 080 | RLS UPDATE/DELETE para editar OV (operador/admin, estados editables) |
+| 081 | Teléfono único en `usuario` |
+| 082 | `cuenta.acceso_wms` / `cuenta.acceso_mateo` (legado; el login usa flags de usuario) |
+| 083 | `usuario.acceso_wms` / `usuario.acceso_mateo` |
+| 084 | **`usuario_reporte_embed`** + `reporte_id` NOT NULL en `cuenta_reporte_embed` |
 
 ### 4.2 `precio_producto` (fuente de precio de venta)
 
@@ -281,7 +304,8 @@ Herramienta **interna** (Playwright) para simular Andino / Mar Azul / Aves. No e
 - [x] Sesión WMS 12 h + cierre conjunto de Mateo
 - [x] Equivalencia de producto por comprador (`comprador_producto_alias`, 067/073)
 - [x] Lista de precio, captura QR surtido (074), editar OV (080), impresoras (076)
-- [x] Editar en Creación (proveedores, clientes, compradores, camiones, plantas)
+- [x] Editar en Creación (proveedores, grupos/clientes, compradores, camiones, plantas)
+- [x] Reportes embed + permisos por usuario (084); Grupos UI; Excel/PDF precios comprador
 - [x] Teléfonos con prefijo de país en display
 
 ---

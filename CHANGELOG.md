@@ -2,6 +2,28 @@
 
 Todos los repos de producto (`polaria-wms-web`, `polaria-wms-api`, `polaria-wms-db`, `Widget-react`) y este Dev Hub (`flujo`) publican la misma versión de producto.
 
+## 2.7.15 — 2026-09-25
+
+### Añadido
+- Admin de cuenta: **Cargar reportes** por URL y **Permisos de reportes** por usuario.
+- Gestión de precios de compradores: plantilla Excel, import con preview, **imprimir** lista (landscape, no editable).
+- Compradores: **grupo perteneciente**, filtros de exportación por grupo/producto/fechas y multi-select de compradores.
+- Equivalencia y precio especial opcionales al crear alias comprador–producto.
+- Schemas de formularios: reportes embed, permisos, gestión de precios, comprador crear/editar.
+
+### Cambiado
+- Maestro **Clientes** renombrado a **Grupos** en el admin de cuenta.
+- TTL de sesión WMS / JWT Mateo Support: **1 mes** (handoff SSO sigue en 60 s).
+
+### Base de datos
+- Migración **084** (`usuario_reporte_embed` + `reporte_id` obligatorio en `cuenta_reporte_embed`).
+- Migración **085** (`tmp_producto_mas_vendido`).
+- Migración **086** (`tmp_grupo_perteneciente`).
+
+La generación de diseño sigue siendo **V2**. El número de producto es **2.7.15**.
+
+Verificación manual del hub: abrir portal, confirmar versión 2.7.15, schemas de reportes/precios/grupos visibles, mapa/CHANGELOG actualizados. Resultado: PASS.
+
 ## 2.7.5 — 2026-09-17
 
 ### Cambiado

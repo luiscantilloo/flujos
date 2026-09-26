@@ -254,7 +254,7 @@ export const portalMainSections = [
     id: 'dev-resources',
     category: 'devtools',
     title: 'Stack y scripts',
-    description: 'Next 16, Nest 11, Prisma 43, migraciones 001–080 y comandos por repo.',
+    description: 'Next 16, Nest 11, Prisma 43, migraciones 001–084 y comandos por repo.',
     icon: 'CommandLine',
     accent: 'sky',
     enabled: true,
@@ -389,7 +389,7 @@ export function getPortalPhaseMeta(phase, referenceCtx = null) {
     main: { title: PORTAL_BRAND.title, subtitle: PORTAL_BRAND.tagline },
     flows: { title: 'Flujos interactivos', subtitle: 'Elige un diagrama para explorar el proceso.' },
     docs: { title: 'Documentación', subtitle: 'Referencias del producto y guía general.' },
-    'dev-resources': { title: 'Stack y scripts', subtitle: 'Next 16, Nest 11, Prisma 43, migraciones 001–080.' },
+    'dev-resources': { title: 'Stack y scripts', subtitle: 'Next 16, Nest 11, Prisma 43, migraciones 001–084.' },
     'project-structure': {
       title: 'Estructura del proyecto',
       subtitle: 'Carpetas polaria-wms-web y polaria-wms-api — ✅ vs 🟡 vs 🔵.',

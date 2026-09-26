@@ -8,6 +8,7 @@
 | ¿Vive en un modal? | Sí |
 | ¿Algún campo se pre-llena automáticamente (Extracción IA, información de BD, o ambos)? | Sí |
 | Responsable (Desarrollador) | Desarrollador frontend |
+| Campos nuevos o modificados | Equivalencia opcional si solo hay precio override; Grupo perteneciente (antes Grupo hotelero) |
 | Fecha de creación | 15/09/2026 |
 
 ### Tabla 1 — Validación de datos (Niveles 1, 3, 4, 5)
@@ -24,7 +25,7 @@
 | Código de cliente | Texto (solo lectura) | Sí | varchar(32) | comprador.codigo | Sí (por cuenta: uq_comprador_cuenta_codigo) | Comprador abierto | No se modifica | — | Front, BD |
 | Nombre comercial | Texto | Sí | varchar(255); HTML required | comprador / detalle.comprador | No | Comprador abierto | — | Falta el nombre comercial. / El nombre del comprador es obligatorio. | Front, Back, BD |
 | Apodo interno | Texto | No | text | ficha.apodo | No | Comprador abierto | — | — | Front, Back, BD |
-| Grupo hotelero | Texto | No | text | ficha.grupo | No | Comprador abierto | — | — | Front, Back, BD |
+| Grupo perteneciente | Selección | No | Catálogo `tmp_grupo_perteneciente` por cuenta | ficha.grupo | No | Comprador abierto | Columna grupo; opciones desde BD (tmp de prueba) | — | Front, Back, BD |
 | Vendedor asignado | Texto (solo lectura) | No | text | ficha.vendedor | No | Comprador abierto | — | — | Front, Back, BD |
 | Estado | Selección | No | Activo, Suspendido por cartera, Prospecto | ficha.estado o Activo | No | Comprador abierto | — | — | Front, Back, BD |
 | Teléfono | Teléfono internacional E.164 | No | Si hay valor, isValidInternationalPhone | detalle.telefono | No | Contactos (fallback) | Si el principal está vacío se usa el primer contacto E.164 válido | Ingresa un número de teléfono válido. / El teléfono del comprador no es válido. | Front, Back, BD |
@@ -64,7 +65,7 @@
 | ¿Requiere temperatura al entregar? | Selección | No | Sí, No | ficha.requiereTemp o Sí | No | Comprador abierto | — | — | Front, Back, BD |
 | ¿Requiere ficha técnica del producto? | Selección | No | Sí, No | ficha.requiereFicha o No | No | Comprador abierto | — | — | Front, Back, BD |
 | Política de rechazo y devolución | Texto largo | No | textarea | ficha.politicaDevolucion | No | Comprador abierto | — | — | Front, Back, BD |
-| Equivalencia (pestaña Equivalencia) | Texto | Sí si la fila cambió | varchar(255); no puede quedar vacío si se editó | alias de comprador_producto_alias | Sí (id_comprador + id_producto) | Fila de alias | Se envía en el mismo Guardar del modal si el draft cambió | La equivalencia no puede quedar vacía. / La equivalencia es obligatoria. / La equivalencia no puede superar 255 caracteres. | Front, Back, BD |
+| Equivalencia (pestaña Equivalencia) | Texto | No (puede quedar vacío si solo cambia el precio) | varchar(255) | alias de comprador_producto_alias | Sí (id_comprador + id_producto) | Fila de alias | Se envía en el mismo Guardar del modal si el draft cambió | La equivalencia no puede superar 255 caracteres. | Front, Back, BD |
 | Precio comprador (pestaña Equivalencia) | Número decimal (texto) | No | ≥ 0; vacío → quitar override (null = lista default); parseDecimalEs | precio override o lista | No | Fila de alias | Si el valor iguala precioLista se guarda null | Ingresa un precio válido (0 o mayor). | Front, Back, BD |
 | Código (pestaña Equivalencia) | Texto | — | Código de catálogo | alias.codigoProducto | No | Fila de alias | No editable | — | Front, BD |
 | Nombre (pestaña Equivalencia) | Texto | — | Título de catálogo | alias.nombreProducto | No | Fila de alias | No editable | — | Front, BD |
@@ -97,7 +98,7 @@
 | Código de cliente | Sí | Información de BD | No |
 | Nombre comercial | Sí | Información de BD | Sí |
 | Apodo interno | Sí | Información de BD | Sí |
-| Grupo hotelero | Sí | Información de BD | Sí |
+| Grupo perteneciente | Sí | Información de BD | Sí |
 | Vendedor asignado | Sí | Información de BD | No |
 | Estado | Sí | Información de BD | Sí |
 | Teléfono | Sí | Información de BD | Sí |
@@ -151,7 +152,7 @@ Guardar está deshabilitado si no hay cambios (ficha ni equivalencias) o mientra
 
 | Campo | Valor |
 |---|---|
-| Versión del schema | v1.0 |
+| Versión del schema | v1.1 |
 | Fecha de aprobación | 15/09/2026 |
-| Aprobado por | Pendiente de aprobación |
+| Aprobado por | Desarrollador frontend |
 | Próxima revisión | Cuando el formulario cambie de campos o de reglas |

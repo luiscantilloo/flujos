@@ -85,8 +85,12 @@ export const WEB_TREE = [
           {
             id: 'pw-embed',
             name: 'reportes-embed/',
-            hint: '✅ embed MIT (cuenta_reporte_embed)',
-            children: [{ id: 'pw-embed-view', name: 'view/' }],
+            hint: '✅ embed + gestión/permisos (084)',
+            children: [
+              { id: 'pw-embed-view', name: 'view/' },
+              { id: 'pw-embed-gestion', name: 'gestion/', hint: 'CRUD reportes cuenta' },
+              { id: 'pw-embed-permisos', name: 'permisos/', hint: 'grants por usuario' },
+            ],
           },
           {
             id: 'pw-shell',
@@ -142,7 +146,7 @@ export const WEB_TREE = [
                         children: [
                           { id: 'pw-app-adm-usu', name: 'usuarios/' },
                           { id: 'pw-app-adm-prov', name: 'proveedores/' },
-                          { id: 'pw-app-adm-cli', name: 'clientes/' },
+                          { id: 'pw-app-adm-cli', name: 'clientes/', hint: 'UI: Grupos' },
                           { id: 'pw-app-adm-comp', name: 'compradores/' },
                           { id: 'pw-app-adm-cam', name: 'camiones/' },
                           { id: 'pw-app-adm-pla', name: 'plantas/' },
@@ -279,11 +283,12 @@ export const WEB_TREE = [
             children: [
               { id: 'pw-adm-cat', name: 'catalogo/' },
               { id: 'pw-adm-prov', name: 'proveedores/' },
-              { id: 'pw-adm-cli', name: 'clientes/' },
-              { id: 'pw-adm-comp', name: 'compradores/', hint: '✅ CRUD + alias + ficha' },
+              { id: 'pw-adm-cli', name: 'clientes/', hint: 'UI: Grupos' },
+              { id: 'pw-adm-comp', name: 'compradores/', hint: '✅ CRUD + alias + Excel/PDF precios' },
               { id: 'pw-adm-cam', name: 'camiones/' },
               { id: 'pw-adm-pla', name: 'plantas/' },
-              { id: 'pw-adm-usu', name: 'usuarios/' },
+              { id: 'pw-adm-usu', name: 'usuarios/', hint: '✅ + permisos reportes' },
+              { id: 'pw-adm-rep', name: 'reportes-embed/', hint: '✅ Cargar reportes' },
               { id: 'pw-adm-bi', name: 'bodega-interna/' },
               { id: 'pw-adm-be', name: 'bodega-externa/' },
               { id: 'pw-adm-inv', name: 'inventario-mercancia/', hint: 'Reportería' },
