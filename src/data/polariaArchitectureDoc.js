@@ -46,7 +46,7 @@ export function formatPolariaArchitectureMarkdown() {
     '3. `GET /auth/me` → perfil, roles, `idBodegas[]`.',
     '4. Selector de bodega en web; el contexto tenant viaja en headers.',
     '',
-    'Mateo: JWT de widget (~300 s) para n8n (se renueva); historial con Bearer de sesión WMS. La sesión de Polaria dura 1 mes; al logout o al vencer, el widget se cierra. Enlaces del chat subrayados (otra pestaña); nombre de PDF en “ruta” es descarga si el archivo existe.',
+    'Mateo: JWT de widget (~300 s) para n8n (se renueva); historial con Bearer de sesión WMS. La sesión de Polaria dura 23 días; al logout o al vencer, el widget se cierra. Enlaces del chat subrayados (otra pestaña); nombre de PDF en “ruta” es descarga si el archivo existe.',
     '',
     '### Ventas (split create / emitir)',
     '',

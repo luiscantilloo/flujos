@@ -24,12 +24,12 @@ const GLOSSARY_ROWS = [
   ['RLS', 'Row Level Security en PostgreSQL: el JWT del usuario limita filas.', 'políticas en `polaria-wms-db`'],
   ['Anon key', 'Clave pública de Supabase. La seguridad es RLS, no ocultar la key.', '`NEXT_PUBLIC_SUPABASE_ANON_KEY`'],
   ['Service role', 'Clave de servidor. Solo API; nunca al browser.', '`SUPABASE_SERVICE_ROLE_KEY`'],
-  ['Mateo', 'Chat embebido. JWT n8n ~300 s (se renueva); historial con Bearer WMS. Cierra con la sesión de 1 mes de Polaria. Enlaces subrayados (nueva pestaña); PDF en “ruta” descargable si el archivo existe.', 'schema `mateo_support` · vistas `widget_*`'],
+  ['Mateo', 'Chat embebido. JWT n8n ~300 s (se renueva); historial con Bearer WMS. Cierra con la sesión de 23 días de Polaria. Enlaces subrayados (nueva pestaña); PDF en “ruta” descargable si el archivo existe.', 'schema `mateo_support` · vistas `widget_*`'],
   ['Grupo', 'Empresa dueña de varios compradores en el admin de cuenta (UI: antes “Clientes”).', '`cliente` · tabla/maestro de grupos'],
   ['Comprador', 'Destino comercial de una venta (persona o punto).', '`comprador` · `id_comprador`'],
   ['Alias de producto', 'Nombre con el que un comprador conoce un ítem del catálogo (sandía → patilla). No altera `producto`. Un par comprador+producto = un alias. Equivalencia y precio especial son opcionales.', '`comprador_producto_alias` · migración 067 · `wms_sync_table_to_tenants`'],
   ['Reporte embed', 'Dashboard externo (p. ej. Looker/MIT) cargado por URL en la cuenta. El admin asigna qué usuarios lo ven.', '`cuenta_reporte_embed` · `usuario_reporte_embed` · migración 084'],
-  ['Sesión WMS (1 mes)', 'Tope de sesión en el browser desde el login. Al vencer (1 mes) o al logout, Mateo también se cierra.', '`SESSION_MAX_AGE_MS` · `auth-session-timeout`'],
+  ['Sesión WMS (23 días)', 'Tope de sesión en el browser desde el login. Al vencer (23 días) o al logout, Mateo también se cierra.', '`SESSION_MAX_AGE_MS` · `auth-session-timeout`'],
   ['Fridem', 'Bodega externa de terceros, inventario solo lectura (en maduración).', 'integración externa'],
 ]
 

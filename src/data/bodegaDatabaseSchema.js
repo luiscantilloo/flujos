@@ -59,7 +59,7 @@ export const SCHEMA_META = {
     'Escrituras sensibles vía polaria-wms-api (Prisma bypass RLS); lecturas web con supabase-js + JWT.',
     'Fuente: polaria-wms-db migrations + prisma/schema.prisma. Auth en auth.users (Supabase).',
     'Onboarding: POST /configuracion/bodegas (no insert browser). Integración: solicitud_integracion.',
-    'Login: POST /auth/prelogin → POST /auth/login; SSO Mateo opcional. Sesión WMS: tope 1 mes en el browser; Mateo se cierra con Polaria.',
+    'Login: POST /auth/prelogin → POST /auth/login; SSO Mateo opcional. Sesión WMS: tope 23 días en el browser; Mateo se cierra con Polaria.',
   ],
 }
 
@@ -75,7 +75,7 @@ export const AUTH_LOGIN_V20 = {
     steps: [
       'POST /auth/prelogin — validar codigoEmpresa + usuario (flujo platform | tenant)',
       'POST /auth/login — contraseña (Supabase Auth) → sesión JWT',
-      'tope 1 mes en el browser (`SESSION_MAX_AGE_MS`); al vencer o logout se cierra Mateo',
+      'tope 23 días en el browser (`SESSION_MAX_AGE_MS`); al vencer o logout se cierra Mateo',
       'Opcional: SSO Mateo (mateo-handoff / mateo-exchange, header x-auth-client)',
       'Cargar rol, tenant(s) y permisos → dashboard según rol',
     ],
