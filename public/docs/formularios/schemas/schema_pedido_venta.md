@@ -121,9 +121,66 @@ Errores de contexto: `No hay cuenta activa.` / `No se pudieron cargar los datos 
 
 Si Origen incluye Extracción IA, Editable = Sí (campos de captura). Los fiscales son solo BD y no editables.
 
+### Tabla 4 — Prueba automatizada del Nivel 2
+
+#### 4.1 Acceso y botones
+
+| Campo | Valor |
+|---|---|
+| Rol con que se inicia sesión | Administrador de cuenta (también válido: Operador de cuenta) |
+| Ruta / URL | /dashboard/ventas/ordenes |
+| Pasos para abrir el formulario | clic button "Nueva venta" → esperar dialog "Nuevo pedido" → clic button "Tengo el mensaje o archivos" |
+| Registro que debe existir | Staging — comprador de prueba con discrepancia IA vs ficha: usar un comprador activo de la cuenta de staging cuya ficha tenga `Centro de consumo / cocina` = "Cocina central (ficha)" y `Dirección de entrega` = "Av. Ficha 100"; el texto/archivo de pedido de prueba debe traer centro = "Cocina IA distinta" y dirección = "Calle Pedido 200" para disparar el diálogo "Hay diferencias con la ficha del cliente". Identificador del comprador: pendiente-asignar (responsable WMS). |
+| Archivos del formulario | src/modules/sales/ordenes/components/OrdenVentaCreateModal.tsx; src/modules/sales/ordenes/components/OperadorOrdenesVentaPageContent.tsx; src/modules/sales/ordenes/utils/prefill-orden-venta-from-comprador.ts; src/modules/sales/ordenes/utils/map-pedido-extraido-to-form.ts |
+| Botón Guardar | button "Validar y enviar" |
+| Botón Cancelar / Cerrar | button "Cancelar" |
+| Diálogo de descarte: botón que confirma el descarte | — |
+| Diálogo de descarte: botón para seguir editando | — |
+| Botón de la advertencia no-saltable | button "Enviar igual" |
+
+#### 4.2 Campos
+
+| Campo | Localizador | Valor de prueba |
+|---|---|---|
+| Cliente (paso documentos) | button "Cliente" | Comprador staging con discrepancia IA/BD |
+| Texto del pedido | textbox "Texto del pedido" | Pedido prueba: centro Cocina IA distinta; dirección Calle Pedido 200; entrega mañana; 10 kg producto catálogo |
+| Archivos | button "Archivos" | — |
+| Cliente | button "Cliente" | Mismo comprador staging |
+| Orden de compra del hotel | textbox "Orden de compra del hotel" | OC-STAGING-001 |
+| Centro de consumo / cocina | textbox "Centro de consumo / cocina" | Cocina IA distinta |
+| Vendedor | textbox "Vendedor" | — |
+| Fecha de entrega | textbox "Fecha de entrega" | (mañana ISO, ≥ hoy) |
+| Ventana de entrega — desde | textbox "Ventana de entrega — desde" | 08:00 |
+| Ventana de entrega — hasta | textbox "Ventana de entrega — hasta" | 12:00 |
+| Prioridad | combobox "Prioridad" | Normal |
+| Moneda | combobox "Moneda" | MXN |
+| Bodega destino | combobox "Bodega destino" | Bodega default de la cuenta |
+| Observaciones | textbox "Observaciones" | Prueba Nivel 2 staging |
+| Dirección de entrega | textbox "Dirección de entrega" | Calle Pedido 200 |
+| Andén / punto de recepción | textbox "Andén / punto de recepción" | Andén 1 |
+| Contacto en el hotel | textbox "Contacto en el hotel" | Ana Prueba |
+| Teléfono del contacto | textbox "Teléfono del contacto" | 5551234567 |
+| Producto (línea) | button "Agregar producto" | Primer producto de venta de la cuenta |
+| Cantidad (línea) | textbox "Cantidad" | 10 |
+| Unidad (línea) | textbox "Unidad" | — |
+| Especificación (línea) | textbox "Especificación" | Sin hueso |
+| Desc% (línea) | textbox "Desc%" | — |
+| Precio (línea) | textbox "Precio" | 85.50 |
+| IVA (línea) | combobox "IVA" | 0% |
+| Importe (línea) | textbox "Importe" | — |
+| Peso total (kg) | textbox "Peso total (kg)" | — |
+| Razón social | textbox "Razón social" | — |
+| RFC | textbox "RFC" | — |
+| Régimen | textbox "Régimen" | — |
+| CP fiscal | textbox "CP fiscal" | — |
+| Uso CFDI | textbox "Uso CFDI" | — |
+| Método de pago | textbox "Método de pago" | — |
+| Forma de pago | textbox "Forma de pago" | — |
+| Correos CFDI | textbox "Correos CFDI" | — |
+
 ### Notas y justificaciones
 
-`OrdenVentaCreateModal` cubre alta y edición. El paso inicial ofrece "Venta nueva" o "Tengo el mensaje o archivos" (OpenAI / surtido). Están en el DOM pero ocultos (`hidden` + `aria-hidden`) y no se documentan como visibles: Turno que prepara, Hora sugerida de salida, Chofer, Unidad (vehículo), Cajas, Presentación, ¿Acepta sustituciones?, Requiere lote / trazabilidad, Registrar temperatura al entregar. Esos ocultos sí pueden prellenarse desde ficha/IA/edición y se persisten en observaciones. El WMS no timbra CFDI.
+`OrdenVentaCreateModal` cubre alta y edición. El paso inicial ofrece "Venta nueva" o "Tengo el mensaje o archivos" (OpenAI / surtido). Están en el DOM pero ocultos (`hidden` + `aria-hidden`) y no se documentan como visibles: Turno que prepara, Hora sugerida de salida, Chofer, Unidad (vehículo), Cajas, Presentación, ¿Acepta sustituciones?, Requiere lote / trazabilidad, Registrar temperatura al entregar. Esos ocultos sí pueden prellenarse desde ficha/IA/edición y se persisten en observaciones. El WMS no timbra CFDI. Para Nivel 2 con prellenado "Ambas": abrir por "Tengo el mensaje o archivos", leer el pedido de prueba y confirmar el diálogo de discrepancias con "Enviar igual" (botón de advertencia no-saltable). Cancelar cierra sin diálogo de descarte.
 
 ### Versión y revisión (del schema de ese formulario, no de esta plantilla)
 

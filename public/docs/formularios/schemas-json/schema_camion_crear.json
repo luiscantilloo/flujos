@@ -1,0 +1,764 @@
+{
+  "formato": "polaria.schema-formulario",
+  "version_formato": "1.0",
+  "exportacion": {
+    "fecha": "2026-09-28T08:00:32-05:00",
+    "archivo_origen": "schema_camion_crear.md",
+    "ruta_origen": "public/docs/formularios/schemas/schema_camion_crear.md",
+    "version_portal": "2.7.15",
+    "hash_origen": "1bfc7a8ecb6275f34ce019d34d3340de760dd612990c2b22f7a85e7792d4424c"
+  },
+  "datos_formulario": {
+    "id": "camion_crear",
+    "formulario": "Crear camión",
+    "proyecto_repo": "polaria-wms-web",
+    "protocolo_referencia": "PROTOCOLO_DE_VALIDACION_DE_FORMULARIOS_v1.0.md",
+    "campos_nuevos_o_modificados": null,
+    "vive_en_modal": {
+      "valor": "si",
+      "detalle": null,
+      "texto_original": "Sí"
+    },
+    "tiene_prellenado": {
+      "valor": "no",
+      "detalle": null,
+      "texto_original": "No"
+    },
+    "responsable": "Desarrollador frontend",
+    "fecha_creacion": {
+      "valor": "2026-09-15",
+      "texto_original": "15/09/2026"
+    }
+  },
+  "tabla_1_validacion": [
+    {
+      "campo": "Placa",
+      "campo_id": "placa",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": false,
+        "texto_original": "Texto"
+      },
+      "obligatorio": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": 16,
+        "texto_original": "varchar(16); se fuerza a MAYÚSCULAS; se recorta; genera el código interno"
+      },
+      "valor_por_defecto": null,
+      "unico": {
+        "valor": "si",
+        "detalle": "por cuenta: uq_camion_cuenta_placa",
+        "texto_original": "Sí (por cuenta: uq_camion_cuenta_placa)"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": "El código se genera con generateCodigoCuentaFromNombre(placa); no se muestra",
+      "mensajes_error": {
+        "mensajes": [
+          "La placa es obligatoria.",
+          "No se pudo generar el código del camión."
+        ],
+        "texto_original": "La placa es obligatoria. / No se pudo generar el código del camión."
+      },
+      "capas": {
+        "front": true,
+        "back": true,
+        "bd": true,
+        "texto_original": "Front, Back, BD"
+      }
+    },
+    {
+      "campo": "Marca",
+      "campo_id": "marca",
+      "tipo_dato": {
+        "categoria": "seleccion",
+        "solo_lectura": true,
+        "texto_original": "Catálogo (picker de solo lectura)"
+      },
+      "obligatorio": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": 64,
+        "texto_original": "varchar(64); catálogo CAMION_MARCAS_CATALOG; no se escribe a mano"
+      },
+      "valor_por_defecto": null,
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": "Al elegir marca se vacían modeloId y modelo",
+      "mensajes_error": {
+        "mensajes": [
+          "Selecciona la marca del vehículo."
+        ],
+        "texto_original": "Selecciona la marca del vehículo."
+      },
+      "capas": {
+        "front": true,
+        "back": true,
+        "bd": true,
+        "texto_original": "Front, Back, BD"
+      }
+    },
+    {
+      "campo": "Modelo",
+      "campo_id": "modelo",
+      "tipo_dato": {
+        "categoria": "seleccion",
+        "solo_lectura": true,
+        "texto_original": "Catálogo (picker de solo lectura)"
+      },
+      "obligatorio": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": 64,
+        "texto_original": "varchar(64); modelos de listModelosByMarcaId(marcaId)"
+      },
+      "valor_por_defecto": null,
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Marca"
+        ],
+        "texto_original": "Marca"
+      },
+      "regla_dependencia": "El picker de modelo solo abre si hay marcaId; placeholder \"Primero elige una marca\"",
+      "mensajes_error": {
+        "mensajes": [
+          "Selecciona el modelo del vehículo."
+        ],
+        "texto_original": "Selecciona el modelo del vehículo."
+      },
+      "capas": {
+        "front": true,
+        "back": true,
+        "bd": true,
+        "texto_original": "Front, Back, BD"
+      }
+    },
+    {
+      "campo": "Peso máx (kg)",
+      "campo_id": "peso_max_kg",
+      "tipo_dato": {
+        "categoria": "numero_decimal",
+        "solo_lectura": false,
+        "texto_original": "Número decimal"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "numeric(18,4); inputMode=decimal; acepta coma; vacío → null; si hay valor debe ser finito y > 0"
+      },
+      "valor_por_defecto": null,
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": "parseOptionalNumberInput en el modal",
+      "mensajes_error": {
+        "mensajes": [
+          "El peso máximo debe ser un número mayor a cero."
+        ],
+        "texto_original": "El peso máximo debe ser un número mayor a cero."
+      },
+      "capas": {
+        "front": true,
+        "back": true,
+        "bd": true,
+        "texto_original": "Front, Back, BD"
+      }
+    },
+    {
+      "campo": "Volumen (m³)",
+      "campo_id": "volumen_m3",
+      "tipo_dato": {
+        "categoria": "numero_decimal",
+        "solo_lectura": false,
+        "texto_original": "Número decimal"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "numeric(18,4); inputMode=decimal; vacío → null; si hay valor > 0"
+      },
+      "valor_por_defecto": null,
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": null,
+      "mensajes_error": {
+        "mensajes": [
+          "El volumen debe ser un número mayor a cero."
+        ],
+        "texto_original": "El volumen debe ser un número mayor a cero."
+      },
+      "capas": {
+        "front": true,
+        "back": true,
+        "bd": true,
+        "texto_original": "Front, Back, BD"
+      }
+    },
+    {
+      "campo": "Cap. pallets",
+      "campo_id": "cap_pallets",
+      "tipo_dato": {
+        "categoria": "numero_entero",
+        "solo_lectura": false,
+        "texto_original": "Número entero"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "integer; inputMode=numeric; vacío → null; si hay valor entero > 0"
+      },
+      "valor_por_defecto": null,
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": null,
+      "mensajes_error": {
+        "mensajes": [
+          "La capacidad de pallets debe ser un entero mayor a cero."
+        ],
+        "texto_original": "La capacidad de pallets debe ser un entero mayor a cero."
+      },
+      "capas": {
+        "front": true,
+        "back": true,
+        "bd": true,
+        "texto_original": "Front, Back, BD"
+      }
+    },
+    {
+      "campo": "Tipo de vehículo",
+      "campo_id": "tipo_de_vehiculo",
+      "tipo_dato": {
+        "categoria": "seleccion",
+        "solo_lectura": false,
+        "texto_original": "Catálogo (picker)"
+      },
+      "obligatorio": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "Enum tipo_camion: refrigerado, isotermico, seco"
+      },
+      "valor_por_defecto": "refrigerado (etiqueta Refrigerado)",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": "Al elegir tipo se asignan tempMinDefault y tempMaxDefault del catálogo",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": true,
+        "bd": true,
+        "texto_original": "Front, Back, BD"
+      }
+    },
+    {
+      "campo": "Temperatura mínima",
+      "campo_id": "temperatura_minima",
+      "tipo_dato": {
+        "categoria": "numero_entero",
+        "solo_lectura": false,
+        "texto_original": "Número entero (slider)"
+      },
+      "obligatorio": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": 64,
+        "texto_original": "TEMP_SLIDER_MIN=-50 … TEMP_SLIDER_MAX=200; step 1; se persiste junto con máxima en rango_temperatura varchar(64)"
+      },
+      "valor_por_defecto": "-25 (tipo refrigerado)",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Tipo de vehículo"
+        ],
+        "texto_original": "Tipo de vehículo"
+      },
+      "regla_dependencia": "Si el usuario sube mínima por encima de máxima, máxima se iguala; presets fijan min=max",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": true,
+        "bd": true,
+        "texto_original": "Front, Back, BD"
+      }
+    },
+    {
+      "campo": "Temperatura máxima",
+      "campo_id": "temperatura_maxima",
+      "tipo_dato": {
+        "categoria": "numero_entero",
+        "solo_lectura": false,
+        "texto_original": "Número entero (slider)"
+      },
+      "obligatorio": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "rango_limite": {
+        "minimo": -50,
+        "maximo": 200,
+        "longitud_maxima": null,
+        "texto_original": "-50 … 200 °C; step 1"
+      },
+      "valor_por_defecto": "15 (tipo refrigerado)",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Tipo de vehículo",
+          "Temperatura mínima"
+        ],
+        "texto_original": "Tipo de vehículo; Temperatura mínima"
+      },
+      "regla_dependencia": "Si el usuario baja máxima por debajo de mínima, mínima se iguala",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": true,
+        "bd": true,
+        "texto_original": "Front, Back, BD"
+      }
+    }
+  ],
+  "tabla_2_interaccion": [
+    {
+      "campo": "Placa",
+      "campo_id": "placa",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 1,
+        "texto_original": "1"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": true,
+        "momento": "al abrir el modal",
+        "texto_original": "Sí, al abrir el modal"
+      }
+    },
+    {
+      "campo": "Marca",
+      "campo_id": "marca",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 2,
+        "texto_original": "2"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": "readOnly; abre picker al clic / Enter / espacio",
+        "texto_original": "No (readOnly; abre picker al clic / Enter / espacio)"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Modelo",
+      "campo_id": "modelo",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 3,
+        "texto_original": "3"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": "(readOnly); el picker no abre si no hay marca",
+        "texto_original": "No (readOnly); el picker no abre si no hay marca"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Peso máx (kg)",
+      "campo_id": "peso_max_kg",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 4,
+        "texto_original": "4"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Volumen (m³)",
+      "campo_id": "volumen_m3",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 5,
+        "texto_original": "5"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Cap. pallets",
+      "campo_id": "cap_pallets",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 6,
+        "texto_original": "6"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Tipo de vehículo",
+      "campo_id": "tipo_de_vehiculo",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 7,
+        "texto_original": "7"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": "readOnly; abre picker",
+        "texto_original": "No (readOnly; abre picker)"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Temperatura mínima",
+      "campo_id": "temperatura_minima",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 8,
+        "texto_original": "8"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Temperatura máxima",
+      "campo_id": "temperatura_maxima",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 9,
+        "texto_original": "9"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    }
+  ],
+  "tabla_3_prellenado": null,
+  "prueba_nivel_2": {
+    "acceso": {
+      "rol": "Administrador de cuenta",
+      "ruta": "/dashboard/administracion/asignacion-creacion/camiones",
+      "pasos_abrir": [
+        {
+          "accion": "clic",
+          "localizador": {
+            "testid": null,
+            "rol": "button",
+            "nombre": "Nuevo camión",
+            "texto_original": "button \"Nuevo camión\""
+          },
+          "valor": null,
+          "texto_original": "clic button \"Nuevo camión\""
+        },
+        {
+          "accion": "esperar",
+          "localizador": {
+            "testid": null,
+            "rol": "dialog",
+            "nombre": "Crear camión",
+            "texto_original": "dialog \"Crear camión\""
+          },
+          "valor": null,
+          "texto_original": "esperar dialog \"Crear camión\""
+        }
+      ],
+      "registro_requerido": null,
+      "archivos_formulario": [
+        "src/modules/admin-panel/camiones/components/CamionCreateModal.tsx",
+        "src/modules/admin-panel/camiones/components/CamionesListView.tsx",
+        "src/modules/admin-panel/camiones/components/CamionTemperaturaSlider.tsx",
+        "src/modules/admin-panel/camiones/components/CamionCatalogTablePickerModal.tsx"
+      ]
+    },
+    "botones": {
+      "guardar": {
+        "testid": null,
+        "rol": "button",
+        "nombre": "Crear",
+        "texto_original": "button \"Crear\""
+      },
+      "cancelar": {
+        "testid": null,
+        "rol": "button",
+        "nombre": "Cancelar",
+        "texto_original": "button \"Cancelar\""
+      },
+      "descarte_confirmar": null,
+      "descarte_seguir_editando": null,
+      "advertencia_confirmar": null
+    },
+    "campos": [
+      {
+        "campo": "Placa",
+        "campo_id": "placa",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Placa",
+          "texto_original": "textbox \"Placa\""
+        },
+        "valor_de_prueba": "ABC123"
+      },
+      {
+        "campo": "Marca",
+        "campo_id": "marca",
+        "localizador": {
+          "testid": null,
+          "rol": "button",
+          "nombre": "Marca",
+          "texto_original": "button \"Marca\""
+        },
+        "valor_de_prueba": "Volvo"
+      },
+      {
+        "campo": "Modelo",
+        "campo_id": "modelo",
+        "localizador": {
+          "testid": null,
+          "rol": "button",
+          "nombre": "Modelo",
+          "texto_original": "button \"Modelo\""
+        },
+        "valor_de_prueba": "FH 460"
+      },
+      {
+        "campo": "Peso máx (kg)",
+        "campo_id": "peso_max_kg",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Peso máx (kg)",
+          "texto_original": "textbox \"Peso máx (kg)\""
+        },
+        "valor_de_prueba": "18000"
+      },
+      {
+        "campo": "Volumen (m³)",
+        "campo_id": "volumen_m3",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Volumen (m³)",
+          "texto_original": "textbox \"Volumen (m³)\""
+        },
+        "valor_de_prueba": "45"
+      },
+      {
+        "campo": "Cap. pallets",
+        "campo_id": "cap_pallets",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Cap. pallets",
+          "texto_original": "textbox \"Cap. pallets\""
+        },
+        "valor_de_prueba": "12"
+      },
+      {
+        "campo": "Tipo de vehículo",
+        "campo_id": "tipo_de_vehiculo",
+        "localizador": {
+          "testid": null,
+          "rol": "button",
+          "nombre": "Tipo de vehículo",
+          "texto_original": "button \"Tipo de vehículo\""
+        },
+        "valor_de_prueba": "Refrigerado"
+      },
+      {
+        "campo": "Temperatura mínima",
+        "campo_id": "temperatura_minima",
+        "localizador": {
+          "testid": null,
+          "rol": "slider",
+          "nombre": "Temperatura mínima",
+          "texto_original": "slider \"Temperatura mínima\""
+        },
+        "valor_de_prueba": "-25"
+      },
+      {
+        "campo": "Temperatura máxima",
+        "campo_id": "temperatura_maxima",
+        "localizador": {
+          "testid": null,
+          "rol": "slider",
+          "nombre": "Temperatura máxima",
+          "texto_original": "slider \"Temperatura máxima\""
+        },
+        "valor_de_prueba": "15"
+      }
+    ]
+  },
+  "notas_justificaciones": "Sin cuenta: \"No se encontró la cuenta activa.\". Disponible se guarda true en el alta (no hay campo). Presets del slider: Congelación (-18), Refrigerado (4), Fresco (12), Ambiente (22), Templado (60). El rango se serializa con formatRangoTemperatura. Si falla: DomainServiceError o \"No se pudo crear el camión.\". Código único por cuenta (uq_camion_cuenta_codigo) sin mensaje de aplicación. Cancelar/Cerrar cierra el modal sin diálogo de descarte. No hay `data-testid` en el módulo; localizadores por rol/nombre accesible.",
+  "version_revision": {
+    "version_schema": "v1.0",
+    "fecha_aprobacion": {
+      "valor": "2026-09-15",
+      "texto_original": "15/09/2026"
+    },
+    "aprobado_por": "Pendiente de aprobación",
+    "proxima_revision": "Cuando el formulario cambie de campos o de reglas"
+  },
+  "advertencias": []
+}
