@@ -1,0 +1,3092 @@
+{
+  "formato": "polaria.schema-formulario",
+  "version_formato": "1.0",
+  "exportacion": {
+    "fecha": "2026-09-28T08:00:32-05:00",
+    "archivo_origen": "schema_pedido_venta.md",
+    "ruta_origen": "public/docs/formularios/schemas/schema_pedido_venta.md",
+    "version_portal": "2.7.15",
+    "hash_origen": "eee4b1b7ca27820945aeed863d32460b200d03d086f712a00b26c0f0bd5fdf38"
+  },
+  "datos_formulario": {
+    "id": "pedido_venta",
+    "formulario": "Pedido de venta (nuevo / editar)",
+    "proyecto_repo": "polaria-wms-web",
+    "protocolo_referencia": "PROTOCOLO_DE_VALIDACION_DE_FORMULARIOS_v1.0.md",
+    "campos_nuevos_o_modificados": null,
+    "vive_en_modal": {
+      "valor": "si",
+      "detalle": null,
+      "texto_original": "Sí"
+    },
+    "tiene_prellenado": {
+      "valor": "condicional",
+      "detalle": "ambos",
+      "texto_original": "Sí, ambos"
+    },
+    "responsable": "Desarrollador frontend",
+    "fecha_creacion": {
+      "valor": "2026-09-15",
+      "texto_original": "15/09/2026"
+    }
+  },
+  "tabla_1_validacion": [
+    {
+      "campo": "Cliente (paso documentos)",
+      "campo_id": "cliente_paso_documentos",
+      "tipo_dato": {
+        "categoria": "seleccion",
+        "solo_lectura": false,
+        "texto_original": "Picker UUID"
+      },
+      "obligatorio": {
+        "valor": "condicional",
+        "detalle": "para leer con IA",
+        "texto_original": "Sí para leer con IA"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "Compradores de la cuenta"
+      },
+      "valor_por_defecto": "Vacío",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": "Se elige en `OrdenVentaCompradorPickerModal`",
+      "mensajes_error": {
+        "mensajes": [
+          "Selecciona un cliente."
+        ],
+        "texto_original": "Selecciona un cliente."
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Texto del pedido",
+      "campo_id": "texto_del_pedido",
+      "tipo_dato": {
+        "categoria": "texto_largo",
+        "solo_lectura": false,
+        "texto_original": "Texto largo"
+      },
+      "obligatorio": {
+        "valor": "condicional",
+        "detalle": null,
+        "texto_original": "Condicional"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Vacío",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": "Obligatorio junto con Archivos: al menos uno para \"Leer y llenar el formulario\"",
+      "mensajes_error": {
+        "mensajes": [
+          "Pega el texto del pedido o adjunta al menos un archivo."
+        ],
+        "texto_original": "Pega el texto del pedido o adjunta al menos un archivo."
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Archivos",
+      "campo_id": "archivos",
+      "tipo_dato": {
+        "categoria": "otro",
+        "solo_lectura": false,
+        "texto_original": "Archivos múltiples"
+      },
+      "obligatorio": {
+        "valor": "condicional",
+        "detalle": null,
+        "texto_original": "Condicional"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "PDF, Excel, CSV, Word, eml, html, imágenes; otros se guardan sin leerse"
+      },
+      "valor_por_defecto": "Lista vacía",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": "Misma regla que Texto del pedido",
+      "mensajes_error": {
+        "mensajes": [
+          "Pega el texto del pedido o adjunta al menos un archivo.",
+          "No se pudo leer el pedido. Intenta de nuevo."
+        ],
+        "texto_original": "Pega el texto del pedido o adjunta al menos un archivo. / No se pudo leer el pedido. Intenta de nuevo."
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Cliente",
+      "campo_id": "cliente",
+      "tipo_dato": {
+        "categoria": "seleccion",
+        "solo_lectura": false,
+        "texto_original": "Picker UUID"
+      },
+      "obligatorio": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "Compradores de la cuenta"
+      },
+      "valor_por_defecto": "Vacío (en edición: comprador de la OV)",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": "Precios y alias dependen del cliente",
+      "mensajes_error": {
+        "mensajes": [
+          "Selecciona un cliente.",
+          "Se seleccionó el cliente, pero no se pudieron cargar sus datos de alta."
+        ],
+        "texto_original": "Selecciona un cliente. / Se seleccionó el cliente, pero no se pudieron cargar sus datos de alta."
+      },
+      "capas": {
+        "front": true,
+        "back": true,
+        "bd": true,
+        "texto_original": "Front, Back, BD"
+      }
+    },
+    {
+      "campo": "Orden de compra del hotel",
+      "campo_id": "orden_de_compra_del_hotel",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": false,
+        "texto_original": "Texto"
+      },
+      "obligatorio": {
+        "valor": "condicional",
+        "detalle": null,
+        "texto_original": "Condicional"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "Recortado"
+      },
+      "valor_por_defecto": "Vacío",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Ficha del cliente (`exigeOc`)"
+        ],
+        "texto_original": "Ficha del cliente (`exigeOc`)"
+      },
+      "regla_dependencia": "Obligatorio si la ficha tiene exige OC = Sí",
+      "mensajes_error": {
+        "mensajes": [
+          "Este cliente exige orden de compra para facturar. Captúrala en el pedido."
+        ],
+        "texto_original": "Este cliente exige orden de compra para facturar. Captúrala en el pedido."
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Centro de consumo / cocina",
+      "campo_id": "centro_de_consumo_cocina",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": false,
+        "texto_original": "Texto"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Vacío",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente / IA"
+        ],
+        "texto_original": "Cliente / IA"
+      },
+      "regla_dependencia": null,
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Vendedor",
+      "campo_id": "vendedor",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": true,
+        "texto_original": "Texto (solo lectura)"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "Nombre de la sesión"
+      },
+      "valor_por_defecto": "Nombre de `session.nombre` o —",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Sesión"
+        ],
+        "texto_original": "Sesión"
+      },
+      "regla_dependencia": "No editable",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Fecha de entrega",
+      "campo_id": "fecha_de_entrega",
+      "tipo_dato": {
+        "categoria": "fecha",
+        "solo_lectura": false,
+        "texto_original": "Fecha"
+      },
+      "obligatorio": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "`min` = hoy ISO; no anterior a hoy"
+      },
+      "valor_por_defecto": "Vacío (IA: fecha extraída o mañana)",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": "`validatePedidoCabecera`",
+      "mensajes_error": {
+        "mensajes": [
+          "Ingresa la fecha de entrega.",
+          "La fecha de entrega no puede ser anterior a hoy."
+        ],
+        "texto_original": "Ingresa la fecha de entrega. / La fecha de entrega no puede ser anterior a hoy."
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Ventana de entrega — desde",
+      "campo_id": "ventana_de_entrega_desde",
+      "tipo_dato": {
+        "categoria": "hora",
+        "solo_lectura": false,
+        "texto_original": "Hora"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "`type=time`; no mayor que hasta si ambos tienen valor"
+      },
+      "valor_por_defecto": "Vacío",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Ventana de entrega — hasta"
+        ],
+        "texto_original": "Ventana de entrega — hasta"
+      },
+      "regla_dependencia": "`isVentanaDesdeMayorQueHasta`",
+      "mensajes_error": {
+        "mensajes": [
+          "La ventana \"desde\" no puede ser mayor que \"hasta\"."
+        ],
+        "texto_original": "La ventana \"desde\" no puede ser mayor que \"hasta\"."
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Ventana de entrega — hasta",
+      "campo_id": "ventana_de_entrega_hasta",
+      "tipo_dato": {
+        "categoria": "hora",
+        "solo_lectura": false,
+        "texto_original": "Hora"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "`type=time`; no menor que desde si ambos tienen valor"
+      },
+      "valor_por_defecto": "Vacío",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Ventana de entrega — desde"
+        ],
+        "texto_original": "Ventana de entrega — desde"
+      },
+      "regla_dependencia": "Misma regla",
+      "mensajes_error": {
+        "mensajes": [
+          "La ventana \"desde\" no puede ser mayor que \"hasta\"."
+        ],
+        "texto_original": "La ventana \"desde\" no puede ser mayor que \"hasta\"."
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Prioridad",
+      "campo_id": "prioridad",
+      "tipo_dato": {
+        "categoria": "seleccion",
+        "solo_lectura": false,
+        "texto_original": "Selección"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "Normal / Urgente / Programado"
+      },
+      "valor_por_defecto": "Normal",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": null,
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Moneda",
+      "campo_id": "moneda",
+      "tipo_dato": {
+        "categoria": "seleccion",
+        "solo_lectura": false,
+        "texto_original": "Selección"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "MXN / USD"
+      },
+      "valor_por_defecto": "MXN",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente"
+        ],
+        "texto_original": "Cliente"
+      },
+      "regla_dependencia": "Prefill desde ficha si MXN o USD",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Bodega destino",
+      "campo_id": "bodega_destino",
+      "tipo_dato": {
+        "categoria": "seleccion",
+        "solo_lectura": false,
+        "texto_original": "Selección UUID"
+      },
+      "obligatorio": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "Bodegas internas y externas vinculadas"
+      },
+      "valor_por_defecto": "Bodega default de la cuenta, o la única disponible, o vacía",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cuenta"
+        ],
+        "texto_original": "Cuenta"
+      },
+      "regla_dependencia": "Placeholder Selecciona una bodega",
+      "mensajes_error": {
+        "mensajes": [
+          "Selecciona una bodega destino.",
+          "La bodega destino no está activa"
+        ],
+        "texto_original": "Selecciona una bodega destino. / La bodega destino no está activa"
+      },
+      "capas": {
+        "front": true,
+        "back": true,
+        "bd": true,
+        "texto_original": "Front, Back, BD"
+      }
+    },
+    {
+      "campo": "Observaciones",
+      "campo_id": "observaciones",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": false,
+        "texto_original": "Texto"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "Placeholder Notas para almacén"
+      },
+      "valor_por_defecto": "Vacío",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente / IA"
+        ],
+        "texto_original": "Cliente / IA"
+      },
+      "regla_dependencia": "En IA, si hay ficha e IA distintas se concatenan",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Dirección de entrega",
+      "campo_id": "direccion_de_entrega",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": false,
+        "texto_original": "Texto"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Vacío",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente / IA"
+        ],
+        "texto_original": "Cliente / IA"
+      },
+      "regla_dependencia": null,
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Andén / punto de recepción",
+      "campo_id": "anden_punto_de_recepcion",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": false,
+        "texto_original": "Texto"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Vacío",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente / IA"
+        ],
+        "texto_original": "Cliente / IA"
+      },
+      "regla_dependencia": null,
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Contacto en el hotel",
+      "campo_id": "contacto_en_el_hotel",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": false,
+        "texto_original": "Texto"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Vacío",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente / IA"
+        ],
+        "texto_original": "Cliente / IA"
+      },
+      "regla_dependencia": null,
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Teléfono del contacto",
+      "campo_id": "telefono_del_contacto",
+      "tipo_dato": {
+        "categoria": "telefono",
+        "solo_lectura": false,
+        "texto_original": "Teléfono"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Vacío",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente / IA"
+        ],
+        "texto_original": "Cliente / IA"
+      },
+      "regla_dependencia": null,
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Producto (línea)",
+      "campo_id": "producto_linea",
+      "tipo_dato": {
+        "categoria": "seleccion",
+        "solo_lectura": false,
+        "texto_original": "Picker UUID"
+      },
+      "obligatorio": {
+        "valor": "si",
+        "detalle": "≥ 1 línea",
+        "texto_original": "Sí (≥ 1 línea)"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "Productos de venta de la cuenta; no se duplica el mismo `idProducto`"
+      },
+      "valor_por_defecto": null,
+      "unico": {
+        "valor": null,
+        "detalle": null,
+        "texto_original": "Único dentro del pedido (no se agrega si ya está)"
+      },
+      "depende_de": {
+        "campos": [
+          "Catálogo de venta"
+        ],
+        "texto_original": "Catálogo de venta"
+      },
+      "regla_dependencia": "Se agrega con \"Agregar producto\" / `OrdenVentaProductoPickerModal`",
+      "mensajes_error": {
+        "mensajes": [
+          "Agrega al menos un producto a la venta."
+        ],
+        "texto_original": "Agrega al menos un producto a la venta."
+      },
+      "capas": {
+        "front": true,
+        "back": true,
+        "bd": true,
+        "texto_original": "Front, Back, BD"
+      }
+    },
+    {
+      "campo": "Cantidad (línea)",
+      "campo_id": "cantidad_linea",
+      "tipo_dato": {
+        "categoria": "numero_decimal",
+        "solo_lectura": false,
+        "texto_original": "Decimal"
+      },
+      "obligatorio": {
+        "valor": "condicional",
+        "detalle": "por línea",
+        "texto_original": "Sí por línea"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "Mayor a 0; `parseDecimalEs`; placeholder 0"
+      },
+      "valor_por_defecto": "Vacío",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Producto"
+        ],
+        "texto_original": "Producto"
+      },
+      "regla_dependencia": "Tras elegir producto, el foco va a cantidad",
+      "mensajes_error": {
+        "mensajes": [
+          "Ingresa una cantidad válida para {nombre}."
+        ],
+        "texto_original": "Ingresa una cantidad válida para {nombre}."
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Unidad (línea)",
+      "campo_id": "unidad_linea",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": true,
+        "texto_original": "Texto (solo lectura)"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "Unidad del catálogo"
+      },
+      "valor_por_defecto": "kg (`UNIDAD_MEDIDA_VENTA_DEFAULT`) si el producto no trae unidad",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Producto"
+        ],
+        "texto_original": "Producto"
+      },
+      "regla_dependencia": "`disabled` + `tabIndex=-1`",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Especificación (línea)",
+      "campo_id": "especificacion_linea",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": false,
+        "texto_original": "Texto"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Vacío",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Producto / IA"
+        ],
+        "texto_original": "Producto / IA"
+      },
+      "regla_dependencia": "Se persiste en `notas_lineas`",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Desc% (línea)",
+      "campo_id": "desc_linea",
+      "tipo_dato": {
+        "categoria": "numero_decimal",
+        "solo_lectura": false,
+        "texto_original": "Decimal"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "0–100 en el cálculo de importe"
+      },
+      "valor_por_defecto": "0 (o vacío mostrado como 0)",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": "Input deshabilitado; no se captura en UI",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Precio (línea)",
+      "campo_id": "precio_linea",
+      "tipo_dato": {
+        "categoria": "numero_decimal",
+        "solo_lectura": false,
+        "texto_original": "Decimal"
+      },
+      "obligatorio": {
+        "valor": "condicional",
+        "detalle": "por línea",
+        "texto_original": "Sí por línea"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "Mayor a 0"
+      },
+      "valor_por_defecto": "Precio de lista / override de alias del comprador",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Producto y Cliente"
+        ],
+        "texto_original": "Producto y Cliente"
+      },
+      "regla_dependencia": "Override de `listCompradorProductoAliasAdmin` si existe",
+      "mensajes_error": {
+        "mensajes": [
+          "Ingresa un precio mayor a cero para {nombre}."
+        ],
+        "texto_original": "Ingresa un precio mayor a cero para {nombre}."
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": true,
+        "texto_original": "Front, BD"
+      }
+    },
+    {
+      "campo": "IVA (línea)",
+      "campo_id": "iva_linea",
+      "tipo_dato": {
+        "categoria": "seleccion",
+        "solo_lectura": false,
+        "texto_original": "Selección"
+      },
+      "obligatorio": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "0% / 8% / 16%"
+      },
+      "valor_por_defecto": "0",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [],
+        "texto_original": "—"
+      },
+      "regla_dependencia": "Se anota en `notas_lineas` si ≠ 0",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Importe (línea)",
+      "campo_id": "importe_linea",
+      "tipo_dato": {
+        "categoria": "numero_decimal",
+        "solo_lectura": false,
+        "texto_original": "Decimal (calculado)"
+      },
+      "obligatorio": {
+        "valor": "no_aplica",
+        "detalle": null,
+        "texto_original": "—"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "cantidad × precio − descuento"
+      },
+      "valor_por_defecto": "0",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cantidad",
+          "Precio",
+          "Desc%"
+        ],
+        "texto_original": "Cantidad, Precio, Desc%"
+      },
+      "regla_dependencia": "Solo lectura",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Peso total (kg)",
+      "campo_id": "peso_total_kg",
+      "tipo_dato": {
+        "categoria": "numero_decimal",
+        "solo_lectura": false,
+        "texto_original": "Decimal (calculado)"
+      },
+      "obligatorio": {
+        "valor": "no_aplica",
+        "detalle": null,
+        "texto_original": "—"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "Suma de cantidades"
+      },
+      "valor_por_defecto": "0",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cantidades"
+        ],
+        "texto_original": "Cantidades"
+      },
+      "regla_dependencia": "Solo lectura",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Razón social",
+      "campo_id": "razon_social",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": true,
+        "texto_original": "Texto (solo lectura)"
+      },
+      "obligatorio": {
+        "valor": "no_aplica",
+        "detalle": null,
+        "texto_original": "—"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Ficha del comprador o —",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente"
+        ],
+        "texto_original": "Cliente"
+      },
+      "regla_dependencia": "Sección Datos fiscales",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "RFC",
+      "campo_id": "rfc",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": true,
+        "texto_original": "Texto (solo lectura)"
+      },
+      "obligatorio": {
+        "valor": "no_aplica",
+        "detalle": null,
+        "texto_original": "—"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Ficha del comprador o —",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente"
+        ],
+        "texto_original": "Cliente"
+      },
+      "regla_dependencia": "Sección Datos fiscales",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Régimen",
+      "campo_id": "regimen",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": true,
+        "texto_original": "Texto (solo lectura)"
+      },
+      "obligatorio": {
+        "valor": "no_aplica",
+        "detalle": null,
+        "texto_original": "—"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Ficha del comprador o —",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente"
+        ],
+        "texto_original": "Cliente"
+      },
+      "regla_dependencia": "Sección Datos fiscales",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "CP fiscal",
+      "campo_id": "cp_fiscal",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": true,
+        "texto_original": "Texto (solo lectura)"
+      },
+      "obligatorio": {
+        "valor": "no_aplica",
+        "detalle": null,
+        "texto_original": "—"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Ficha del comprador o —",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente"
+        ],
+        "texto_original": "Cliente"
+      },
+      "regla_dependencia": "Sección Datos fiscales",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Uso CFDI",
+      "campo_id": "uso_cfdi",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": true,
+        "texto_original": "Texto (solo lectura)"
+      },
+      "obligatorio": {
+        "valor": "no_aplica",
+        "detalle": null,
+        "texto_original": "—"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Ficha del comprador o —",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente"
+        ],
+        "texto_original": "Cliente"
+      },
+      "regla_dependencia": "Sección Datos fiscales",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Método de pago",
+      "campo_id": "metodo_de_pago",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": true,
+        "texto_original": "Texto (solo lectura)"
+      },
+      "obligatorio": {
+        "valor": "no_aplica",
+        "detalle": null,
+        "texto_original": "—"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Ficha del comprador o —",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente"
+        ],
+        "texto_original": "Cliente"
+      },
+      "regla_dependencia": "Sección Datos fiscales",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Forma de pago",
+      "campo_id": "forma_de_pago",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": true,
+        "texto_original": "Texto (solo lectura)"
+      },
+      "obligatorio": {
+        "valor": "no_aplica",
+        "detalle": null,
+        "texto_original": "—"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Ficha del comprador o —",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente"
+        ],
+        "texto_original": "Cliente"
+      },
+      "regla_dependencia": "Sección Datos fiscales",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    },
+    {
+      "campo": "Correos CFDI",
+      "campo_id": "correos_cfdi",
+      "tipo_dato": {
+        "categoria": "texto",
+        "solo_lectura": true,
+        "texto_original": "Texto (solo lectura)"
+      },
+      "obligatorio": {
+        "valor": "no_aplica",
+        "detalle": null,
+        "texto_original": "—"
+      },
+      "rango_limite": {
+        "minimo": null,
+        "maximo": null,
+        "longitud_maxima": null,
+        "texto_original": "—"
+      },
+      "valor_por_defecto": "Ficha del comprador o —",
+      "unico": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "depende_de": {
+        "campos": [
+          "Cliente"
+        ],
+        "texto_original": "Cliente"
+      },
+      "regla_dependencia": "Sección Datos fiscales",
+      "mensajes_error": {
+        "mensajes": [],
+        "texto_original": "—"
+      },
+      "capas": {
+        "front": true,
+        "back": false,
+        "bd": false,
+        "texto_original": "Front"
+      }
+    }
+  ],
+  "tabla_2_interaccion": [
+    {
+      "campo": "Cliente (paso documentos)",
+      "campo_id": "cliente_paso_documentos",
+      "orden_tabulacion": {
+        "tipo": "relativo",
+        "posicion": null,
+        "texto_original": "1 (paso docs)"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": "salvo envío/lectura IA",
+        "texto_original": "No (salvo envío/lectura IA)"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Texto del pedido",
+      "campo_id": "texto_del_pedido",
+      "orden_tabulacion": {
+        "tipo": "relativo",
+        "posicion": null,
+        "texto_original": "2 (paso docs)"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Archivos",
+      "campo_id": "archivos",
+      "orden_tabulacion": {
+        "tipo": "relativo",
+        "posicion": null,
+        "texto_original": "3 (paso docs)"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Cliente",
+      "campo_id": "cliente",
+      "orden_tabulacion": {
+        "tipo": "relativo",
+        "posicion": null,
+        "texto_original": "1 (formulario)"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Orden de compra del hotel",
+      "campo_id": "orden_de_compra_del_hotel",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 2,
+        "texto_original": "2"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Centro de consumo / cocina",
+      "campo_id": "centro_de_consumo_cocina",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 3,
+        "texto_original": "3"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Vendedor",
+      "campo_id": "vendedor",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 4,
+        "texto_original": "4"
+      },
+      "deshabilitado": {
+        "valor": "condicional",
+        "detalle": "siempre (readOnly)",
+        "texto_original": "Sí siempre (readOnly)"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Fecha de entrega",
+      "campo_id": "fecha_de_entrega",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 5,
+        "texto_original": "5"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Ventana de entrega — desde",
+      "campo_id": "ventana_de_entrega_desde",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 6,
+        "texto_original": "6"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Ventana de entrega — hasta",
+      "campo_id": "ventana_de_entrega_hasta",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 7,
+        "texto_original": "7"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Prioridad",
+      "campo_id": "prioridad",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 8,
+        "texto_original": "8"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Moneda",
+      "campo_id": "moneda",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 9,
+        "texto_original": "9"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Bodega destino",
+      "campo_id": "bodega_destino",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 10,
+        "texto_original": "10"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Observaciones",
+      "campo_id": "observaciones",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 11,
+        "texto_original": "11"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Dirección de entrega",
+      "campo_id": "direccion_de_entrega",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 12,
+        "texto_original": "12"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Andén / punto de recepción",
+      "campo_id": "anden_punto_de_recepcion",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 13,
+        "texto_original": "13"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Contacto en el hotel",
+      "campo_id": "contacto_en_el_hotel",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 14,
+        "texto_original": "14"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Teléfono del contacto",
+      "campo_id": "telefono_del_contacto",
+      "orden_tabulacion": {
+        "tipo": "posicion",
+        "posicion": 15,
+        "texto_original": "15"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Producto (línea)",
+      "campo_id": "producto_linea",
+      "orden_tabulacion": {
+        "tipo": "relativo",
+        "posicion": null,
+        "texto_original": "Picker; no tabula en la fila"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": "si hay catálogo",
+        "texto_original": "No si hay catálogo"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Cantidad (línea)",
+      "campo_id": "cantidad_linea",
+      "orden_tabulacion": {
+        "tipo": "relativo",
+        "posicion": null,
+        "texto_original": "Primera celda editable de cada fila"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": true,
+        "momento": "al agregar un producto desde el picker (`orden-venta-cantidad-{idProducto}`)",
+        "texto_original": "Sí, al agregar un producto desde el picker (`orden-venta-cantidad-{idProducto}`)"
+      }
+    },
+    {
+      "campo": "Unidad (línea)",
+      "campo_id": "unidad_linea",
+      "orden_tabulacion": {
+        "tipo": "fuera_de_tab",
+        "posicion": null,
+        "texto_original": "Fuera de tab (`tabIndex=-1`)"
+      },
+      "deshabilitado": {
+        "valor": "condicional",
+        "detalle": "siempre",
+        "texto_original": "Sí siempre"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Especificación (línea)",
+      "campo_id": "especificacion_linea",
+      "orden_tabulacion": {
+        "tipo": "relativo",
+        "posicion": null,
+        "texto_original": "Tras cantidad"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Desc% (línea)",
+      "campo_id": "desc_linea",
+      "orden_tabulacion": {
+        "tipo": "fuera_de_tab",
+        "posicion": null,
+        "texto_original": "Fuera de tab (`tabIndex=-1`)"
+      },
+      "deshabilitado": {
+        "valor": "condicional",
+        "detalle": "siempre",
+        "texto_original": "Sí siempre"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Precio (línea)",
+      "campo_id": "precio_linea",
+      "orden_tabulacion": {
+        "tipo": "relativo",
+        "posicion": null,
+        "texto_original": "Tras especificación"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "IVA (línea)",
+      "campo_id": "iva_linea",
+      "orden_tabulacion": {
+        "tipo": "relativo",
+        "posicion": null,
+        "texto_original": "Tras precio"
+      },
+      "deshabilitado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Importe (línea)",
+      "campo_id": "importe_linea",
+      "orden_tabulacion": {
+        "tipo": "no_aplica",
+        "posicion": null,
+        "texto_original": "—"
+      },
+      "deshabilitado": {
+        "valor": "si",
+        "detalle": "calculado",
+        "texto_original": "Sí (calculado)"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Peso total (kg)",
+      "campo_id": "peso_total_kg",
+      "orden_tabulacion": {
+        "tipo": "relativo",
+        "posicion": null,
+        "texto_original": "Tras líneas"
+      },
+      "deshabilitado": {
+        "valor": "si",
+        "detalle": "readOnly",
+        "texto_original": "Sí (readOnly)"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    },
+    {
+      "campo": "Campos fiscales",
+      "campo_id": "campos_fiscales",
+      "orden_tabulacion": {
+        "tipo": "relativo",
+        "posicion": null,
+        "texto_original": "Tras expandir Datos fiscales"
+      },
+      "deshabilitado": {
+        "valor": "condicional",
+        "detalle": "siempre (readOnly)",
+        "texto_original": "Sí siempre (readOnly)"
+      },
+      "foco_automatico": {
+        "tiene": false,
+        "momento": null,
+        "texto_original": "—"
+      }
+    }
+  ],
+  "tabla_3_prellenado": [
+    {
+      "campo": "Cliente",
+      "campo_id": "cliente",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Orden de compra del hotel",
+      "campo_id": "orden_de_compra_del_hotel",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "ambas",
+        "texto_original": "Ambas"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Centro de consumo / cocina",
+      "campo_id": "centro_de_consumo_cocina",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "ambas",
+        "texto_original": "Ambas"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Vendedor",
+      "campo_id": "vendedor",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      }
+    },
+    {
+      "campo": "Fecha de entrega",
+      "campo_id": "fecha_de_entrega",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "ambas",
+        "texto_original": "Ambas"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Ventana de entrega — desde",
+      "campo_id": "ventana_de_entrega_desde",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "ambas",
+        "texto_original": "Ambas"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Ventana de entrega — hasta",
+      "campo_id": "ventana_de_entrega_hasta",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "ambas",
+        "texto_original": "Ambas"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Prioridad",
+      "campo_id": "prioridad",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Moneda",
+      "campo_id": "moneda",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Bodega destino",
+      "campo_id": "bodega_destino",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Observaciones",
+      "campo_id": "observaciones",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "ambas",
+        "texto_original": "Ambas"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Dirección de entrega",
+      "campo_id": "direccion_de_entrega",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "ambas",
+        "texto_original": "Ambas"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Andén / punto de recepción",
+      "campo_id": "anden_punto_de_recepcion",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "ambas",
+        "texto_original": "Ambas"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Contacto en el hotel",
+      "campo_id": "contacto_en_el_hotel",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "ambas",
+        "texto_original": "Ambas"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Teléfono del contacto",
+      "campo_id": "telefono_del_contacto",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "ambas",
+        "texto_original": "Ambas"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Producto (línea)",
+      "campo_id": "producto_linea",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "ambas",
+        "texto_original": "Ambas"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": "quitar / agregar",
+        "texto_original": "Sí (quitar / agregar)"
+      }
+    },
+    {
+      "campo": "Cantidad (línea)",
+      "campo_id": "cantidad_linea",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "ambas",
+        "texto_original": "Ambas"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Unidad (línea)",
+      "campo_id": "unidad_linea",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      }
+    },
+    {
+      "campo": "Especificación (línea)",
+      "campo_id": "especificacion_linea",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "ambas",
+        "texto_original": "Ambas"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Precio (línea)",
+      "campo_id": "precio_linea",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "IVA (línea)",
+      "campo_id": "iva_linea",
+      "tiene_prellenado": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      },
+      "origen": {
+        "valor": null,
+        "texto_original": "—"
+      },
+      "editable": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      }
+    },
+    {
+      "campo": "Razón social",
+      "campo_id": "razon_social",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      }
+    },
+    {
+      "campo": "RFC",
+      "campo_id": "rfc",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      }
+    },
+    {
+      "campo": "Régimen",
+      "campo_id": "regimen",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      }
+    },
+    {
+      "campo": "CP fiscal",
+      "campo_id": "cp_fiscal",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      }
+    },
+    {
+      "campo": "Uso CFDI",
+      "campo_id": "uso_cfdi",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      }
+    },
+    {
+      "campo": "Método de pago",
+      "campo_id": "metodo_de_pago",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      }
+    },
+    {
+      "campo": "Forma de pago",
+      "campo_id": "forma_de_pago",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      }
+    },
+    {
+      "campo": "Correos CFDI",
+      "campo_id": "correos_cfdi",
+      "tiene_prellenado": {
+        "valor": "si",
+        "detalle": null,
+        "texto_original": "Sí"
+      },
+      "origen": {
+        "valor": "informacion_bd",
+        "texto_original": "Información de BD"
+      },
+      "editable": {
+        "valor": "no",
+        "detalle": null,
+        "texto_original": "No"
+      }
+    }
+  ],
+  "prueba_nivel_2": {
+    "acceso": {
+      "rol": "Administrador de cuenta (también válido: Operador de cuenta)",
+      "ruta": "/dashboard/ventas/ordenes",
+      "pasos_abrir": [
+        {
+          "accion": "clic",
+          "localizador": {
+            "testid": null,
+            "rol": "button",
+            "nombre": "Nueva venta",
+            "texto_original": "button \"Nueva venta\""
+          },
+          "valor": null,
+          "texto_original": "clic button \"Nueva venta\""
+        },
+        {
+          "accion": "esperar",
+          "localizador": {
+            "testid": null,
+            "rol": "dialog",
+            "nombre": "Nuevo pedido",
+            "texto_original": "dialog \"Nuevo pedido\""
+          },
+          "valor": null,
+          "texto_original": "esperar dialog \"Nuevo pedido\""
+        },
+        {
+          "accion": "clic",
+          "localizador": {
+            "testid": null,
+            "rol": "button",
+            "nombre": "Tengo el mensaje o archivos",
+            "texto_original": "button \"Tengo el mensaje o archivos\""
+          },
+          "valor": null,
+          "texto_original": "clic button \"Tengo el mensaje o archivos\""
+        }
+      ],
+      "registro_requerido": "Staging — comprador de prueba con discrepancia IA vs ficha: usar un comprador activo de la cuenta de staging cuya ficha tenga `Centro de consumo / cocina` = \"Cocina central (ficha)\" y `Dirección de entrega` = \"Av. Ficha 100\"; el texto/archivo de pedido de prueba debe traer centro = \"Cocina IA distinta\" y dirección = \"Calle Pedido 200\" para disparar el diálogo \"Hay diferencias con la ficha del cliente\". Identificador del comprador: pendiente-asignar (responsable WMS).",
+      "archivos_formulario": [
+        "src/modules/sales/ordenes/components/OrdenVentaCreateModal.tsx",
+        "src/modules/sales/ordenes/components/OperadorOrdenesVentaPageContent.tsx",
+        "src/modules/sales/ordenes/utils/prefill-orden-venta-from-comprador.ts",
+        "src/modules/sales/ordenes/utils/map-pedido-extraido-to-form.ts"
+      ]
+    },
+    "botones": {
+      "guardar": {
+        "testid": null,
+        "rol": "button",
+        "nombre": "Validar y enviar",
+        "texto_original": "button \"Validar y enviar\""
+      },
+      "cancelar": {
+        "testid": null,
+        "rol": "button",
+        "nombre": "Cancelar",
+        "texto_original": "button \"Cancelar\""
+      },
+      "descarte_confirmar": null,
+      "descarte_seguir_editando": null,
+      "advertencia_confirmar": {
+        "testid": null,
+        "rol": "button",
+        "nombre": "Enviar igual",
+        "texto_original": "button \"Enviar igual\""
+      }
+    },
+    "campos": [
+      {
+        "campo": "Cliente (paso documentos)",
+        "campo_id": "cliente_paso_documentos",
+        "localizador": {
+          "testid": null,
+          "rol": "button",
+          "nombre": "Cliente",
+          "texto_original": "button \"Cliente\""
+        },
+        "valor_de_prueba": "Comprador staging con discrepancia IA/BD"
+      },
+      {
+        "campo": "Texto del pedido",
+        "campo_id": "texto_del_pedido",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Texto del pedido",
+          "texto_original": "textbox \"Texto del pedido\""
+        },
+        "valor_de_prueba": "Pedido prueba: centro Cocina IA distinta; dirección Calle Pedido 200; entrega mañana; 10 kg producto catálogo"
+      },
+      {
+        "campo": "Archivos",
+        "campo_id": "archivos",
+        "localizador": {
+          "testid": null,
+          "rol": "button",
+          "nombre": "Archivos",
+          "texto_original": "button \"Archivos\""
+        },
+        "valor_de_prueba": null
+      },
+      {
+        "campo": "Cliente",
+        "campo_id": "cliente",
+        "localizador": {
+          "testid": null,
+          "rol": "button",
+          "nombre": "Cliente",
+          "texto_original": "button \"Cliente\""
+        },
+        "valor_de_prueba": "Mismo comprador staging"
+      },
+      {
+        "campo": "Orden de compra del hotel",
+        "campo_id": "orden_de_compra_del_hotel",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Orden de compra del hotel",
+          "texto_original": "textbox \"Orden de compra del hotel\""
+        },
+        "valor_de_prueba": "OC-STAGING-001"
+      },
+      {
+        "campo": "Centro de consumo / cocina",
+        "campo_id": "centro_de_consumo_cocina",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Centro de consumo / cocina",
+          "texto_original": "textbox \"Centro de consumo / cocina\""
+        },
+        "valor_de_prueba": "Cocina IA distinta"
+      },
+      {
+        "campo": "Vendedor",
+        "campo_id": "vendedor",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Vendedor",
+          "texto_original": "textbox \"Vendedor\""
+        },
+        "valor_de_prueba": null
+      },
+      {
+        "campo": "Fecha de entrega",
+        "campo_id": "fecha_de_entrega",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Fecha de entrega",
+          "texto_original": "textbox \"Fecha de entrega\""
+        },
+        "valor_de_prueba": "(mañana ISO, ≥ hoy)"
+      },
+      {
+        "campo": "Ventana de entrega — desde",
+        "campo_id": "ventana_de_entrega_desde",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Ventana de entrega — desde",
+          "texto_original": "textbox \"Ventana de entrega — desde\""
+        },
+        "valor_de_prueba": "08:00"
+      },
+      {
+        "campo": "Ventana de entrega — hasta",
+        "campo_id": "ventana_de_entrega_hasta",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Ventana de entrega — hasta",
+          "texto_original": "textbox \"Ventana de entrega — hasta\""
+        },
+        "valor_de_prueba": "12:00"
+      },
+      {
+        "campo": "Prioridad",
+        "campo_id": "prioridad",
+        "localizador": {
+          "testid": null,
+          "rol": "combobox",
+          "nombre": "Prioridad",
+          "texto_original": "combobox \"Prioridad\""
+        },
+        "valor_de_prueba": "Normal"
+      },
+      {
+        "campo": "Moneda",
+        "campo_id": "moneda",
+        "localizador": {
+          "testid": null,
+          "rol": "combobox",
+          "nombre": "Moneda",
+          "texto_original": "combobox \"Moneda\""
+        },
+        "valor_de_prueba": "MXN"
+      },
+      {
+        "campo": "Bodega destino",
+        "campo_id": "bodega_destino",
+        "localizador": {
+          "testid": null,
+          "rol": "combobox",
+          "nombre": "Bodega destino",
+          "texto_original": "combobox \"Bodega destino\""
+        },
+        "valor_de_prueba": "Bodega default de la cuenta"
+      },
+      {
+        "campo": "Observaciones",
+        "campo_id": "observaciones",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Observaciones",
+          "texto_original": "textbox \"Observaciones\""
+        },
+        "valor_de_prueba": "Prueba Nivel 2 staging"
+      },
+      {
+        "campo": "Dirección de entrega",
+        "campo_id": "direccion_de_entrega",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Dirección de entrega",
+          "texto_original": "textbox \"Dirección de entrega\""
+        },
+        "valor_de_prueba": "Calle Pedido 200"
+      },
+      {
+        "campo": "Andén / punto de recepción",
+        "campo_id": "anden_punto_de_recepcion",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Andén / punto de recepción",
+          "texto_original": "textbox \"Andén / punto de recepción\""
+        },
+        "valor_de_prueba": "Andén 1"
+      },
+      {
+        "campo": "Contacto en el hotel",
+        "campo_id": "contacto_en_el_hotel",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Contacto en el hotel",
+          "texto_original": "textbox \"Contacto en el hotel\""
+        },
+        "valor_de_prueba": "Ana Prueba"
+      },
+      {
+        "campo": "Teléfono del contacto",
+        "campo_id": "telefono_del_contacto",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Teléfono del contacto",
+          "texto_original": "textbox \"Teléfono del contacto\""
+        },
+        "valor_de_prueba": "5551234567"
+      },
+      {
+        "campo": "Producto (línea)",
+        "campo_id": "producto_linea",
+        "localizador": {
+          "testid": null,
+          "rol": "button",
+          "nombre": "Agregar producto",
+          "texto_original": "button \"Agregar producto\""
+        },
+        "valor_de_prueba": "Primer producto de venta de la cuenta"
+      },
+      {
+        "campo": "Cantidad (línea)",
+        "campo_id": "cantidad_linea",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Cantidad",
+          "texto_original": "textbox \"Cantidad\""
+        },
+        "valor_de_prueba": "10"
+      },
+      {
+        "campo": "Unidad (línea)",
+        "campo_id": "unidad_linea",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Unidad",
+          "texto_original": "textbox \"Unidad\""
+        },
+        "valor_de_prueba": null
+      },
+      {
+        "campo": "Especificación (línea)",
+        "campo_id": "especificacion_linea",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Especificación",
+          "texto_original": "textbox \"Especificación\""
+        },
+        "valor_de_prueba": "Sin hueso"
+      },
+      {
+        "campo": "Desc% (línea)",
+        "campo_id": "desc_linea",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Desc%",
+          "texto_original": "textbox \"Desc%\""
+        },
+        "valor_de_prueba": null
+      },
+      {
+        "campo": "Precio (línea)",
+        "campo_id": "precio_linea",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Precio",
+          "texto_original": "textbox \"Precio\""
+        },
+        "valor_de_prueba": "85.50"
+      },
+      {
+        "campo": "IVA (línea)",
+        "campo_id": "iva_linea",
+        "localizador": {
+          "testid": null,
+          "rol": "combobox",
+          "nombre": "IVA",
+          "texto_original": "combobox \"IVA\""
+        },
+        "valor_de_prueba": "0%"
+      },
+      {
+        "campo": "Importe (línea)",
+        "campo_id": "importe_linea",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Importe",
+          "texto_original": "textbox \"Importe\""
+        },
+        "valor_de_prueba": null
+      },
+      {
+        "campo": "Peso total (kg)",
+        "campo_id": "peso_total_kg",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Peso total (kg)",
+          "texto_original": "textbox \"Peso total (kg)\""
+        },
+        "valor_de_prueba": null
+      },
+      {
+        "campo": "Razón social",
+        "campo_id": "razon_social",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Razón social",
+          "texto_original": "textbox \"Razón social\""
+        },
+        "valor_de_prueba": null
+      },
+      {
+        "campo": "RFC",
+        "campo_id": "rfc",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "RFC",
+          "texto_original": "textbox \"RFC\""
+        },
+        "valor_de_prueba": null
+      },
+      {
+        "campo": "Régimen",
+        "campo_id": "regimen",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Régimen",
+          "texto_original": "textbox \"Régimen\""
+        },
+        "valor_de_prueba": null
+      },
+      {
+        "campo": "CP fiscal",
+        "campo_id": "cp_fiscal",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "CP fiscal",
+          "texto_original": "textbox \"CP fiscal\""
+        },
+        "valor_de_prueba": null
+      },
+      {
+        "campo": "Uso CFDI",
+        "campo_id": "uso_cfdi",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Uso CFDI",
+          "texto_original": "textbox \"Uso CFDI\""
+        },
+        "valor_de_prueba": null
+      },
+      {
+        "campo": "Método de pago",
+        "campo_id": "metodo_de_pago",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Método de pago",
+          "texto_original": "textbox \"Método de pago\""
+        },
+        "valor_de_prueba": null
+      },
+      {
+        "campo": "Forma de pago",
+        "campo_id": "forma_de_pago",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Forma de pago",
+          "texto_original": "textbox \"Forma de pago\""
+        },
+        "valor_de_prueba": null
+      },
+      {
+        "campo": "Correos CFDI",
+        "campo_id": "correos_cfdi",
+        "localizador": {
+          "testid": null,
+          "rol": "textbox",
+          "nombre": "Correos CFDI",
+          "texto_original": "textbox \"Correos CFDI\""
+        },
+        "valor_de_prueba": null
+      }
+    ]
+  },
+  "notas_justificaciones": "`OrdenVentaCreateModal` cubre alta y edición. El paso inicial ofrece \"Venta nueva\" o \"Tengo el mensaje o archivos\" (OpenAI / surtido). Están en el DOM pero ocultos (`hidden` + `aria-hidden`) y no se documentan como visibles: Turno que prepara, Hora sugerida de salida, Chofer, Unidad (vehículo), Cajas, Presentación, ¿Acepta sustituciones?, Requiere lote / trazabilidad, Registrar temperatura al entregar. Esos ocultos sí pueden prellenarse desde ficha/IA/edición y se persisten en observaciones. El WMS no timbra CFDI. Para Nivel 2 con prellenado \"Ambas\": abrir por \"Tengo el mensaje o archivos\", leer el pedido de prueba y confirmar el diálogo de discrepancias con \"Enviar igual\" (botón de advertencia no-saltable). Cancelar cierra sin diálogo de descarte.",
+  "version_revision": {
+    "version_schema": "v1.0",
+    "fecha_aprobacion": {
+      "valor": "2026-09-15",
+      "texto_original": "15/09/2026"
+    },
+    "aprobado_por": "Pendiente de aprobación",
+    "proxima_revision": "Cuando el formulario cambie de campos o de reglas"
+  },
+  "advertencias": [
+    "Tabla 1 · Archivos · Tipo de dato: categoría no reconocida",
+    "Tabla 1 · Producto (línea) · Único: no encaja en reglas Sí/No",
+    "Tabla 2 · Campos fiscales · Campo: campo_id no existe en la Tabla 1",
+    "Tabla 1 · Razón social · Campo: no tiene fila en la Tabla 2",
+    "Tabla 1 · RFC · Campo: no tiene fila en la Tabla 2",
+    "Tabla 1 · Régimen · Campo: no tiene fila en la Tabla 2",
+    "Tabla 1 · CP fiscal · Campo: no tiene fila en la Tabla 2",
+    "Tabla 1 · Uso CFDI · Campo: no tiene fila en la Tabla 2",
+    "Tabla 1 · Método de pago · Campo: no tiene fila en la Tabla 2",
+    "Tabla 1 · Forma de pago · Campo: no tiene fila en la Tabla 2",
+    "Tabla 1 · Correos CFDI · Campo: no tiene fila en la Tabla 2"
+  ]
+}

@@ -38,9 +38,40 @@
 | Temperatura mínima | 8 | No | — |
 | Temperatura máxima | 9 | No | — |
 
+### Tabla 4 — Prueba automatizada del Nivel 2
+
+#### 4.1 Acceso y botones
+
+| Campo | Valor |
+|---|---|
+| Rol con que se inicia sesión | Administrador de cuenta |
+| Ruta / URL | /dashboard/administracion/asignacion-creacion/camiones |
+| Pasos para abrir el formulario | clic button "Nuevo camión" → esperar dialog "Crear camión" |
+| Registro que debe existir | — |
+| Archivos del formulario | src/modules/admin-panel/camiones/components/CamionCreateModal.tsx; src/modules/admin-panel/camiones/components/CamionesListView.tsx; src/modules/admin-panel/camiones/components/CamionTemperaturaSlider.tsx; src/modules/admin-panel/camiones/components/CamionCatalogTablePickerModal.tsx |
+| Botón Guardar | button "Crear" |
+| Botón Cancelar / Cerrar | button "Cancelar" |
+| Diálogo de descarte: botón que confirma el descarte | — |
+| Diálogo de descarte: botón para seguir editando | — |
+| Botón de la advertencia no-saltable | — |
+
+#### 4.2 Campos
+
+| Campo | Localizador | Valor de prueba |
+|---|---|---|
+| Placa | textbox "Placa" | ABC123 |
+| Marca | button "Marca" | Volvo |
+| Modelo | button "Modelo" | FH 460 |
+| Peso máx (kg) | textbox "Peso máx (kg)" | 18000 |
+| Volumen (m³) | textbox "Volumen (m³)" | 45 |
+| Cap. pallets | textbox "Cap. pallets" | 12 |
+| Tipo de vehículo | button "Tipo de vehículo" | Refrigerado |
+| Temperatura mínima | slider "Temperatura mínima" | -25 |
+| Temperatura máxima | slider "Temperatura máxima" | 15 |
+
 ### Notas y justificaciones
 
-Sin cuenta: "No se encontró la cuenta activa.". Disponible se guarda true en el alta (no hay campo). Presets del slider: Congelación (-18), Refrigerado (4), Fresco (12), Ambiente (22), Templado (60). El rango se serializa con formatRangoTemperatura. Si falla: DomainServiceError o "No se pudo crear el camión.". Código único por cuenta (uq_camion_cuenta_codigo) sin mensaje de aplicación.
+Sin cuenta: "No se encontró la cuenta activa.". Disponible se guarda true en el alta (no hay campo). Presets del slider: Congelación (-18), Refrigerado (4), Fresco (12), Ambiente (22), Templado (60). El rango se serializa con formatRangoTemperatura. Si falla: DomainServiceError o "No se pudo crear el camión.". Código único por cuenta (uq_camion_cuenta_codigo) sin mensaje de aplicación. Cancelar/Cerrar cierra el modal sin diálogo de descarte. No hay `data-testid` en el módulo; localizadores por rol/nombre accesible.
 
 ### Versión y revisión (del schema de ese formulario, no de esta plantilla)
 

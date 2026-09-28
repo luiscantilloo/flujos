@@ -58,9 +58,42 @@
 | Temperatura mínima | Sí | Información de BD | Sí |
 | Temperatura máxima | Sí | Información de BD | Sí |
 
+### Tabla 4 — Prueba automatizada del Nivel 2
+
+#### 4.1 Acceso y botones
+
+| Campo | Valor |
+|---|---|
+| Rol con que se inicia sesión | Administrador de cuenta |
+| Ruta / URL | /dashboard/administracion/asignacion-creacion/camiones |
+| Pasos para abrir el formulario | clic button "Editar" → esperar dialog "Editar camión" |
+| Registro que debe existir | Un camión activo (`estaActivo`) de la cuenta de prueba, visible en la lista de camiones |
+| Archivos del formulario | src/modules/admin-panel/camiones/components/CamionEditModal.tsx; src/modules/admin-panel/camiones/components/CamionesListView.tsx; src/modules/admin-panel/camiones/components/CamionTemperaturaSlider.tsx; src/modules/admin-panel/camiones/components/CamionCatalogTablePickerModal.tsx |
+| Botón Guardar | button "Guardar" |
+| Botón Cancelar / Cerrar | button "Cancelar" |
+| Diálogo de descarte: botón que confirma el descarte | — |
+| Diálogo de descarte: botón para seguir editando | — |
+| Botón de la advertencia no-saltable | — |
+
+#### 4.2 Campos
+
+| Campo | Localizador | Valor de prueba |
+|---|---|---|
+| Código | textbox "Código" | — |
+| Placa | textbox "Placa" | XYZ987 |
+| Marca | button "Marca" | Kenworth |
+| Modelo | button "Modelo" | T680 |
+| Peso máx (kg) | textbox "Peso máx (kg)" | 20000 |
+| Volumen (m³) | textbox "Volumen (m³)" | 50 |
+| Cap. pallets | textbox "Cap. pallets" | 14 |
+| Tipo de vehículo | button "Tipo de vehículo" | Isotérmico |
+| Estado | combobox "Estado" | Disponible |
+| Temperatura mínima | slider "Temperatura mínima" | -18 |
+| Temperatura máxima | slider "Temperatura máxima" | 4 |
+
 ### Notas y justificaciones
 
-El código es de solo lectura. Sin cuenta: "No se encontró la cuenta activa.". Si falla: DomainServiceError o "No se pudo actualizar el camión.".
+El código es de solo lectura. Sin cuenta: "No se encontró la cuenta activa.". Si falla: DomainServiceError o "No se pudo actualizar el camión.". Cancelar/Cerrar cierra sin diálogo de descarte. Abrir con el icono/botón "Editar" de una fila activa.
 
 ### Versión y revisión (del schema de ese formulario, no de esta plantilla)
 
